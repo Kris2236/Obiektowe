@@ -26,7 +26,6 @@ abstract public class AbstractWorldMap implements IMapElement {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -46,10 +45,7 @@ abstract public class AbstractWorldMap implements IMapElement {
         return visualize.draw(lowerLeft(), upperRight());
     }
 
-//    public List<Animal> getAnimalsList(){
-//        return animals;
-//    }
-
     public abstract Vector2d lowerLeft();
+
     public abstract Vector2d upperRight();
 }
