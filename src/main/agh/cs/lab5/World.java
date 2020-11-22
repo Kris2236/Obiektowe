@@ -2,7 +2,6 @@ package agh.cs.lab5;
 
 public class World {
     public static void main(String[] args) {
-
         MoveDirection[] directions = new OptionsParser().parse(args);
         Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4) };
 

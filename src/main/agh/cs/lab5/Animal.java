@@ -2,14 +2,14 @@ package agh.cs.lab5;
 
 public class Animal{
     protected Vector2d position;
-    protected agh.cs.lab5.MapDirection direction;
-    protected agh.cs.lab5.IWorldMap mapCurrentWorld;
+    protected MapDirection direction;
+    protected IWorldMap mapCurrentWorld;
 
-    public Animal(agh.cs.lab5.IWorldMap map){
+    public Animal(IWorldMap map){
         this.mapCurrentWorld = map;
     }
 
-    public Animal(agh.cs.lab5.IWorldMap map, Vector2d initialPosition){
+    public Animal(IWorldMap map, Vector2d initialPosition){
         this.mapCurrentWorld = map;
         this.position = initialPosition;
     }
@@ -28,7 +28,7 @@ public class Animal{
         }
     }
 
-    public void move(agh.cs.lab5.MoveDirection direction) {
+    public void move(MoveDirection direction) {
         switch (direction){
             case RIGHT -> this.direction = this.direction.next();
             case LEFT -> this.direction = this.direction.previous();
@@ -36,7 +36,7 @@ public class Animal{
         }
     }
 
-    private void changeDirection(agh.cs.lab5.MoveDirection direction){
+    private void changeDirection(MoveDirection direction){
         Vector2d pos = switch (direction){
             case FORWARD -> this.position.add(this.direction.toUnitVector());
             case BACKWARD -> this.position.substract(this.direction.toUnitVector());

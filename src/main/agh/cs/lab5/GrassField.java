@@ -1,12 +1,13 @@
 package agh.cs.lab5;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class GrassField extends AbstractWorldMap implements IWorldMap{
-    protected ArrayList<agh.cs.lab5.Grass> grassPositions = new ArrayList<>();
-    protected ArrayList<Animal> animals = new ArrayList<>();
-    private int numberOfGrass;
+    private final ArrayList<Grass> grassPositions = new ArrayList<>();
+    private final ArrayList<Animal> animals = new ArrayList<>();
+    private final int numberOfGrass;
 
     public GrassField(int numberOfGrass){
         this.numberOfGrass = numberOfGrass;
@@ -20,11 +21,11 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
             int x = generator.nextInt((int) Math.sqrt( (this.numberOfGrass+1)) * 10);
             int y = generator.nextInt((int) Math.sqrt( (this.numberOfGrass+1)) * 10);
             boolean uniquePosition = true;
-            agh.cs.lab5.Grass newPosition = new agh.cs.lab5.Grass(new agh.cs.lab5.Vector2d(x,y));
+            Grass newPosition = new Grass(new Vector2d(x,y));
 
             // check if new random grass position equals other existing
-            for(agh.cs.lab5.Grass grass : grassPositions){
-                if(grass.getPosition().equals(newPosition)){
+            for(Grass grass : grassPositions){
+                if(grass.getPosition().equals(newPosition.getPosition())){
                     i--;
                     uniquePosition = false;
                 }
@@ -38,18 +39,16 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        if(objectAt(position) instanceof Animal){
-            return false;
-        }
-        return true;
+        return !isOccupied(position) || objectAt(position) instanceof Grass;
     }
 
     @Override
     public boolean place(Animal animal) {
-        if(super.place(animal, this.animals)){
+        if(super.place(animal)){ // do zmiany!!!!!!!!!!!!!!!!!!!!!!!!
             animals.add(animal);
             return true;
         }
+
         return false;
     }
 
@@ -57,7 +56,7 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
     public boolean isOccupied(Vector2d position) {
 
         // check animals in AbstractWorldMap
-        boolean result = super.isOccupied(position, this.animals);
+        boolean result = super.isOccupied(position);
 
         if(result){
             return true;
@@ -70,13 +69,14 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
             }
         }
 
-        return result;
+        return false;
     }
 
     @Override
     public Object objectAt(Vector2d position) {
+
         // return Animal object as first - display priority in AbstractWorldMap
-        Object object = super.objectAt(position, this.animals);
+        Object object = super.objectAt(position);
 
         if(object != null){
             return object;
@@ -90,7 +90,7 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
         }
 
         // return no object
-        return object;
+        return null;
     }
 
     @Override
@@ -130,5 +130,10 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
         }
 
         return upperRight;
+    }
+
+    @Override
+    public List<Animal> getAnimalsList() {
+        return this.animals;
     }
 }

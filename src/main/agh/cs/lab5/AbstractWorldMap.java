@@ -4,22 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 abstract public class AbstractWorldMap implements IMapElement {
-    //protected ArrayList<Animal> animals = new ArrayList<>();    //1!!!!!!!!!!!!!!!!!!!!!!
-
 
     public abstract boolean canMoveTo(Vector2d position);
 
-    public boolean place(Animal animal, ArrayList<Animal> animalsPositions) {
+    public boolean place(Animal animal) {
         if(canMoveTo(animal.position)){
-            if(!isOccupied(animal.position, animalsPositions) || objectAt(animal.position, animalsPositions) instanceof Grass) {
-                return true;
-            }
+            // zosrawiam w tej formie do kolejnych labów
+            return true;
         }
 
         return false;
     }
 
-    public boolean isOccupied(Vector2d position, ArrayList<Animal> animalsPositions) {
+    public boolean isOccupied(Vector2d position) {
+        List<Animal> animalsPositions = getAnimalsList();
         // check animalsPositions
         for(Animal animal : animalsPositions){
             if(position.equals(animal.position)){
@@ -29,7 +27,9 @@ abstract public class AbstractWorldMap implements IMapElement {
         return false;
     }
 
-    public Object objectAt(Vector2d position, ArrayList<Animal> animalsPositions) {
+    public Object objectAt(Vector2d position) {
+        List<Animal> animalsPositions = getAnimalsList();
+
         // return Animal object as first - display priority
         for(Animal animal : animalsPositions){
             if(animal.position.equals(position)){
@@ -41,11 +41,13 @@ abstract public class AbstractWorldMap implements IMapElement {
     }
 
     public String toString(IWorldMap map){
-        MapVisualizer visualize = new MapVisualizer(map);   // map -> this i toString()
+        MapVisualizer visualize = new MapVisualizer(map);
         return visualize.draw(lowerLeft(), upperRight());
     }
 
     public abstract Vector2d lowerLeft();
 
     public abstract Vector2d upperRight();
+
+    public abstract List<Animal> getAnimalsList();
 }

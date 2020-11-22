@@ -2,6 +2,7 @@ package agh.cs.lab5;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RectangularMap extends AbstractWorldMap implements IWorldMap {
     private final Vector2d boundLower = new Vector2d(0,0);
@@ -27,6 +28,11 @@ public class RectangularMap extends AbstractWorldMap implements IWorldMap {
     }
 
     @Override
+    public List<Animal> getAnimalsList() {
+        return this.animals;
+    }
+
+    @Override
     public boolean canMoveTo(Vector2d position) {
         if(position.precedes(boundUpper) && position.follows(boundLower) && !isOccupied(position)){
             return true;
@@ -37,20 +43,21 @@ public class RectangularMap extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public boolean place(Animal animal) {
-        if(super.place(animal, this.animals)){
+        if(super.place(animal)){
             animals.add(animal);
             return true;
         }
+
         return false;
     }
 
     @Override
     public boolean isOccupied(Vector2d position) {
-        return super.isOccupied(position, animals);
+        return super.isOccupied(position);
     }
 
     @Override
     public Object objectAt(Vector2d position) {
-        return super.objectAt(position, animals);
+        return super.objectAt(position);
     }
 }
