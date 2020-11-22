@@ -1,24 +1,27 @@
 package agh.cs.lab5;
 
-abstract public class AbstractWorldMap implements agh.cs.lab5.IMapElement {
+import java.util.ArrayList;
+import java.util.List;
+
+abstract public class AbstractWorldMap implements IMapElement {
+    //protected ArrayList<Animal> animals = new ArrayList<>();    //1!!!!!!!!!!!!!!!!!!!!!!
+
 
     public abstract boolean canMoveTo(Vector2d position);
 
-    public boolean place(Animal animal) {
+    public boolean place(Animal animal, ArrayList<Animal> animalsPositions) {
         if(canMoveTo(animal.position)){
-            if(!isOccupied(animal.position) || objectAt(animal.position) instanceof agh.cs.lab5.Grass)
-            System.out.println("Animal added: " + animal.position);
-            animals.add(animal);
-            return true;
+            if(!isOccupied(animal.position, animalsPositions) || objectAt(animal.position, animalsPositions) instanceof Grass) {
+                return true;
+            }
         }
-        else {
-            return false;
-        }
+
+        return false;
     }
 
-    public boolean isOccupied(Vector2d position) {
-        // check animals
-        for(Animal animal : animals){
+    public boolean isOccupied(Vector2d position, ArrayList<Animal> animalsPositions) {
+        // check animalsPositions
+        for(Animal animal : animalsPositions){
             if(position.equals(animal.position)){
                 return true;
             }
@@ -27,9 +30,9 @@ abstract public class AbstractWorldMap implements agh.cs.lab5.IMapElement {
         return false;
     }
 
-    public Object objectAt(Vector2d position) {
+    public Object objectAt(Vector2d position, ArrayList<Animal> animalsPositions) {
         // return Animal object as first - display priority
-        for(agh.cs.lab5.Animal animal : animals){
+        for(Animal animal : animalsPositions){
             if(animal.position.equals(position)){
                 return animal;
             }
@@ -38,5 +41,15 @@ abstract public class AbstractWorldMap implements agh.cs.lab5.IMapElement {
         return null;
     }
 
-    public abstract String toString(agh.cs.lab5.IWorldMap map);
+    public String toString(IWorldMap map){
+        MapVisualizer visualize = new MapVisualizer(map);   // map -> this i toString()
+        return visualize.draw(lowerLeft(), upperRight());
+    }
+
+//    public List<Animal> getAnimalsList(){
+//        return animals;
+//    }
+
+    public abstract Vector2d lowerLeft();
+    public abstract Vector2d upperRight();
 }

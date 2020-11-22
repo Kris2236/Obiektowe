@@ -3,14 +3,13 @@ package agh.cs.lab5;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class GrassField extends agh.cs.lab5.AbstractWorldMap implements agh.cs.lab5.IWorldMap, agh.cs.lab5.IMapElement {
+public class GrassField extends AbstractWorldMap implements IWorldMap{
     protected ArrayList<agh.cs.lab5.Grass> grassPositions = new ArrayList<>();
-    protected ArrayList<Grass> animalsPositions = new ArrayList<>();
+    protected ArrayList<Animal> animals = new ArrayList<>();
     private int numberOfGrass;
 
     public GrassField(int numberOfGrass){
         this.numberOfGrass = numberOfGrass;
-
         placeGrass();
     }
 
@@ -32,11 +31,11 @@ public class GrassField extends agh.cs.lab5.AbstractWorldMap implements agh.cs.l
             }
 
             if(uniquePosition){
-                System.out.println("Added grass: " + newPosition.getPosition());
                 grassPositions.add(newPosition);
             }
         }
     }
+
     @Override
     public boolean canMoveTo(Vector2d position) {
         if(objectAt(position) instanceof Animal){
@@ -47,14 +46,18 @@ public class GrassField extends agh.cs.lab5.AbstractWorldMap implements agh.cs.l
 
     @Override
     public boolean place(Animal animal) {
-        return super.place(animal);
+        if(super.place(animal, this.animals)){
+            animals.add(animal);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean isOccupied(Vector2d position) {
 
         // check animals in AbstractWorldMap
-        boolean result = super.isOccupied(position);
+        boolean result = super.isOccupied(position, this.animals);
 
         if(result){
             return true;
@@ -73,7 +76,7 @@ public class GrassField extends agh.cs.lab5.AbstractWorldMap implements agh.cs.l
     @Override
     public Object objectAt(Vector2d position) {
         // return Animal object as first - display priority in AbstractWorldMap
-        Object object = super.objectAt(position);
+        Object object = super.objectAt(position, this.animals);
 
         if(object != null){
             return object;
@@ -85,29 +88,47 @@ public class GrassField extends agh.cs.lab5.AbstractWorldMap implements agh.cs.l
                 return grass;
             }
         }
+
         // return no object
         return object;
     }
 
     @Override
     public String toString(IWorldMap map) {
-        Vector2d upperRight = grassPositions.get(0).getPosition();
+        return super.toString(map);
+    }
+
+    @Override
+    public Vector2d lowerLeft() {
         Vector2d lowerLeft = grassPositions.get(0).getPosition();
 
         // determine the extent of the map - checking grass positions
         for(Grass grass : grassPositions) {
-            upperRight = grass.getPosition().upperRight(upperRight);
             lowerLeft = grass.getPosition().lowerLeft(lowerLeft);
         }
 
         // determine the extent of the map - checking animals positions
         for(Animal animal : animals) {
-            upperRight = animal.position.upperRight(upperRight);
             lowerLeft = animal.position.lowerLeft(lowerLeft);
         }
 
-        // initializing the map display
-        MapVisualizer visualize = new MapVisualizer(map);
-        return visualize.draw(lowerLeft, upperRight);
+        return lowerLeft;
+    }
+
+    @Override
+    public Vector2d upperRight() {
+        Vector2d upperRight = grassPositions.get(0).getPosition();
+
+        // determine the extent of the map - checking grass positions
+        for(Grass grass : grassPositions) {
+            upperRight = grass.getPosition().upperRight(upperRight);
+        }
+
+        // determine the extent of the map - checking animals positions
+        for(Animal animal : animals) {
+            upperRight = animal.position.upperRight(upperRight);
+        }
+
+        return upperRight;
     }
 }

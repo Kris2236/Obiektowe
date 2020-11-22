@@ -20,6 +20,7 @@ public class RectangularMapTest {
 
     @Test
     void canMoveToTest(){
+        v = new Vector2d(3,3);
         assertEquals(map.canMoveTo(v), true);
 
         v = new Vector2d(-1,-1);
