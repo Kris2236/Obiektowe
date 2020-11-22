@@ -44,12 +44,7 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
 
     @Override
     public boolean place(Animal animal) {
-        if(super.place(animal)){ // do zmiany!!!!!!!!!!!!!!!!!!!!!!!!
-            animals.add(animal);
-            return true;
-        }
-
-        return false;
+        return super.place(animal);
     }
 
     @Override

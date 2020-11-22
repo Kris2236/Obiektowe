@@ -7,7 +7,7 @@ import java.util.List;
 public class RectangularMap extends AbstractWorldMap implements IWorldMap {
     private final Vector2d boundLower = new Vector2d(0,0);
     private final Vector2d boundUpper;
-    private ArrayList<Animal> animals = new ArrayList<>();      // animals positions
+    private final ArrayList<Animal> animals = new ArrayList<>();      // animals positions
 
     public RectangularMap(int width, int height){
         this.boundUpper = new Vector2d(width-1,height-1);
@@ -34,21 +34,12 @@ public class RectangularMap extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        if(position.precedes(boundUpper) && position.follows(boundLower) && !isOccupied(position)){
-            return true;
-        }
-
-        return false;
+        return position.precedes(boundUpper) && position.follows(boundLower) && !isOccupied(position);
     }
 
     @Override
     public boolean place(Animal animal) {
-        if(super.place(animal)){
-            animals.add(animal);
-            return true;
-        }
-
-        return false;
+        return super.place(animal);
     }
 
     @Override

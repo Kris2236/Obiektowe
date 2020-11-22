@@ -1,6 +1,5 @@
 package agh.cs.lab5;
 
-import java.util.ArrayList;
 import java.util.List;
 
 abstract public class AbstractWorldMap implements IMapElement {
@@ -9,7 +8,7 @@ abstract public class AbstractWorldMap implements IMapElement {
 
     public boolean place(Animal animal) {
         if(canMoveTo(animal.position)){
-            // zosrawiam w tej formie do kolejnych labów
+            getAnimalsList().add(animal);
             return true;
         }
 
@@ -17,9 +16,9 @@ abstract public class AbstractWorldMap implements IMapElement {
     }
 
     public boolean isOccupied(Vector2d position) {
-        List<Animal> animalsPositions = getAnimalsList();
+
         // check animalsPositions
-        for(Animal animal : animalsPositions){
+        for(Animal animal : getAnimalsList()){
             if(position.equals(animal.position)){
                 return true;
             }
@@ -28,10 +27,9 @@ abstract public class AbstractWorldMap implements IMapElement {
     }
 
     public Object objectAt(Vector2d position) {
-        List<Animal> animalsPositions = getAnimalsList();
 
         // return Animal object as first - display priority
-        for(Animal animal : animalsPositions){
+        for(Animal animal : getAnimalsList()){
             if(animal.position.equals(position)){
                 return animal;
             }
