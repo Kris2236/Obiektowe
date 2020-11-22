@@ -1,8 +1,8 @@
-package agh.cs.lab4;
+package agh.cs.lab5;
 
 public class Vector2d {
-    public int x;
-    public int y;
+    public final int x;
+    public final int y;
 
     public Vector2d(int x, int y) {
         this.x = x;
@@ -55,5 +55,4 @@ public class Vector2d {
     public Vector2d opposite(){
         return new Vector2d(-this.x, -this.y);
     }
-
 }

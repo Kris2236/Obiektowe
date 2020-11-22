@@ -1,20 +1,22 @@
-package agh.cs.lab4;
-
+package agh.cs.lab5;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SimulationEngine implements IEngine{
-    private ArrayList<MoveDirection> comands = new ArrayList<>();
-    private ArrayList<Vector2d> positions = new ArrayList<>();
-    private ArrayList<Animal> animals = new ArrayList<>();
-    private IWorldMap mapCurrentWorld;
+    private final ArrayList<agh.cs.lab5.MoveDirection> comands = new ArrayList<>();
+    private final ArrayList<Vector2d> positions = new ArrayList<>();
+    private final ArrayList<Animal> animals = new ArrayList<>();
+    protected IWorldMap mapCurrentWorld;
 
-    public SimulationEngine(MoveDirection[] comands, IWorldMap map, Vector2d[] positions){
+    public SimulationEngine(agh.cs.lab5.MoveDirection[] comands, IWorldMap map, Vector2d[] positions){
+        // Add animals move comands
         this.comands.addAll(Arrays.asList(comands));
-        this.positions.addAll(Arrays.asList(positions));
-        this.mapCurrentWorld = map;
 
+        // Add animals positions to list
+        this.positions.addAll(Arrays.asList(positions));
+
+        this.mapCurrentWorld = map;
         addAnimalsToMap();
     }
 
@@ -24,7 +26,7 @@ public class SimulationEngine implements IEngine{
             animals.add(new Animal(mapCurrentWorld, position));
         }
 
-        // Push animal in to map
+        // Place animals on the map
         for(Animal animal : animals){
             animal.direction = MapDirection.NORTH;
             mapCurrentWorld.place(animal);
@@ -34,6 +36,7 @@ public class SimulationEngine implements IEngine{
     @Override
     public void run() {
         for(int i=0; i<comands.size(); i++){
+            // make moves for the animals in turn
             animals.get(i%animals.size()).move(comands.get(i));
             System.out.println(mapCurrentWorld.toString(mapCurrentWorld));
         }

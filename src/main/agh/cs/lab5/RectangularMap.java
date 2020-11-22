@@ -1,9 +1,9 @@
-package agh.cs.lab4;
+package agh.cs.lab5;
 
 
 import java.util.ArrayList;
 
-public class RectangularMap implements IWorldMap {
+public class RectangularMap extends agh.cs.lab5.AbstractWorldMap implements agh.cs.lab5.IWorldMap {
     private final Vector2d boundLower = new Vector2d(0,0);
     private final Vector2d boundUpper;
     private ArrayList<Animal> animalsPositions = new ArrayList<>();      // animals positions
@@ -28,29 +28,17 @@ public class RectangularMap implements IWorldMap {
     }
 
     @Override
-    public boolean place(Animal animal) {
-        if(!isOccupied(animal.position) && canMoveTo(animal.position)){
-            animalsPositions.add(animal);
-            return true;
-        }
-        else {
-            return false;
-        }
+    public boolean place(agh.cs.lab5.Animal animal) {
+        return super.place(animal);
     }
 
     @Override
     public boolean isOccupied(Vector2d position) {
-        return objectAt(position) != null;
+        return super.isOccupied(position);
     }
 
     @Override
     public Object objectAt(Vector2d position) {
-        for(Animal animal : animalsPositions){
-            if(animal.position.equals(position)){
-                return animal;
-            }
-        }
-
-        return null;
+        return super.objectAt(position);
     }
 }
