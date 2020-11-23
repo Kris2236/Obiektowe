@@ -1,9 +1,15 @@
 package agh.cs.lab5;
 
-public class Animal{
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Observer;
+
+public class Animal implements Subject{
     protected Vector2d position;
     protected MapDirection direction;
     protected IWorldMap mapCurrentWorld;
+    private ArrayList<IPositionChangeObserver> observerList;
+
 
     public Animal(IWorldMap map){
         this.mapCurrentWorld = map;
@@ -44,7 +50,44 @@ public class Animal{
         };
 
         if(mapCurrentWorld.canMoveTo(pos)){
+            // notify observers
+            notifyObservers(this.position, pos);
             this.position = pos;
         }
     }
+
+    // set visibility !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//    void addObserver(IPositionChangeObserver observer){
+//        observerList.add(observer);
+//    }
+//
+//    void removeObserver(IPositionChangeObserver observer){
+//        observerList.remove(observer);
+//    }
+//
+//    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+//        for (Subject o : observerList){
+//            //o.update(Vector2d oldPosition, Vector2d newPosition);
+//            // other positionChanged function
+//            o.notifyObservers(oldPosition, newPosition);
+//        }
+//    }
+
+    @Override
+    public void register(IPositionChangeObserver o) {
+        observerList.add(o);
+    }
+
+    @Override
+    public void unregister(IPositionChangeObserver o) {
+        observerList.remove(o);
+    }
+
+    @Override
+    public void notifyObservers(Vector2d oldPosition, Vector2d newPosition){
+        for(IPositionChangeObserver o : observerList){
+            o.positionChanged(oldPosition, newPosition);
+        }
+    }
+
 }

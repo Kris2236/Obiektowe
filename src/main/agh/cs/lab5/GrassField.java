@@ -1,12 +1,11 @@
 package agh.cs.lab5;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Random;
 
-public class GrassField extends AbstractWorldMap implements IWorldMap{
-    private final ArrayList<Grass> grassPositions = new ArrayList<>();
-    private final ArrayList<Animal> animals = new ArrayList<>();
+public class GrassField extends AbstractWorldMap implements IWorldMap {
+    private final HashMap<Vector2d, Grass> grassMap = new HashMap<>();
+    private final HashMap<Vector2d, Animal> animalsMap = new HashMap<>();
     private final int numberOfGrass;
 
     public GrassField(int numberOfGrass){
@@ -21,18 +20,16 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
             int x = generator.nextInt((int) Math.sqrt( (this.numberOfGrass+1)) * 10);
             int y = generator.nextInt((int) Math.sqrt( (this.numberOfGrass+1)) * 10);
             boolean uniquePosition = true;
-            Grass newPosition = new Grass(new Vector2d(x,y));
+            Grass newGrass = new Grass(new Vector2d(x,y));
 
             // check if new random grass position equals other existing
-            for(Grass grass : grassPositions){
-                if(grass.getPosition().equals(newPosition.getPosition())){
-                    i--;
-                    uniquePosition = false;
-                }
+            if(grassMap.containsKey(newGrass.getPosition())){
+                i--;
+                uniquePosition = false;
             }
 
             if(uniquePosition){
-                grassPositions.add(newPosition);
+                grassMap.put(newGrass.getPosition(), newGrass);
             }
         }
     }
@@ -58,13 +55,7 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
         }
 
         // check grass
-        for(Grass grass : grassPositions){
-            if(grass.getPosition().equals(position)){
-                return true;
-            }
-        }
-
-        return false;
+        return grassMap.containsKey(position);
     }
 
     @Override
@@ -78,10 +69,8 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
         }
 
         // return Grass object
-        for(Grass grass : grassPositions){
-            if(grass.getPosition().equals(position)){
-                return grass;
-            }
+        if(grassMap.containsKey(position)){
+            return grassMap.get(position);
         }
 
         // return no object
@@ -95,16 +84,18 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
 
     @Override
     public Vector2d lowerLeft() {
-        Vector2d lowerLeft = grassPositions.get(0).getPosition();
+        Vector2d lowerLeft = new Vector2d(0,0); // Do zmiany - pobierz element z mapy
+        System.out.println(grassMap.keySet());
+        System.out.println(animalsMap.keySet());
 
         // determine the extent of the map - checking grass positions
-        for(Grass grass : grassPositions) {
-            lowerLeft = grass.getPosition().lowerLeft(lowerLeft);
+        for(Vector2d grassPos : grassMap.keySet()) {
+            lowerLeft = grassPos.lowerLeft(lowerLeft);
         }
 
         // determine the extent of the map - checking animals positions
-        for(Animal animal : animals) {
-            lowerLeft = animal.position.lowerLeft(lowerLeft);
+        for(Vector2d animalPos : animalsMap.keySet()) {
+            lowerLeft = animalPos.lowerLeft(lowerLeft);
         }
 
         return lowerLeft;
@@ -112,23 +103,28 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
 
     @Override
     public Vector2d upperRight() {
-        Vector2d upperRight = grassPositions.get(0).getPosition();
+        Vector2d upperRight = new Vector2d(0,0); // Do zmiany - pobierz element z mapy;
 
         // determine the extent of the map - checking grass positions
-        for(Grass grass : grassPositions) {
-            upperRight = grass.getPosition().upperRight(upperRight);
+        for(Vector2d grassPos : grassMap.keySet()) {
+            upperRight = grassPos.upperRight(upperRight);
         }
 
         // determine the extent of the map - checking animals positions
-        for(Animal animal : animals) {
-            upperRight = animal.position.upperRight(upperRight);
+        for(Vector2d animalPos : animalsMap.keySet()) {
+            upperRight = animalPos.upperRight(upperRight);
         }
 
         return upperRight;
     }
 
     @Override
-    public List<Animal> getAnimalsList() {
-        return this.animals;
+    public HashMap<Vector2d,Animal> getAnimalsHashMap() {
+        return this.animalsMap;
+    }
+
+    @Override
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        super.positionChanged(oldPosition, newPosition);
     }
 }

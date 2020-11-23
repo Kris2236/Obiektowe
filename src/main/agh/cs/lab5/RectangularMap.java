@@ -1,13 +1,12 @@
 package agh.cs.lab5;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class RectangularMap extends AbstractWorldMap implements IWorldMap {
     private final Vector2d boundLower = new Vector2d(0,0);
     private final Vector2d boundUpper;
-    private final ArrayList<Animal> animals = new ArrayList<>();      // animals positions
+    private final HashMap<Vector2d, Animal> animalsMap = new HashMap<>();      // animals positions map
 
     public RectangularMap(int width, int height){
         this.boundUpper = new Vector2d(width-1,height-1);
@@ -28,8 +27,8 @@ public class RectangularMap extends AbstractWorldMap implements IWorldMap {
     }
 
     @Override
-    public List<Animal> getAnimalsList() {
-        return this.animals;
+    public HashMap<Vector2d, Animal> getAnimalsHashMap() {
+        return this.animalsMap;
     }
 
     @Override
@@ -50,5 +49,10 @@ public class RectangularMap extends AbstractWorldMap implements IWorldMap {
     @Override
     public Object objectAt(Vector2d position) {
         return super.objectAt(position);
+    }
+
+    @Override
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        super.positionChanged(oldPosition, newPosition);
     }
 }

@@ -1,14 +1,14 @@
 package agh.cs.lab5;
 
-import java.util.List;
+import java.util.HashMap;
 
-abstract public class AbstractWorldMap implements IMapElement {
+abstract public class AbstractWorldMap implements IMapElement, IPositionChangeObserver {
 
     public abstract boolean canMoveTo(Vector2d position);
 
     public boolean place(Animal animal) {
         if(canMoveTo(animal.position)){
-            getAnimalsList().add(animal);
+            getAnimalsHashMap().put(animal.position, animal);
             return true;
         }
 
@@ -18,21 +18,14 @@ abstract public class AbstractWorldMap implements IMapElement {
     public boolean isOccupied(Vector2d position) {
 
         // check animalsPositions
-        for(Animal animal : getAnimalsList()){
-            if(position.equals(animal.position)){
-                return true;
-            }
-        }
-        return false;
+        return getAnimalsHashMap().containsKey(position);
     }
 
     public Object objectAt(Vector2d position) {
 
         // return Animal object as first - display priority
-        for(Animal animal : getAnimalsList()){
-            if(animal.position.equals(position)){
-                return animal;
-            }
+        if(getAnimalsHashMap().containsKey(position)) {
+            return getAnimalsHashMap().get(position);
         }
 
         return null;
@@ -47,5 +40,12 @@ abstract public class AbstractWorldMap implements IMapElement {
 
     public abstract Vector2d upperRight();
 
-    public abstract List<Animal> getAnimalsList();
+    public abstract HashMap<Vector2d, Animal> getAnimalsHashMap();
+
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        final HashMap<Vector2d, Animal> animalsMap = getAnimalsHashMap();
+        Animal animal = animalsMap.get(oldPosition);
+        animalsMap.remove(oldPosition);
+        animalsMap.put(newPosition, animal);
+    }
 }
