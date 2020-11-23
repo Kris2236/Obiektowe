@@ -8,7 +8,7 @@ public class Animal implements Subject{
     protected Vector2d position;
     protected MapDirection direction;
     protected IWorldMap mapCurrentWorld;
-    private ArrayList<IPositionChangeObserver> observerList;
+    private ArrayList<IPositionChangeObserver> observerList = new ArrayList<>();
 
 
     public Animal(IWorldMap map){

@@ -9,6 +9,7 @@ abstract public class AbstractWorldMap implements IMapElement, IPositionChangeOb
     public boolean place(Animal animal) {
         if(canMoveTo(animal.position)){
             getAnimalsHashMap().put(animal.position, animal);
+            animal.register(this);
             return true;
         }
 

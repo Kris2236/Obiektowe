@@ -32,20 +32,6 @@ public class SimulationEngine implements IEngine{
         for(Animal animal : animals){
             animal.direction = MapDirection.NORTH;
             mapCurrentWorld.place(animal);
-
-            // check map type
-            IPositionChangeObserver mapa = null;
-            if(mapCurrentWorld instanceof GrassField){
-                mapa = (GrassField)mapCurrentWorld;
-            } else if(mapCurrentWorld instanceof RectangularMap){
-                mapa = (RectangularMap)mapCurrentWorld;
-            } else {
-                // exception
-                System.out.println("Exception...");
-            }
-
-            // add observer
-            animal.register(mapa);
         }
     }
 
