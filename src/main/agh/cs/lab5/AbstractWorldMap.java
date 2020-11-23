@@ -11,11 +11,12 @@ abstract public class AbstractWorldMap implements IMapElement, IPositionChangeOb
             getAnimalsHashMap().put(animal.position, animal);
             animal.register(this);
             return true;
+        } else {
+            throw new IllegalArgumentException(animal.position + " is not legal. Off the map or position is occupated.\n"); // return exception?
         }
-
-        return false;
     }
 
+    // Use objectAt in this method!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     public boolean isOccupied(Vector2d position) {
 
         // check animalsPositions

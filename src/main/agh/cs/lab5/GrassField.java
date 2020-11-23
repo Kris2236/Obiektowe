@@ -85,8 +85,6 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
     @Override
     public Vector2d lowerLeft() {
         Vector2d lowerLeft = new Vector2d(0,0); // Do zmiany - pobierz element z mapy
-        System.out.println(grassMap.keySet());
-        System.out.println(animalsMap.keySet());
 
         // determine the extent of the map - checking grass positions
         for(Vector2d grassPos : grassMap.keySet()) {
