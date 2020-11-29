@@ -2,7 +2,7 @@ package agh.cs.lab7;
 
 import java.util.ArrayList;
 
-public class Animal implements Subject{
+public class Animal implements ISubject {
     protected Vector2d position;
     protected MapDirection direction;
     protected IWorldMap mapCurrentWorld;
@@ -66,8 +66,7 @@ public class Animal implements Subject{
     @Override
     public void notifyObservers(Vector2d oldPosition, Vector2d newPosition){
         for(IPositionChangeObserver o : observerList){
-            o.positionChanged(oldPosition, newPosition);
+            o.positionChanged(oldPosition, newPosition, "Animal");
         }
     }
-
 }

@@ -2,7 +2,7 @@ package agh.cs.lab7;
 
 import java.util.HashMap;
 
-abstract public class AbstractWorldMap implements IPositionChangeObserver {
+abstract public class AbstractWorldMap extends MapBoundary implements IPositionChangeObserver {
 
     public abstract boolean canMoveTo(Vector2d position);
 
@@ -48,5 +48,6 @@ abstract public class AbstractWorldMap implements IPositionChangeObserver {
         Animal animal = animalsMap.get(oldPosition);
         animalsMap.remove(oldPosition);
         animalsMap.put(newPosition, animal);
+        // notify changes in MapBoundry
     }
 }

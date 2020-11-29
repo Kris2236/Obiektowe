@@ -30,7 +30,9 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
 
             if(uniquePosition){
                 grassMap.put(newGrass.getPosition(), newGrass);
-                // add to map boundry
+                // register grass (for MapBoundary)
+                //newGrass.register(this);                                        // aktualnie nie jest wykorzystywane
+                //positionGrassChanged(newGrass.getPosition(), newGrass.getPosition());
             }
         }
     }

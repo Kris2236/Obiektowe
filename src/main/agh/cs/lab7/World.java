@@ -1,13 +1,17 @@
 package agh.cs.lab7;
 
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 public class World {
     public static void main(String[] args) {
 
 
         try{
             MoveDirection[] directions = new OptionsParser().parse(args);
-            //Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4) };
-            Vector2d[] positions = { new Vector2d(2,2), new Vector2d(2,2) };
+            Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4) };
+            //Vector2d[] positions = { new Vector2d(2,2), new Vector2d(2,2) };
             GrassField mapWithGrass = new GrassField(5);
             IEngine engineWithGrass = new SimulationEngine(directions, mapWithGrass, positions);
             System.out.println(mapWithGrass.toString(mapWithGrass));

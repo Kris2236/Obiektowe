@@ -1,6 +1,6 @@
 package agh.cs.lab7;
 
-public interface Subject {
+public interface ISubject {
 
     void register(IPositionChangeObserver o);
     void unregister(IPositionChangeObserver o);
