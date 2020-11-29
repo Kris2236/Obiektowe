@@ -1,12 +1,11 @@
 package agh.cs.lab7;
 
-
 import java.util.HashMap;
 
 public class RectangularMap extends AbstractWorldMap implements IWorldMap {
     private final Vector2d boundLower = new Vector2d(0,0);
     private final Vector2d boundUpper;
-    private final HashMap<Vector2d, Animal> animalsMap = new HashMap<>();      // animals positions map
+    private final HashMap<Vector2d, Animal> animalsMap = new HashMap<>();
 
     public RectangularMap(int width, int height){
         this.boundUpper = new Vector2d(width-1,height-1);

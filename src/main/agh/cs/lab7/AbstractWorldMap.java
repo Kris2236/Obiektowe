@@ -37,9 +37,13 @@ abstract public class AbstractWorldMap extends MapBoundary implements IPositionC
         return visualize.draw(lowerLeft(), upperRight());
     }
 
-    public abstract Vector2d lowerLeft();
+    public Vector2d lowerLeft(){
+        return getLowerLeft();
+    }
 
-    public abstract Vector2d upperRight();
+    public  Vector2d upperRight(){
+        return getUpperRight();
+    }
 
     public abstract HashMap<Vector2d, Animal> getAnimalsHashMap();
 
@@ -48,6 +52,8 @@ abstract public class AbstractWorldMap extends MapBoundary implements IPositionC
         Animal animal = animalsMap.get(oldPosition);
         animalsMap.remove(oldPosition);
         animalsMap.put(newPosition, animal);
-        // notify changes in MapBoundry
+
+        // Notify changes in MapBoundary
+        positionChanged(oldPosition, newPosition, "Animal");
     }
 }

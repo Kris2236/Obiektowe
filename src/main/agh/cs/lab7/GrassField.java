@@ -30,9 +30,8 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
 
             if(uniquePosition){
                 grassMap.put(newGrass.getPosition(), newGrass);
-                // register grass (for MapBoundary)
-                //newGrass.register(this);                                        // aktualnie nie jest wykorzystywane
-                //positionGrassChanged(newGrass.getPosition(), newGrass.getPosition());
+                newGrass.register(this);                                        // aktualnie nie jest wykorzystywane
+                positionChanged(newGrass.getPosition(), newGrass.getPosition(), "Grass");
             }
         }
     }
@@ -87,36 +86,12 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public Vector2d lowerLeft() {
-        Vector2d lowerLeft = new Vector2d(0,0); // Do zmiany - pobierz element z mapy!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        // determine the extent of the map - checking grass positions
-        for(Vector2d grassPos : grassMap.keySet()) {
-            lowerLeft = grassPos.lowerLeft(lowerLeft);
-        }
-
-        // determine the extent of the map - checking animals positions
-        for(Vector2d animalPos : animalsMap.keySet()) {
-            lowerLeft = animalPos.lowerLeft(lowerLeft);
-        }
-
-        return lowerLeft;
+        return super.lowerLeft();
     }
 
     @Override
     public Vector2d upperRight() {
-        Vector2d upperRight = new Vector2d(0,0); // Do zmiany - pobierz element z mapy!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        // determine the extent of the map - checking grass positions
-        for(Vector2d grassPos : grassMap.keySet()) {
-            upperRight = grassPos.upperRight(upperRight);
-        }
-
-        // determine the extent of the map - checking animals positions
-        for(Vector2d animalPos : animalsMap.keySet()) {
-            upperRight = animalPos.upperRight(upperRight);
-        }
-
-        return upperRight;
+        return super.upperRight();
     }
 
     @Override

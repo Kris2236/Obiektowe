@@ -11,7 +11,7 @@ public class SimulationEngine implements IEngine{
 
     public SimulationEngine(MoveDirection[] comands, IWorldMap map, Vector2d[] positions){
 
-        // Add animals move comands
+        // Add animals move commands
         this.comands.addAll(Arrays.asList(comands));
 
         // Add animals positions to list

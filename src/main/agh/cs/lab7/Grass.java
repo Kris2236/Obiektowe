@@ -18,7 +18,7 @@ public class Grass implements ISubject {
         return "*";
     }
 
-    // przydatne gdyby trawa mogła zmieniać pozycje
+    // It will be useful when grass can change position
     @Override
     public void register(IPositionChangeObserver o) {
         observerList.add(o);
@@ -32,7 +32,7 @@ public class Grass implements ISubject {
     @Override
     public void notifyObservers(Vector2d oldPosition, Vector2d newPosition){
         for(IPositionChangeObserver o : observerList){
-            o.positionChanged(oldPosition, newPosition, "Grass");
+            o.positionChanged(oldPosition, newPosition);
         }
     }
 }

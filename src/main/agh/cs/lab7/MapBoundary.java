@@ -8,10 +8,10 @@ import java.util.TreeSet;
 public class MapBoundary implements IPositionChangeObserver {
     private final HashSet<Vector2d> grassPositions = new HashSet<>();
 
-    SortedSet<Vector2d> sortedByX = new TreeSet<Vector2d>(new Comparator<Vector2d>() {
+    SortedSet<Vector2d> sortedByX = new TreeSet<>(new Comparator<>() {
         @Override
         public int compare(Vector2d o1, Vector2d o2) {
-            if(o1.x == o2.x){
+            if (o1.x == o2.x) {
                 return o1.y - o2.y;
             }
 
@@ -19,10 +19,10 @@ public class MapBoundary implements IPositionChangeObserver {
         }
     });
 
-    SortedSet<Vector2d> sortedByY = new TreeSet<Vector2d>(new Comparator<Vector2d>() {
+    SortedSet<Vector2d> sortedByY = new TreeSet<>(new Comparator<>() {
         @Override
         public int compare(Vector2d o1, Vector2d o2) {
-            if(o1.y == o2.y){
+            if (o1.y == o2.y) {
                 return o1.x - o2.x;
             }
 
@@ -31,32 +31,48 @@ public class MapBoundary implements IPositionChangeObserver {
     });
 
     @Override
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {}
+
+    @Override
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition, String type) {
+        if(type.equals("Animal")){
+            updateAnimal(oldPosition, newPosition);
+        } else if(type.equals("Grass")) {
+            updateGrass(oldPosition, newPosition);
+        }
+    }
 
-        // dodajemy obserwatorów do map boundry
+    private void updateGrass(Vector2d oldPosition, Vector2d newPosition) {
 
-        if(type == "Grass"){        // grass can be only added - no "eating" grasss by animal
-            grassPositions.add(newPosition);
+        // grass can be only added - no "eating" grass by animal
+        grassPositions.add(newPosition);
+        sortedByX.add(newPosition);
+        sortedByY.add(newPosition);
+    }
+
+    private void updateAnimal(Vector2d oldPosition, Vector2d newPosition) {
+        if(grassPositions.contains(oldPosition)){
+
+            // (Animal and Grass) 2 objects on old position
             sortedByX.add(newPosition);
             sortedByY.add(newPosition);
         } else {
-            if(grassPositions.contains(oldPosition)){   // (Animal and Grass) 2 objects on old positioin
-                sortedByX.add(newPosition);
-                sortedByX.add(newPosition);
-            } else {
 
-                // Remove old animal position in both sets
-                sortedByX.remove(oldPosition);
-                sortedByY.remove(oldPosition);
+            // Remove old animal position in both sets
+            sortedByX.remove(oldPosition);
+            sortedByY.remove(oldPosition);
 
-                // Add new position
-                sortedByX.add(newPosition);
-                sortedByX.add(newPosition);
-            }
+            // Add new position
+            sortedByX.add(newPosition);
+            sortedByY.add(newPosition);
         }
+    }
 
-        for(Vector2d grass : grassPositions){
-            System.out.println(grass);
-        }
+    public Vector2d getLowerLeft(){
+        return new Vector2d(sortedByX.first().x, sortedByY.first().y);
+    }
+
+    public Vector2d getUpperRight(){
+        return new Vector2d(sortedByX.last().x, sortedByY.last().y);
     }
 }

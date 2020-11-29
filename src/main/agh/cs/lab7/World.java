@@ -1,9 +1,5 @@
 package agh.cs.lab7;
 
-import java.util.Comparator;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 public class World {
     public static void main(String[] args) {
 

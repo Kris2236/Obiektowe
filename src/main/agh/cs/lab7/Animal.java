@@ -6,7 +6,7 @@ public class Animal implements ISubject {
     protected Vector2d position;
     protected MapDirection direction;
     protected IWorldMap mapCurrentWorld;
-    private ArrayList<IPositionChangeObserver> observerList = new ArrayList<>();
+    private final ArrayList<IPositionChangeObserver> observerList = new ArrayList<>();
 
     public Animal(IWorldMap map){
         this.mapCurrentWorld = map;
@@ -22,13 +22,13 @@ public class Animal implements ISubject {
     }
 
     public String toString(){
-        switch(direction){
-            case NORTH: return "^";
-            case EAST: return ">";
-            case SOUTH: return "v";
-            case WEST: return "<";
-            default: return null;
-        }
+        return switch (direction) {
+            case NORTH -> "^";
+            case EAST -> ">";
+            case SOUTH -> "v";
+            case WEST -> "<";
+            default -> null;
+        };
     }
 
     public void move(MoveDirection direction) {
@@ -47,6 +47,7 @@ public class Animal implements ISubject {
         };
 
         if(mapCurrentWorld.canMoveTo(pos)){
+
             // notify observers
             notifyObservers(this.position, pos);
             this.position = pos;
@@ -66,7 +67,7 @@ public class Animal implements ISubject {
     @Override
     public void notifyObservers(Vector2d oldPosition, Vector2d newPosition){
         for(IPositionChangeObserver o : observerList){
-            o.positionChanged(oldPosition, newPosition, "Animal");
+            o.positionChanged(oldPosition, newPosition);
         }
     }
 }
