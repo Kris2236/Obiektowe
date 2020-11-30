@@ -6,19 +6,19 @@ import java.util.List;
 public class OptionsParser {
 
     public MoveDirection[] parse(String[] args) throws IllegalArgumentException {
-        List<MoveDirection> comands = new ArrayList<>();
+        List<MoveDirection> commands = new ArrayList<>();
 
         for(String arg : args){
             switch (arg){
-                case "f", "forward" -> comands.add(MoveDirection.FORWARD);
-                case "b", "backward" -> comands.add(MoveDirection.BACKWARD);
-                case "r", "right" -> comands.add(MoveDirection.RIGHT);
-                case "l", "left" -> comands.add(MoveDirection.LEFT);
+                case "f", "forward" -> commands.add(MoveDirection.FORWARD);
+                case "b", "backward" -> commands.add(MoveDirection.BACKWARD);
+                case "r", "right" -> commands.add(MoveDirection.RIGHT);
+                case "l", "left" -> commands.add(MoveDirection.LEFT);
                 default -> throw new IllegalArgumentException(arg + " is not legal move specification");
             }
         }
-        System.out.println(comands);
+        System.out.println(commands);
 
-        return comands.toArray(new MoveDirection[0]);
+        return commands.toArray(new MoveDirection[0]);
     }
 }

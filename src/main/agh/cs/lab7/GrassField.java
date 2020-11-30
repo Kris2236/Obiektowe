@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class GrassField extends AbstractWorldMap implements IWorldMap {
-    private final HashMap<Vector2d, Grass> grassMap = new HashMap<>();
-    private final HashMap<Vector2d, Animal> animalsMap = new HashMap<>();
+    private final HashMap<Vector2d, Grass> grassPositionMap = new HashMap<>();
+    private final HashMap<Vector2d, Animal> animalsPositionMap = new HashMap<>();
     private final int numberOfGrass;
 
     public GrassField(int numberOfGrass){
@@ -23,14 +23,14 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
             Grass newGrass = new Grass(new Vector2d(x,y));
 
             // check if new random grass position equals other existing
-            if(grassMap.containsKey(newGrass.getPosition())){
+            if(grassPositionMap.containsKey(newGrass.getPosition())){
                 i--;
                 uniquePosition = false;
             }
 
             if(uniquePosition){
-                grassMap.put(newGrass.getPosition(), newGrass);
-                newGrass.register(this);                                        // aktualnie nie jest wykorzystywane
+                grassPositionMap.put(newGrass.getPosition(), newGrass);
+                newGrass.register(this);    // not used (allow "eating" grass)
                 positionChanged(newGrass.getPosition(), newGrass.getPosition(), "Grass");
             }
         }
@@ -57,7 +57,7 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
         }
 
         // check grass
-        return grassMap.containsKey(position);
+        return grassPositionMap.containsKey(position);
     }
 
     @Override
@@ -71,8 +71,8 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
         }
 
         // return Grass object
-        if(grassMap.containsKey(position)){
-            return grassMap.get(position);
+        if(grassPositionMap.containsKey(position)){
+            return grassPositionMap.get(position);
         }
 
         // return no object
@@ -96,7 +96,7 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public HashMap<Vector2d,Animal> getAnimalsHashMap() {
-        return this.animalsMap;
+        return this.animalsPositionMap;
     }
 
     @Override

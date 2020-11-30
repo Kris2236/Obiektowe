@@ -5,15 +5,15 @@ import java.util.ArrayList;
 public class Animal implements ISubject {
     protected Vector2d position;
     protected MapDirection direction;
-    protected IWorldMap mapCurrentWorld;
+    protected IWorldMap map;
     private final ArrayList<IPositionChangeObserver> observerList = new ArrayList<>();
 
     public Animal(IWorldMap map){
-        this.mapCurrentWorld = map;
+        this.map = map;
     }
 
     public Animal(IWorldMap map, Vector2d initialPosition){
-        this.mapCurrentWorld = map;
+        this.map = map;
         this.position = initialPosition;
     }
 
@@ -46,7 +46,7 @@ public class Animal implements ISubject {
             default -> position;
         };
 
-        if(mapCurrentWorld.canMoveTo(pos)){
+        if(map.canMoveTo(pos)){
 
             // notify observers
             notifyObservers(this.position, pos);
