@@ -10,35 +10,43 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
 
     public GrassField(int numberOfGrass){
         this.numberOfGrass = numberOfGrass;
-        placeGrass();
+        placeGrass(numberOfGrass);
     }
 
-    private void placeGrass(){
-        for(int i=0; i<this.numberOfGrass; i++){
+    private void placeGrass(int numberOfGrassToPlace){
+        for(int i=0; i<numberOfGrassToPlace; i++){
             Random generator = new Random();
 
-            int x = generator.nextInt((int) Math.sqrt( (this.numberOfGrass+1)) * 10);
-            int y = generator.nextInt((int) Math.sqrt( (this.numberOfGrass+1)) * 10);
+            int x = generator.nextInt((int) Math.sqrt( (numberOfGrassToPlace+1)) * 10);
+            int y = generator.nextInt((int) Math.sqrt( (numberOfGrassToPlace+1)) * 10);
             boolean uniquePosition = true;
             Grass newGrass = new Grass(new Vector2d(x,y));
 
-            // check if new random grass position equals other existing
-            if(grassPositionMap.containsKey(newGrass.getPosition())){
+            // check if new random grass position equals other existing or animal
+            if(grassPositionMap.containsKey(newGrass.getPosition()) ||
+                    animalsPositionMap.containsKey(newGrass.getPosition())){
                 i--;
                 uniquePosition = false;
             }
 
             if(uniquePosition){
                 grassPositionMap.put(newGrass.getPosition(), newGrass);
-                newGrass.register(this);    // not used (allow "eating" grass)
-                positionChanged(newGrass.getPosition(), newGrass.getPosition(), "Grass");
+                newGrass.register(this);
+                positionGrassAdd(newGrass.getPosition());
             }
         }
     }
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        return !isOccupied(position) || objectAt(position) instanceof Grass;
+        if(objectAt(position) instanceof Grass){
+            grassPositionMap.remove(position);
+            positionGrassDied(position);
+            // unregister + tests
+            placeGrass(1);
+        }
+
+        return !isOccupied(position);
     }
 
     @Override

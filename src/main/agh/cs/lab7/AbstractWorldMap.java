@@ -2,7 +2,7 @@ package agh.cs.lab7;
 
 import java.util.HashMap;
 
-abstract public class AbstractWorldMap extends MapBoundary implements IPositionChangeObserver {
+abstract public class AbstractWorldMap extends MapBoundary {
 
     public abstract boolean canMoveTo(Vector2d position);
 
@@ -10,6 +10,7 @@ abstract public class AbstractWorldMap extends MapBoundary implements IPositionC
         if(canMoveTo(animal.position)){
             getAnimalsHashMap().put(animal.position, animal);
             animal.register(this);
+            animal.notifyObservers(animal.position, animal.position);
             return true;
         } else {
             throw new IllegalArgumentException(animal.position + " is not legal. Off the map or position is occupated.\n");
@@ -54,6 +55,6 @@ abstract public class AbstractWorldMap extends MapBoundary implements IPositionC
         animalsMap.put(newPosition, animal);
 
         // Notify changes in MapBoundary
-        positionChanged(oldPosition, newPosition, "Animal");
+        super.positionChanged(oldPosition, newPosition);
     }
 }

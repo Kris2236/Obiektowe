@@ -6,7 +6,8 @@ public class World {
 
         try{
             MoveDirection[] directions = new OptionsParser().parse(args);
-            Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4) };
+            Vector2d[] positions = { new Vector2d(1,1), new Vector2d(2,2),new Vector2d(3,3),new Vector2d(4,4),new Vector2d(5,5) };
+            //Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4) };
             //Vector2d[] positions = { new Vector2d(2,2), new Vector2d(2,2) };
             GrassField mapWithGrass = new GrassField(5);
             IEngine engineWithGrass = new SimulationEngine(directions, mapWithGrass, positions);

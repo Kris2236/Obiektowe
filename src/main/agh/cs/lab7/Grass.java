@@ -18,7 +18,7 @@ public class Grass implements ISubject {
         return "*";
     }
 
-    // It will be useful when grass can change position
+    // It will be useful when grass can change position/ be 'eaten'
     @Override
     public void register(IPositionChangeObserver o) {
         observerList.add(o);

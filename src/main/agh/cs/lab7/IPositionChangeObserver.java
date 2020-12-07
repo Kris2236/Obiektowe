@@ -13,5 +13,5 @@ public interface IPositionChangeObserver {
     /**
      * Update position in MapBoundary
      */
-    void positionChanged(Vector2d oldPosition, Vector2d newPosition, String type);
+    //void positionChanged(Vector2d oldPosition, Vector2d newPosition, String type);
 }

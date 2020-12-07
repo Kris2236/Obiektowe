@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class MapBoundary implements IPositionChangeObserver {
+public class MapBoundary implements IPositionChangeObserver, ILifeCycleObserver {
     private final HashSet<Vector2d> grassPositions = new HashSet<>();
 
     SortedSet<Vector2d> sortedByX = new TreeSet<>(new Comparator<>() {
@@ -31,23 +31,8 @@ public class MapBoundary implements IPositionChangeObserver {
     });
 
     @Override
-    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {}
-
-    @Override
-    public void positionChanged(Vector2d oldPosition, Vector2d newPosition, String type) {
-        if(type.equals("Animal")){
-            updateAnimal(oldPosition, newPosition);
-        } else if(type.equals("Grass")) {
-            updateGrass(oldPosition, newPosition);
-        }
-    }
-
-    private void updateGrass(Vector2d oldPosition, Vector2d newPosition) {
-
-        // grass can be only added - no "eating" grass by animal
-        grassPositions.add(newPosition);
-        sortedByX.add(newPosition);
-        sortedByY.add(newPosition);
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        updateAnimal(oldPosition,newPosition);
     }
 
     private void updateAnimal(Vector2d oldPosition, Vector2d newPosition) {
@@ -68,11 +53,29 @@ public class MapBoundary implements IPositionChangeObserver {
         }
     }
 
-    public Vector2d getLowerLeft(){
-        return new Vector2d(sortedByX.first().x, sortedByY.first().y);
-    }
+    public Vector2d getLowerLeft(){ return new Vector2d(sortedByX.first().x, sortedByY.first().y); }
 
     public Vector2d getUpperRight(){
         return new Vector2d(sortedByX.last().x, sortedByY.last().y);
+    }
+
+
+    @Override
+    public void positionGrassAdd(Vector2d newPosition) {
+        grassPositions.add(newPosition);
+        sortedByX.add(newPosition);
+        sortedByY.add(newPosition);
+    }
+
+    @Override
+    public void positionGrassDied(Vector2d oldPosition) {
+        // Remove grass position = grass is eaten by animal
+        grassPositions.remove(oldPosition);
+    }
+
+    @Override
+    public void positionGrassChanged(Vector2d oldPosition, Vector2d newPosition) {
+        positionGrassDied(oldPosition);
+        positionGrassAdd(newPosition);
     }
 }
