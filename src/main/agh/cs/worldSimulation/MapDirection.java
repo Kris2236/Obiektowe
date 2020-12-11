@@ -1,4 +1,4 @@
-package agh.cs.lab7;
+package agh.cs.worldSimulation;
 
 public enum MapDirection {
     NORTH, SOUTH, WEST, EAST, NullPointerException;

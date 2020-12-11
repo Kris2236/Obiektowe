@@ -1,4 +1,4 @@
-package agh.cs.lab7;
+package agh.cs.worldSimulation;
 
 /**
  * The interface responsible for managing observers positions in observer pattern.

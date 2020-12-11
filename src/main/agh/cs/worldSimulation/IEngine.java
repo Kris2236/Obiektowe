@@ -1,4 +1,4 @@
-package agh.cs.lab7;
+package agh.cs.worldSimulation;
 
 /**
  * The interface responsible for managing the moves of the animals.
