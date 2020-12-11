@@ -6,10 +6,10 @@ import java.util.Arrays;
 public class SimulationEngine implements IEngine{
     private final ArrayList<MoveDirection> commands = new ArrayList<>();
     private final ArrayList<Vector2d> positions = new ArrayList<>();
-    private final ArrayList<Animal> animals = new ArrayList<>();
-    protected IWorldMap mapCurrentWorld;
+    private ArrayList<Animal> animals = new ArrayList<>();
+    protected IWorldMap map;
 
-    public SimulationEngine(MoveDirection[] commands, IWorldMap map, Vector2d[] positions){
+    public SimulationEngine(MoveDirection[] commands, IWorldMap map, Vector2d[] positions) {
 
         // Add animals move commands
         this.commands.addAll(Arrays.asList(commands));
@@ -17,21 +17,30 @@ public class SimulationEngine implements IEngine{
         // Add animals positions to list
         this.positions.addAll(Arrays.asList(positions));
 
-        this.mapCurrentWorld = map;
+        this.map = map;
         addAnimalsToMap();
     }
 
-    private void addAnimalsToMap(){
+    public SimulationEngine(MoveDirection[] commands, IWorldMap map, int numberOfAnimals) {
+
+        // Add animals move commands
+        this.commands.addAll(Arrays.asList(commands));
+        this.map = map;
+        animals = map.generateAnimals(numberOfAnimals);
+
+    }
+
+    private void addAnimalsToMap() {
 
         // Create animals
-        for(Vector2d position : this.positions){
-            animals.add(new Animal(mapCurrentWorld, position));
+        for(Vector2d position : this.positions) {
+            animals.add(new Animal(map, position));
         }
 
         // Place animals on the map
-        for(Animal animal : animals){
-            animal.direction = MapDirection.NORTH;
-            mapCurrentWorld.place(animal);
+        for(Animal animal : animals) {
+            //animal.direction = MapDirection.NORTH;
+            map.place(animal);
         }
     }
 
@@ -39,23 +48,21 @@ public class SimulationEngine implements IEngine{
     public void run() {
         int day = 0;
 
-        for(int i=0; i<commands.size(); i++){
+        for(int i=0; i<commands.size(); i++) {
 
             // Show the map after every turn
             if(i % animals.size() == 0) {
                 System.out.println("Day: " + day);
                 day++;
-                System.out.println(mapCurrentWorld.toString(mapCurrentWorld));
-                mapCurrentWorld.placeGrass(2);
-                System.out.println(mapCurrentWorld.toString(mapCurrentWorld));
-
-                // After every turn add 2 grass to map - notify map
+                System.out.println(map.toString(map));
+                map.placeGrass(2);
+                System.out.println(map.toString(map));
             }
 
             // Make moves for the animals in turn
             animals.get(i % animals.size()).move(commands.get(i));
         }
-        System.out.println(mapCurrentWorld.toString(mapCurrentWorld));
+        System.out.println(map.toString(map));
 
     }
 }

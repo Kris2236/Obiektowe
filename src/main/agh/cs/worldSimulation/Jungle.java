@@ -1,5 +1,6 @@
 package agh.cs.worldSimulation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -40,23 +41,87 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         if(numberOfGrassToPlace % 2 == 0)
             placeGrassAt(numberOfGrassToPlace/2, boundJungleLower, boundJungleUpper);
         else
-            placeGrassAt(numberOfGrassToPlace/2 + 1, boundJungleLower, boundJungleUpper);
+            placeGrassAtStep(numberOfGrassToPlace/2 + 1, boundJungleLower, boundJungleUpper);
+    }
+
+    private Vector2d generateRandomPositionAt(Vector2d boundFieldLower, Vector2d boundFieldUpper) {
+        Random generator = new Random();
+        int x = generator.nextInt(boundFieldUpper.x - boundFieldLower.x + 1) + boundFieldLower.x;
+        int y = generator.nextInt(boundFieldUpper.y - boundFieldLower.y + 1) + boundFieldLower.y;
+        return new Vector2d(x,y);
+    }
+
+    @Override
+    public ArrayList<Animal> generateAnimals(int numberOfAnimalsToAdd) {
+        int counterFailedTrial = 0;
+        Vector2d boundFieldLower = boundStepLower;
+        Vector2d boundFieldUpper = boundStepUpper;
+        ArrayList<Animal> animalsList = new ArrayList<>();
+
+        for(int i=0; i<numberOfAnimalsToAdd; i++) {
+            boolean uniquePosition = true;
+
+            if(counterFailedTrial > numberOfAnimalsToAdd) {         // Enlarge the adding area
+                if(!boundFieldLower.precedes(boundStepLower))
+                    boundFieldLower.substract(new Vector2d(1,1));
+                if(boundFieldUpper.follows(boundStepUpper))
+                    boundFieldUpper.add(new Vector2d(1,1));
+            }
+
+            Animal newAnimal = new Animal(this, generateRandomPositionAt(boundFieldLower, boundFieldUpper));
+
+            if(animalsPositionMap.containsKey(newAnimal.position)) {        // Check if new random animal position equals other existing
+                i--;
+                counterFailedTrial++;
+                uniquePosition = false;
+            }
+
+            if(grassPositionMap.containsKey(newAnimal.position)) {      // Move grass if is collision
+                placeGrassAt(1, boundStepLower, boundStepUpper);        // Add grass in all field because animals are adding in savanna
+                grassPositionMap.remove(newAnimal.position);
+                positionGrassDied(newAnimal.position);
+            }
+
+            if(uniquePosition) {
+                this.place(newAnimal);
+                animalsList.add(newAnimal);
+            }
+        }
+
+        return animalsList;
     }
 
     private void placeGrassAt(int numberOfGrassToPlace,Vector2d boundFieldLower ,Vector2d boundFieldUpper) {
         for(int i=0; i<numberOfGrassToPlace; i++) {
-            Random generator = new Random();
-
-            int x = generator.nextInt(boundFieldUpper.x - boundFieldLower.x + 1) + boundFieldLower.x;
-            int y = generator.nextInt(boundFieldUpper.y - boundFieldLower.y + 1) + boundFieldLower.y;
             boolean uniquePosition = true;
-            Grass newGrass = new Grass(new Vector2d(x,y));
+            Grass newGrass = new Grass(generateRandomPositionAt(boundFieldLower, boundFieldUpper));
 
-            // check if new random grass position equals other existing or animal
             if(grassPositionMap.containsKey(newGrass.getPosition()) ||
-                    animalsPositionMap.containsKey(newGrass.getPosition())) {
+                    animalsPositionMap.containsKey(newGrass.getPosition())) {       // check if new random grass position equals other existing or animal
                 i--;
                 uniquePosition = false;
+                // Ręcznie sprawdź czy są wolne pozycje na mapie - unikanie nieskończonej pętli
+            }
+
+            if(uniquePosition) {
+                grassPositionMap.put(newGrass.getPosition(), newGrass);
+                newGrass.register(this);
+                positionGrassAdd(newGrass.getPosition());
+            }
+        }
+    }
+
+    private void placeGrassAtStep(int numberOfGrassToPlace,Vector2d boundFieldLower ,Vector2d boundFieldUpper) {
+        for(int i=0; i<numberOfGrassToPlace; i++) {
+            boolean uniquePosition = true;
+            Grass newGrass = new Grass(generateRandomPositionAt(boundFieldLower, boundFieldUpper));
+
+            if(grassPositionMap.containsKey(newGrass.getPosition()) ||
+                    animalsPositionMap.containsKey(newGrass.getPosition()) ||       // check if new random grass position equals other existing or animal
+                    newGrass.getPosition().precedes(boundStepUpper) && newGrass.getPosition().follows(boundStepLower)) {       // This is not step area
+                i--;
+                uniquePosition = false;
+                // Ręcznie sprawdź czy są wolne pozycje na mapie - unikanie nieskączonej pętli
             }
 
             if(uniquePosition) {
@@ -121,7 +186,6 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
             case "7" -> northWestWrap(position);
             default -> null;
         };
-        System.out.println(position + " " + animal.toString() + " " + wrappedPosition);
 
         return wrappedPosition;
     }
@@ -131,7 +195,6 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         if(objectAt(position) instanceof Grass) {
             grassPositionMap.remove(position);
             positionGrassDied(position);
-            // unregister + tests
         }
 
         return !isOccupied(position) && position.precedes(boundStepUpper) && position.follows(boundStepLower);
@@ -144,39 +207,33 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public boolean isOccupied(Vector2d position) {
-
-        // check animals in AbstractWorldMap
-        boolean result = super.isOccupied(position);
+        boolean result = super.isOccupied(position);        // check animals in AbstractWorldMap
 
         if(result) {
             return true;
         }
 
-        // check grass
-        return grassPositionMap.containsKey(position);
+        return grassPositionMap.containsKey(position);      // check grass
     }
 
     @Override
     public Object objectAt(Vector2d position) {
-
-        // return Animal object as first - display priority in AbstractWorldMap
-        Object object = super.objectAt(position);
+        Object object = super.objectAt(position);        // return Animal object as first - display priority in AbstractWorldMap
 
         if(object != null) {
             return object;
         }
 
-        // return Grass object
-        if(grassPositionMap.containsKey(position)) {
+        if(grassPositionMap.containsKey(position)) {        // return Grass object
             return grassPositionMap.get(position);
         }
 
-        // return no object
-        return null;
+        return null;        // return no object
     }
 
     @Override
     public String toString(IWorldMap map) {
+        System.out.println(animalsPositionMap);
         return super.toString(map);
     }
 

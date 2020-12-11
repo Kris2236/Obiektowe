@@ -29,16 +29,16 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 - [ ] ```sawanna``` na środku ma rozmiar proporcjonalny do mapy ``` jungleRatio * (a * b)```
 - [x] Unikaj kolizji przy pierwszym dodawaiu zwierząt - zmnień pozycję rośliny
 - [x] Trawa pojawia się w turach
-- [ ] 8 obrotów (stron świata)
-- [ ] Zawija się na krańcach dla 8 kierunków świata
+- [x] 8 obrotów (stron świata)
+- [x] Zawija się na krańcach dla 8 kierunków świata
 - [ ] Dane wejściowe są ładowane z pliku parameters.json znajdującego się w katalogu, w których uruchamiana jest aplikacja.
 - [ ] ilość energii początkowej zwierząt ```(startEnergy)```
 - [ ] ilość energii traconej w każdym dniu ```(moveEnergy)```
 - [ ] ilość energii zyskiwanej przy zjedzeniu rośliny ```(plantEnergy)```
 - [ ] Wiele zwierząt może znajdować się na jednej pozycji
-- [ ] Gdy dżungla jest pełna to nie dodajemy nowych roślin
+- [ ] Gdy dżungla jest pełna to nie dodajemy nowych roślin !!!
 - [ ] Genertor losowych początkowych pozycji zwierząt
-    - [ ] losowe i unikalne pozycje
+    - [x] losowe i unikalne pozycje
     - [ ] losowy kierunek
     
 - [ ] Minimalna energia potrzebna do rozmnożenia to połowa energii początkowej zwierzęcia, tzn. 50% ```startEnergy```
@@ -47,7 +47,7 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 #### Mechanika mapy:
 - [x] Tury - zwierzę może ruszyć się tylko raz w ciągu dnia
 - [x] Generator codziennego dodawania roślin
-  - [x] 1 na ```sawannie```
+  - [ ] 1 na ```sawannie``` (jeśli pozycja naley do stepu to ponownie doaj)
   - [x] 1 na ```stepie```
 - [ ] Poziom życia zwierząt
   - [ ] Każdego dnia zwierze traci określoną ilość ```energii``` za poruszanie się po mapie

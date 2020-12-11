@@ -6,9 +6,15 @@ abstract public class AbstractWorldMap extends MapBoundary {
 
     public abstract boolean canMoveTo(Vector2d position);
 
+    private MapDirection generateRandomDirection() {
+        // ...
+        return MapDirection.NORTH;
+    }
+
     public boolean place(Animal animal) throws IllegalArgumentException {
         if(canMoveTo(animal.position)){
             getAnimalsHashMap().put(animal.position, animal);
+            animal.direction = generateRandomDirection();
             animal.register(this);
             animal.notifyObservers(animal.position, animal.position);
             return true;

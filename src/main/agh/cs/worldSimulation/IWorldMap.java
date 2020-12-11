@@ -1,5 +1,7 @@
 package agh.cs.worldSimulation;
 
+import java.util.ArrayList;
+
 /**
  * The interface responsible for interacting with the map of the world.
  * Assumes that Vector2d and MoveDirection classes are defined.
@@ -49,4 +51,6 @@ public interface IWorldMap {
     Vector2d wrapEdge(Vector2d oldPosition, Vector2d pos, MoveDirection direction);
 
     void placeGrass(int numberOfGrassToPlace);
+
+    ArrayList<Animal> generateAnimals(int numberOfAnimals);
 }
