@@ -11,36 +11,36 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     private final int numberOfGrass;
     private Vector2d boundJungleLower;
     private Vector2d boundJungleUpper;
+    private Vector2d mapCenter;
+
 
     public Jungle(int width, int height, int numberOfGrass) {
         this.boundStepUpper = new Vector2d(width-1,height-1);
         this.numberOfGrass = numberOfGrass;
-
         createJungle();
         placeGrass(numberOfGrass);
     }
 
     private void createJungle() {
-        int xMapCenter = boundStepUpper.x/2;
-        int yMapCenter = boundStepUpper.y/2;
+        // it will be parameter !!!
         int xSqrtSideLength = (int) Math.sqrt(boundStepUpper.x + 1);
         int ySqrtSideLength = (int) Math.sqrt(boundStepUpper.y+ 1 );
+        this.mapCenter = new Vector2d(boundStepUpper.x/2,boundStepUpper.y/2);
+        this.boundJungleUpper = new Vector2d(mapCenter.x + xSqrtSideLength/2,mapCenter.y + ySqrtSideLength/2);
 
-        if (xSqrtSideLength % 2 == 0) {
-            this.boundJungleLower = new Vector2d(xMapCenter - xSqrtSideLength/2 - 1,yMapCenter - ySqrtSideLength/2 - 1);
-        } else {
-            this.boundJungleLower = new Vector2d(xMapCenter - xSqrtSideLength/2,yMapCenter - ySqrtSideLength/2);
-        }
-        this.boundJungleUpper = new Vector2d(xMapCenter + xSqrtSideLength/2,yMapCenter + ySqrtSideLength/2);
+        if (xSqrtSideLength % 2 == 0)
+            this.boundJungleLower = new Vector2d(mapCenter.x - xSqrtSideLength/2 - 1,mapCenter.y - ySqrtSideLength/2 - 1);
+        else
+            this.boundJungleLower = new Vector2d(mapCenter.x - xSqrtSideLength/2,mapCenter.y - ySqrtSideLength/2);
     }
 
     public void placeGrass(int numberOfGrassToPlace) {
-        if(numberOfGrassToPlace % 2 == 0) {
-            placeGrassAt(numberOfGrassToPlace/2, boundJungleLower, boundJungleUpper);
-        } else {
-            placeGrassAt(numberOfGrassToPlace/2 + 1, boundJungleLower, boundJungleUpper);
-        }
         placeGrassAt(numberOfGrassToPlace/2, boundStepLower, boundStepUpper);
+
+        if(numberOfGrassToPlace % 2 == 0)
+            placeGrassAt(numberOfGrassToPlace/2, boundJungleLower, boundJungleUpper);
+        else
+            placeGrassAt(numberOfGrassToPlace/2 + 1, boundJungleLower, boundJungleUpper);
     }
 
     private void placeGrassAt(int numberOfGrassToPlace,Vector2d boundFieldLower ,Vector2d boundFieldUpper) {
@@ -67,14 +67,58 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         }
     }
 
+    private Vector2d northWrap(Vector2d position) {
+        return new Vector2d(position.x, boundStepLower.y);
+    }
+
+    private Vector2d northEastWrap(Vector2d position) {
+        if(canMoveTo(northWrap(position).add(new Vector2d(1,0))))
+            return northWrap(position).add(new Vector2d(1,0));
+        return eastWrap(northWrap(position));
+    }
+
+    private Vector2d eastWrap(Vector2d position) {
+        return new Vector2d(boundStepLower.x, position.y);
+    }
+
+    private Vector2d southEastWrap(Vector2d position) {
+        if(canMoveTo(southWrap(position).add(new Vector2d(1,0))))
+            return southWrap(position).add(new Vector2d(1,0));
+        return eastWrap(southWrap(position));
+    }
+
+    private Vector2d southWrap(Vector2d position) {
+        return new Vector2d(position.x, boundStepUpper.y);
+    }
+
+    private Vector2d southWestWrap(Vector2d position) {
+        if(canMoveTo(southWrap(position).substract(new Vector2d(1,0))))
+            return southWrap(position).substract(new Vector2d(1,0));
+        return westWrap(southWrap(position));
+    }
+
+    private Vector2d westWrap(Vector2d position) {
+        return new Vector2d(boundStepUpper.x, position.y);
+    }
+
+    private Vector2d northWestWrap(Vector2d position) {
+        if(canMoveTo(northWrap(position).substract(new Vector2d(1,0))))
+            return northWrap(position).substract(new Vector2d(1,0));
+        return westWrap(northWrap(position));
+    }
+
     public Vector2d wrapEdge(Vector2d oldPosition, Vector2d position, MoveDirection direction) {
         Animal animal = animalsPositionMap.get(oldPosition);
 
         Vector2d wrappedPosition = switch (animal.toString()) {
-            case "^" -> new Vector2d(position.x, boundStepLower.y);     // N
-            case ">" -> new Vector2d(boundStepLower.x, position.y);     // E
-            case "v" -> new Vector2d(position.x, boundStepUpper.y);     // S
-            case "<" -> new Vector2d(boundStepUpper.x, position.y);     // W
+            case "^" -> northWrap(position);
+            case "1" -> northEastWrap(position);
+            case ">" -> eastWrap(position);
+            case "3" -> southEastWrap(position);
+            case "v" -> southWrap(position);
+            case "5" -> southWestWrap(position);
+            case "<" -> westWrap(position);
+            case "7" -> northWestWrap(position);
             default -> null;
         };
         System.out.println(position + " " + animal.toString() + " " + wrappedPosition);
@@ -155,5 +199,4 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
         super.positionChanged(oldPosition, newPosition);
     }
-
 }

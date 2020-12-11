@@ -37,16 +37,18 @@ public class SimulationEngine implements IEngine{
 
     @Override
     public void run() {
-        int year = 0;
+        int day = 0;
 
         for(int i=0; i<commands.size(); i++){
 
             // Show the map after every turn
             if(i % animals.size() == 0) {
-                System.out.println("Year: " + year);
-                year++;
+                System.out.println("Day: " + day);
+                day++;
                 System.out.println(mapCurrentWorld.toString(mapCurrentWorld));
                 mapCurrentWorld.placeGrass(2);
+                System.out.println(mapCurrentWorld.toString(mapCurrentWorld));
+
                 // After every turn add 2 grass to map - notify map
             }
 

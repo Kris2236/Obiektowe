@@ -1,5 +1,5 @@
 package agh.cs.worldSimulation;
 
 public enum MoveDirection {
-    FORWARD, BACKWARD, RIGHT, LEFT;
+    FORWARD, FORWARD_RIGHT, RIGHT, BACKWARD_RIGHT, BACKWARD, BACKWARD_LEFT, LEFT, FORWARD_LEFT;
 }
