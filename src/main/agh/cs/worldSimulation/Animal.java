@@ -52,7 +52,9 @@ public class Animal implements ISubject {
             this.position = pos;
         } else if( !(map.objectAt(pos) instanceof Animal) ) {
 
-            pos = map.wrapEdge(pos);
+            pos = map.wrapEdge(this.position, pos, direction);
+            // Check if the wrapped position is occupied !!!!
+
             notifyObservers(this.position, pos);
             this.position = pos;
         }

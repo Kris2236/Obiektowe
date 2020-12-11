@@ -46,5 +46,7 @@ public interface IWorldMap {
 
     Object toString(IWorldMap map);
 
-    Vector2d wrapEdge(Vector2d pos);
+    Vector2d wrapEdge(Vector2d oldPosition, Vector2d pos, MoveDirection direction);
+
+    void placeGrass(int numberOfGrassToPlace);
 }

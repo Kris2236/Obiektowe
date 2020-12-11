@@ -22,31 +22,29 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 ...
 
 ## Status projektu
-### TODO:
 
-#### Tworzenie projektu
-- [ ] Wygeneruj mapę
-    - [x] ```step``` jako prostokąt ```a * b```
-    - [x] ```sawanna``` na środku ```sqrt(a) * sqrt(b)```
-    - [ ] unikaj kolizji przy pierwszym dodawaiu zwierząt - zmnień pozycję rośliny
-    - [ ] trawa pojawia się w turach
-    - [ ] zawija się na krańcach dla 8 kierunków świata
-    
+##### Wygeneruj mapę:
+- [x] ```step``` jako prostokąt ```a * b```
+- [x] ```sawanna``` na środku ```sqrt(a) * sqrt(b)```
+- [x] unikaj kolizji przy pierwszym dodawaiu zwierząt - zmnień pozycję rośliny
+- [x] trawa pojawia się w turach
+- [ ] 8 obrotów (stron świata)
+- [ ] zawija się na krańcach dla 8 kierunków świata
+
+#### Mechanika mapy:
 - [x] Tury - zwierzę może ruszyć się tylko raz w ciągu dnia
-  
-- [ ] Generator codziennego dodawania roślin
-  - [ ] 1 na ```sawannie```
-  - [ ] 1 na ```stepie```
-    
+- [x] Generator codziennego dodawania roślin
+  - [x] 1 na ```sawannie```
+  - [x] 1 na ```stepie```
 - [ ] Poziom życia zwierząt
   - [ ] Każdego dnia zwierze traci określoną ilość ```energii```
-    
-- [ ] Genetyka zwierząt
-- [ ] Generator ruchów zwierząt
-  - [ ] Każdy ruch zużywa energie
-    
-- [ ] 8 obrotów (stron świata)
 - [ ] Rozmnażanie i umieranie zwierzaków
+
+#### Zwierzęta:
+- [ ] Genetyka zwierząt
+- [ ] Generator ruchów zwierząt 
+
+#### Engine:
 - [ ] Testy
 - [ ] Symulacja
 - [ ] Statystyki - wykres

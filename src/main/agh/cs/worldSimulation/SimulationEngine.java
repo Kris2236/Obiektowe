@@ -46,6 +46,7 @@ public class SimulationEngine implements IEngine{
                 System.out.println("Year: " + year);
                 year++;
                 System.out.println(mapCurrentWorld.toString(mapCurrentWorld));
+                mapCurrentWorld.placeGrass(2);
                 // After every turn add 2 grass to map - notify map
             }
 
