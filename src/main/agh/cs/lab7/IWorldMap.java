@@ -45,4 +45,6 @@ public interface IWorldMap {
     Object objectAt(Vector2d position);
 
     Object toString(IWorldMap map);
+
+    Vector2d wrapEdge(Vector2d pos);
 }

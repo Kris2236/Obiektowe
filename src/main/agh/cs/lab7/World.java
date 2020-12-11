@@ -3,18 +3,15 @@ package agh.cs.lab7;
 public class World {
     public static void main(String[] args) {
 
-
         try{
             MoveDirection[] directions = new OptionsParser().parse(args);
             Vector2d[] positions = { new Vector2d(1,1), new Vector2d(2,2),new Vector2d(3,3),new Vector2d(4,4),new Vector2d(5,5) };
-            //Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4) };
-            //Vector2d[] positions = { new Vector2d(2,2), new Vector2d(2,2) };
-            GrassField mapWithGrass = new GrassField(5);
-            IEngine engineWithGrass = new SimulationEngine(directions, mapWithGrass, positions);
-            System.out.println(mapWithGrass.toString(mapWithGrass));
+            Jungle jungleMap = new Jungle(10,7,15);
+            IEngine engineWithGrass = new SimulationEngine(directions, jungleMap, positions);
             engineWithGrass.run();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
+
     }
 }

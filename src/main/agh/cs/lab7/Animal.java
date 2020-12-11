@@ -48,7 +48,11 @@ public class Animal implements ISubject {
 
         if(map.canMoveTo(pos)){
 
-            // notify observers
+            notifyObservers(this.position, pos);
+            this.position = pos;
+        } else if( !(map.objectAt(pos) instanceof Animal) ) {
+
+            pos = map.wrapEdge(pos);
             notifyObservers(this.position, pos);
             this.position = pos;
         }

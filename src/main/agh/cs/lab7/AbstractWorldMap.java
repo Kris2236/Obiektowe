@@ -29,7 +29,6 @@ abstract public class AbstractWorldMap extends MapBoundary {
         if(getAnimalsHashMap().containsKey(position)) {
             return getAnimalsHashMap().get(position);
         }
-
         return null;
     }
 

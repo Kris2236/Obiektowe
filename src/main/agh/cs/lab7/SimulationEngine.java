@@ -37,11 +37,22 @@ public class SimulationEngine implements IEngine{
 
     @Override
     public void run() {
+        int year = 0;
+
         for(int i=0; i<commands.size(); i++){
 
-            // make moves for the animals in turn
-            animals.get(i%animals.size()).move(commands.get(i));
-            System.out.println(mapCurrentWorld.toString(mapCurrentWorld));
+            // Show the map after every turn
+            if(i % animals.size() == 0) {
+                System.out.println("Year: " + year);
+                year++;
+                System.out.println(mapCurrentWorld.toString(mapCurrentWorld));
+                // After every turn add 2 grass to map - notify map
+            }
+
+            // Make moves for the animals in turn
+            animals.get(i % animals.size()).move(commands.get(i));
         }
+        System.out.println(mapCurrentWorld.toString(mapCurrentWorld));
+
     }
 }
