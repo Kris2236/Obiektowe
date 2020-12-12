@@ -36,7 +36,7 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 - [ ] ilość energii zyskiwanej przy zjedzeniu rośliny ```(plantEnergy)```
 - [ ] Wiele zwierząt może znajdować się na jednej pozycji
 - [ ] Gdy dżungla jest pełna to nie dodajemy nowych roślin !!!
-- [ ] Genertor losowych początkowych pozycji zwierząt
+- [x] Genertor losowych początkowych pozycji zwierząt
     - [x] losowe i unikalne pozycje
     - [x] losowy kierunek
     

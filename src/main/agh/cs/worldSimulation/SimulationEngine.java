@@ -10,36 +10,24 @@ public class SimulationEngine implements IEngine{
     protected IWorldMap map;
 
     public SimulationEngine(MoveDirection[] commands, IWorldMap map, Vector2d[] positions) {
-
-        // Add animals move commands
-        this.commands.addAll(Arrays.asList(commands));
-
-        // Add animals positions to list
-        this.positions.addAll(Arrays.asList(positions));
-
+        this.commands.addAll(Arrays.asList(commands));          // Add animals move commands
+        this.positions.addAll(Arrays.asList(positions));            // Add animals positions to list
         this.map = map;
         addAnimalsToMap();
     }
 
     public SimulationEngine(MoveDirection[] commands, IWorldMap map, int numberOfAnimals) {
-
-        // Add animals move commands
-        this.commands.addAll(Arrays.asList(commands));
+        this.commands.addAll(Arrays.asList(commands));          // Add animals move commands
         this.map = map;
         animals = map.generateAnimals(numberOfAnimals);
-
     }
 
     private void addAnimalsToMap() {
-
-        // Create animals
-        for(Vector2d position : this.positions) {
+        for(Vector2d position : this.positions) {           // Create animals
             animals.add(new Animal(map, position));
         }
 
-        // Place animals on the map
-        for(Animal animal : animals) {
-            //animal.direction = MapDirection.NORTH;
+        for(Animal animal : animals) {          // Place animals on the map
             map.place(animal);
         }
     }
@@ -50,8 +38,7 @@ public class SimulationEngine implements IEngine{
 
         for(int i=0; i<commands.size(); i++) {
 
-            // Show the map after every turn
-            if(i % animals.size() == 0) {
+            if(i % animals.size() == 0) {               // Show the map after every turn
                 System.out.println("Day: " + day);
                 day++;
                 System.out.println(map.toString(map));
@@ -59,10 +46,9 @@ public class SimulationEngine implements IEngine{
                 System.out.println(map.toString(map));
             }
 
-            // Make moves for the animals in turn
-            animals.get(i % animals.size()).move(commands.get(i));
+            animals.get(i % animals.size()).move(commands.get(i));              // Make moves for the animals in turn
         }
-        System.out.println(map.toString(map));
 
+        System.out.println(map.toString(map));
     }
 }

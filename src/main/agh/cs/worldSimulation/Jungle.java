@@ -2,6 +2,7 @@ package agh.cs.worldSimulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class Jungle extends AbstractWorldMap implements IWorldMap {
@@ -25,41 +26,120 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     }
 
     private void createJungle(double jungleRatio) {
-        if(jungleRatio < 0 || jungleRatio > 1)
-            throw new IllegalArgumentException(jungleRatio + " is not legal. JungleRatio have to be in range (0.0 ... 1.0).\n");
+        if(jungleRatio <= 0 || jungleRatio > 1)
+            throw new IllegalArgumentException(jungleRatio + " is not legal. JungleRatio have to be in range (0.0 < jungleRatio <= 1.0).\n");
 
         int x = (int) (mapBoundUpper.x*jungleRatio);
         int y = (int) (mapBoundUpper.y*jungleRatio);
 
-        if(jungleRatio != 0) {      // Set min/max jungle size
+        if(jungleRatio != 0) {      // Set min jungle size
             if(x == 0)
                 x = 1;
-            else if(x > mapBoundUpper.x)
-                x = mapBoundUpper.x;
-
             if(y == 0)
                 y = 1;
-            else if(y > mapBoundUpper.x)
-                y = mapBoundUpper.x;
         }
 
         Vector2d jungleDimensions = new Vector2d(x,y);
         this.mapCenter = new Vector2d(mapBoundUpper.x/2,mapBoundUpper.y/2);
-        this.jungleBoundUpper = new Vector2d(mapCenter.x + jungleDimensions.x/2,mapCenter.y + jungleDimensions.y/2);
 
-        if (jungleDimensions.x % 2 == 0)
-            this.jungleBoundLower = new Vector2d(mapCenter.x - jungleDimensions.x/2 - 1,mapCenter.y - jungleDimensions.y/2 - 1);
-        else
+        if(jungleRatio == 1) {  // Always the map must be divided into 2 types (jungle and step)
+            this.jungleBoundUpper = mapBoundUpper.substract(new Vector2d(1,1));
+            this.jungleBoundLower = mapBoundLower.add(new Vector2d(1,1));
+        } else {
+            this.jungleBoundUpper = new Vector2d(mapCenter.x + jungleDimensions.x/2,mapCenter.y + jungleDimensions.y/2);
             this.jungleBoundLower = new Vector2d(mapCenter.x - jungleDimensions.x/2,mapCenter.y - jungleDimensions.y/2);
+        }
+    }
+
+    private void printJungle(){
+        for(int y=0; y<=mapBoundUpper.y; y++){
+            for(int x=0; x<=mapBoundUpper.x; x++){
+                if(isInJungle(new Vector2d(x,y)))
+                    System.out.print("T");
+                else
+                    System.out.print("F");
+            }
+            System.out.println();
+        }
     }
 
     public void placeGrass(int numberOfGrassToPlace) {
-        placeGrassAt(numberOfGrassToPlace/2, mapBoundLower, mapBoundUpper);
+        placeGrassAtStep(numberOfGrassToPlace/2, mapBoundLower, mapBoundUpper);
 
         if(numberOfGrassToPlace % 2 == 0)
             placeGrassAt(numberOfGrassToPlace/2, jungleBoundLower, jungleBoundUpper);
         else
-            placeGrassAtStep(numberOfGrassToPlace/2 + 1, jungleBoundLower, jungleBoundUpper);
+            placeGrassAt(numberOfGrassToPlace/2 + 1, jungleBoundLower, jungleBoundUpper);
+    }
+
+    private void placeGrassAt(int numberOfGrassToPlace,Vector2d boundFieldLower ,Vector2d boundFieldUpper) {
+        int counterFailedTrial = 0;
+        Grass newGrass;
+
+        for(int i=0; i<numberOfGrassToPlace; i++) {
+            boolean uniquePosition = true;
+            newGrass = new Grass(generateRandomPositionAt(boundFieldLower, boundFieldUpper));
+
+            if(counterFailedTrial > 2 * numberOfGrassToPlace) {       // Check if are there any empty positions !!!! you can check how many position in field are empty
+                Vector2d[] emptyPositions = emptyPositionsAt(boundFieldLower, boundFieldUpper);
+                if(emptyPositions.length == 0)
+                    return;                     // stop function - all positions are occupied
+                else
+                    newGrass = new Grass(emptyPositions[generateRandomNumber(0, emptyPositions.length-1)]);     // Choose random empty position
+
+            } else if(isOccupied(newGrass.getPosition())) {
+                i--;
+                uniquePosition = false;
+                counterFailedTrial++;
+            }
+
+            if(uniquePosition)
+                addGrass(newGrass);
+        }
+    }
+
+    private Vector2d[] emptyPositionsAt(Vector2d boundFieldLower, Vector2d boundFieldUpper) {
+        List<Vector2d> emptyPositions = new ArrayList<>();
+
+        for(int x=boundFieldLower.x; x<=boundFieldUpper.x; x++) {
+            for(int y=boundFieldLower.y; y<=boundFieldUpper.y; y++) {
+                if(!isOccupied(new Vector2d(x,y)))
+                    emptyPositions.add(new Vector2d(x,y));
+            }
+        }
+
+        return emptyPositions.toArray(new Vector2d[0]);
+    }
+
+    private void addGrass(Grass newGrass) {
+        grassPositionMap.put(newGrass.getPosition(), newGrass);
+        newGrass.register(this);
+        positionGrassAdd(newGrass.getPosition());
+    }
+
+    private boolean isInJungle(Vector2d position) {
+        return position.follows(jungleBoundLower) && position.precedes(jungleBoundUpper);
+    }
+
+    private boolean isInStep(Vector2d position) {
+        return position.follows(mapBoundLower) && position.precedes(mapBoundUpper) && !isInJungle(position);
+    }
+
+    private void placeGrassAtStep(int numberOfGrassToPlace,Vector2d boundFieldLower ,Vector2d boundFieldUpper) {
+        Grass newGrass;
+
+        for(int i=0; i<numberOfGrassToPlace; i++) {
+            boolean uniquePosition = true;
+            newGrass = new Grass(generateRandomPositionAt(boundFieldLower, boundFieldUpper));
+
+            // Do zoptymalizowania!!!
+            while(isOccupied(newGrass.getPosition()) || !isInStep(newGrass.getPosition())){
+                newGrass = new Grass(generateRandomPositionAt(boundFieldLower, boundFieldUpper));
+            }
+
+            if(uniquePosition)
+                addGrass(newGrass);
+        }
     }
 
     private Vector2d generateRandomPositionAt(Vector2d boundFieldLower, Vector2d boundFieldUpper) {
@@ -67,6 +147,11 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         int x = generator.nextInt(boundFieldUpper.x - boundFieldLower.x + 1) + boundFieldLower.x;
         int y = generator.nextInt(boundFieldUpper.y - boundFieldLower.y + 1) + boundFieldLower.y;
         return new Vector2d(x,y);
+    }
+
+    private int generateRandomNumber(int min, int max) {
+        Random generator = new Random();
+        return generator.nextInt(max - min + 1) + min;
     }
 
     @Override
@@ -107,47 +192,6 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         }
 
         return animalsList;
-    }
-
-    private void placeGrassAt(int numberOfGrassToPlace,Vector2d boundFieldLower ,Vector2d boundFieldUpper) {
-        for(int i=0; i<numberOfGrassToPlace; i++) {
-            boolean uniquePosition = true;
-            Grass newGrass = new Grass(generateRandomPositionAt(boundFieldLower, boundFieldUpper));
-
-            if(grassPositionMap.containsKey(newGrass.getPosition()) ||
-                    animalsPositionMap.containsKey(newGrass.getPosition())) {       // check if new random grass position equals other existing or animal
-                i--;
-                uniquePosition = false;
-                // Ręcznie sprawdź czy są wolne pozycje na mapie - unikanie nieskończonej pętli
-            }
-
-            if(uniquePosition) {
-                grassPositionMap.put(newGrass.getPosition(), newGrass);
-                newGrass.register(this);
-                positionGrassAdd(newGrass.getPosition());
-            }
-        }
-    }
-
-    private void placeGrassAtStep(int numberOfGrassToPlace,Vector2d boundFieldLower ,Vector2d boundFieldUpper) {
-        for(int i=0; i<numberOfGrassToPlace; i++) {
-            boolean uniquePosition = true;
-            Grass newGrass = new Grass(generateRandomPositionAt(boundFieldLower, boundFieldUpper));
-
-            if(grassPositionMap.containsKey(newGrass.getPosition()) ||
-                    animalsPositionMap.containsKey(newGrass.getPosition()) ||       // check if new random grass position equals other existing or animal
-                    newGrass.getPosition().precedes(mapBoundUpper) && newGrass.getPosition().follows(mapBoundLower)) {       // This is not step area
-                i--;
-                uniquePosition = false;
-                // Ręcznie sprawdź czy są wolne pozycje na mapie - unikanie nieskączonej pętli
-            }
-
-            if(uniquePosition) {
-                grassPositionMap.put(newGrass.getPosition(), newGrass);
-                newGrass.register(this);
-                positionGrassAdd(newGrass.getPosition());
-            }
-        }
     }
 
     private Vector2d northWrap(Vector2d position) {
@@ -251,7 +295,6 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public String toString(IWorldMap map) {
-        System.out.println(animalsPositionMap);
         return super.toString(map);
     }
 

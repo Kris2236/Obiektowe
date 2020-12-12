@@ -6,7 +6,7 @@ public class World {
         try{
             MoveDirection[] directions = new OptionsParser().parse(args);
             Vector2d[] positions = { new Vector2d(1,1), new Vector2d(2,4),new Vector2d(3,4)};
-            IWorldMap jungleMap = new Jungle(10,5,0,1);
+            IWorldMap jungleMap = new Jungle(10,5,0,0.5);
             //IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions);
             IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, 2);
             engineJungleWorld.run();
