@@ -1,14 +1,27 @@
 package agh.cs.worldSimulation;
 
 import java.util.HashMap;
+import java.util.Random;
 
 abstract public class AbstractWorldMap extends MapBoundary {
 
     public abstract boolean canMoveTo(Vector2d position);
 
     private MapDirection generateRandomDirection() {
-        // ...
-        return MapDirection.NORTH;
+        Random generator = new Random();
+        int randomNumber = generator.nextInt(8);
+
+        return switch (randomNumber) {
+            case 0 -> MapDirection.NORTH;
+            case 1 -> MapDirection.NORTH_EAST;
+            case 2 -> MapDirection.EAST;
+            case 3 -> MapDirection.SOUTH_EAST;
+            case 4 -> MapDirection.SOUTH;
+            case 5 -> MapDirection.SOUTH_WEST;
+            case 6 -> MapDirection.WEST;
+            case 7 -> MapDirection.NORTH_WEST;
+            default -> throw new IllegalStateException("Unexpected value: " + randomNumber);
+        };
     }
 
     public boolean place(Animal animal) throws IllegalArgumentException {
@@ -24,16 +37,12 @@ abstract public class AbstractWorldMap extends MapBoundary {
     }
 
     public boolean isOccupied(Vector2d position) {
-
-        // check animalsPositions
-        return objectAt(position) != null;
+        return objectAt(position) != null;          // check animalsPositions
     }
 
     public Object objectAt(Vector2d position) {
-
-        // return Animal object as first - display priority
         if(getAnimalsHashMap().containsKey(position)) {
-            return getAnimalsHashMap().get(position);
+            return getAnimalsHashMap().get(position);           // return Animal object as first - display priority
         }
         return null;
     }
@@ -58,8 +67,6 @@ abstract public class AbstractWorldMap extends MapBoundary {
         Animal animal = animalsMap.get(oldPosition);
         animalsMap.remove(oldPosition);
         animalsMap.put(newPosition, animal);
-
-        // Notify changes in MapBoundary
-        super.positionChanged(oldPosition, newPosition);
+        super.positionChanged(oldPosition, newPosition);            // Notify changes in MapBoundary
     }
 }

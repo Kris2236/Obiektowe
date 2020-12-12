@@ -5,19 +5,19 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class Jungle extends AbstractWorldMap implements IWorldMap {
-    private final Vector2d boundStepLower = new Vector2d(0,0);
-    private final Vector2d boundStepUpper;
+    private final Vector2d mapBoundLower = new Vector2d(0,0);
+    private final Vector2d mapBoundUpper;
     private final HashMap<Vector2d, Grass> grassPositionMap = new HashMap<>();
     private final HashMap<Vector2d, Animal> animalsPositionMap = new HashMap<>();
+    private Vector2d jungleBoundLower;
+    private Vector2d jungleBoundUpper;
+    private Vector2d mapCenter;
     private final int numberOfGrass;
     private final double jungleRatio;          // number 0.0 ... 1.0
-    private Vector2d boundJungleLower;
-    private Vector2d boundJungleUpper;
-    private Vector2d mapCenter;
 
 
     public Jungle(int width, int height, int numberOfGrass, double jungleRatio) {
-        this.boundStepUpper = new Vector2d(width-1,height-1);
+        this.mapBoundUpper = new Vector2d(width-1,height-1);
         this.numberOfGrass = numberOfGrass;
         this.jungleRatio = jungleRatio;
         createJungle(this.jungleRatio);
@@ -28,36 +28,38 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         if(jungleRatio < 0 || jungleRatio > 1)
             throw new IllegalArgumentException(jungleRatio + " is not legal. JungleRatio have to be in range (0.0 ... 1.0).\n");
 
-        int x = (int) (boundStepUpper.x*jungleRatio);
-        int y = (int) (boundStepUpper.y*jungleRatio);
+        int x = (int) (mapBoundUpper.x*jungleRatio);
+        int y = (int) (mapBoundUpper.y*jungleRatio);
 
-        if(x == 0 && !(jungleRatio == 0))               // Set min/max jungle size
-            x = 1;
-        else if(x > boundStepUpper.x)
-            x = boundStepUpper.x;
+        if(jungleRatio != 0) {      // Set min/max jungle size
+            if(x == 0)
+                x = 1;
+            else if(x > mapBoundUpper.x)
+                x = mapBoundUpper.x;
 
-        if(y == 0 && !(jungleRatio == 0))
-            y = 1;
-        else if(y > boundStepUpper.x)
-            y = boundStepUpper.x;
+            if(y == 0)
+                y = 1;
+            else if(y > mapBoundUpper.x)
+                y = mapBoundUpper.x;
+        }
 
         Vector2d jungleDimensions = new Vector2d(x,y);
-        this.mapCenter = new Vector2d(boundStepUpper.x/2,boundStepUpper.y/2);
-        this.boundJungleUpper = new Vector2d(mapCenter.x + jungleDimensions.x/2,mapCenter.y + jungleDimensions.y/2);
+        this.mapCenter = new Vector2d(mapBoundUpper.x/2,mapBoundUpper.y/2);
+        this.jungleBoundUpper = new Vector2d(mapCenter.x + jungleDimensions.x/2,mapCenter.y + jungleDimensions.y/2);
 
         if (jungleDimensions.x % 2 == 0)
-            this.boundJungleLower = new Vector2d(mapCenter.x - jungleDimensions.x/2 - 1,mapCenter.y - jungleDimensions.y/2 - 1);
+            this.jungleBoundLower = new Vector2d(mapCenter.x - jungleDimensions.x/2 - 1,mapCenter.y - jungleDimensions.y/2 - 1);
         else
-            this.boundJungleLower = new Vector2d(mapCenter.x - jungleDimensions.x/2,mapCenter.y - jungleDimensions.y/2);
+            this.jungleBoundLower = new Vector2d(mapCenter.x - jungleDimensions.x/2,mapCenter.y - jungleDimensions.y/2);
     }
 
     public void placeGrass(int numberOfGrassToPlace) {
-        placeGrassAt(numberOfGrassToPlace/2, boundStepLower, boundStepUpper);
+        placeGrassAt(numberOfGrassToPlace/2, mapBoundLower, mapBoundUpper);
 
         if(numberOfGrassToPlace % 2 == 0)
-            placeGrassAt(numberOfGrassToPlace/2, boundJungleLower, boundJungleUpper);
+            placeGrassAt(numberOfGrassToPlace/2, jungleBoundLower, jungleBoundUpper);
         else
-            placeGrassAtStep(numberOfGrassToPlace/2 + 1, boundJungleLower, boundJungleUpper);
+            placeGrassAtStep(numberOfGrassToPlace/2 + 1, jungleBoundLower, jungleBoundUpper);
     }
 
     private Vector2d generateRandomPositionAt(Vector2d boundFieldLower, Vector2d boundFieldUpper) {
@@ -70,17 +72,17 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     @Override
     public ArrayList<Animal> generateAnimals(int numberOfAnimalsToAdd) {
         int counterFailedTrial = 0;
-        Vector2d boundFieldLower = boundStepLower;
-        Vector2d boundFieldUpper = boundStepUpper;
+        Vector2d boundFieldLower = mapBoundLower;
+        Vector2d boundFieldUpper = mapBoundUpper;
         ArrayList<Animal> animalsList = new ArrayList<>();
 
         for(int i=0; i<numberOfAnimalsToAdd; i++) {
             boolean uniquePosition = true;
 
             if(counterFailedTrial > numberOfAnimalsToAdd) {         // Enlarge the adding area
-                if(!boundFieldLower.precedes(boundStepLower))
+                if(!boundFieldLower.precedes(mapBoundLower))
                     boundFieldLower.substract(new Vector2d(1,1));
-                if(boundFieldUpper.follows(boundStepUpper))
+                if(boundFieldUpper.follows(mapBoundUpper))
                     boundFieldUpper.add(new Vector2d(1,1));
             }
 
@@ -93,7 +95,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
             }
 
             if(grassPositionMap.containsKey(newAnimal.position)) {      // Move grass if is collision
-                placeGrassAt(1, boundStepLower, boundStepUpper);        // Add grass in all field because animals are adding in savanna
+                placeGrassAt(1, mapBoundLower, mapBoundUpper);        // Add grass in all field because animals are adding in savanna
                 grassPositionMap.remove(newAnimal.position);
                 positionGrassDied(newAnimal.position);
             }
@@ -134,7 +136,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
             if(grassPositionMap.containsKey(newGrass.getPosition()) ||
                     animalsPositionMap.containsKey(newGrass.getPosition()) ||       // check if new random grass position equals other existing or animal
-                    newGrass.getPosition().precedes(boundStepUpper) && newGrass.getPosition().follows(boundStepLower)) {       // This is not step area
+                    newGrass.getPosition().precedes(mapBoundUpper) && newGrass.getPosition().follows(mapBoundLower)) {       // This is not step area
                 i--;
                 uniquePosition = false;
                 // Ręcznie sprawdź czy są wolne pozycje na mapie - unikanie nieskączonej pętli
@@ -149,7 +151,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     }
 
     private Vector2d northWrap(Vector2d position) {
-        return new Vector2d(position.x, boundStepLower.y);
+        return new Vector2d(position.x, mapBoundLower.y);
     }
 
     private Vector2d northEastWrap(Vector2d position) {
@@ -159,7 +161,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     }
 
     private Vector2d eastWrap(Vector2d position) {
-        return new Vector2d(boundStepLower.x, position.y);
+        return new Vector2d(mapBoundLower.x, position.y);
     }
 
     private Vector2d southEastWrap(Vector2d position) {
@@ -169,7 +171,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     }
 
     private Vector2d southWrap(Vector2d position) {
-        return new Vector2d(position.x, boundStepUpper.y);
+        return new Vector2d(position.x, mapBoundUpper.y);
     }
 
     private Vector2d southWestWrap(Vector2d position) {
@@ -179,7 +181,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     }
 
     private Vector2d westWrap(Vector2d position) {
-        return new Vector2d(boundStepUpper.x, position.y);
+        return new Vector2d(mapBoundUpper.x, position.y);
     }
 
     private Vector2d northWestWrap(Vector2d position) {
@@ -213,7 +215,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
             positionGrassDied(position);
         }
 
-        return !isOccupied(position) && position.precedes(boundStepUpper) && position.follows(boundStepLower);
+        return !isOccupied(position) && position.precedes(mapBoundUpper) && position.follows(mapBoundLower);
     }
 
     @Override
@@ -255,12 +257,12 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public Vector2d lowerLeft() {
-        return boundStepLower;
+        return mapBoundLower;
     }
 
     @Override
     public Vector2d upperRight() {
-        return boundStepUpper;
+        return mapBoundUpper;
     }
 
     @Override

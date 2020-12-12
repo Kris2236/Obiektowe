@@ -36,7 +36,7 @@ public class Animal implements ISubject {
     }
 
     public void move(MoveDirection direction) {
-        // If animal decided to change direction
+        // If animal decided to change direction - genetic
         switch (direction){
             case FORWARD -> this.direction = this.direction;
             case FORWARD_RIGHT -> this.direction = this.direction.next();

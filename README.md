@@ -25,7 +25,6 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 
 ##### Wygeneruj mapę:
 - [x] ```step``` jako prostokąt ```a * b```
-- [x] ```sawanna``` na środku ```sqrt(a) * sqrt(b)```
 - [x] ```sawanna``` na środku ma rozmiar proporcjonalny do mapy ``` jungleRatio * (a * b)```
 - [x] Unikaj kolizji przy pierwszym dodawaiu zwierząt - zmnień pozycję rośliny
 - [x] Trawa pojawia się w turach
@@ -39,7 +38,7 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 - [ ] Gdy dżungla jest pełna to nie dodajemy nowych roślin !!!
 - [ ] Genertor losowych początkowych pozycji zwierząt
     - [x] losowe i unikalne pozycje
-    - [ ] losowy kierunek
+    - [x] losowy kierunek
     
 - [ ] Minimalna energia potrzebna do rozmnożenia to połowa energii początkowej zwierzęcia, tzn. 50% ```startEnergy```
 - [ ] gdy para zwierząt się rozmnaża, a wszystkie pozycje dookoła są zajęte to potomek ląduje na losowo zajętym kwadracie
