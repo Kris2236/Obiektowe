@@ -10,29 +10,45 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     private final HashMap<Vector2d, Grass> grassPositionMap = new HashMap<>();
     private final HashMap<Vector2d, Animal> animalsPositionMap = new HashMap<>();
     private final int numberOfGrass;
+    private final double jungleRatio;          // number 0.0 ... 1.0
     private Vector2d boundJungleLower;
     private Vector2d boundJungleUpper;
     private Vector2d mapCenter;
 
 
-    public Jungle(int width, int height, int numberOfGrass) {
+    public Jungle(int width, int height, int numberOfGrass, double jungleRatio) {
         this.boundStepUpper = new Vector2d(width-1,height-1);
         this.numberOfGrass = numberOfGrass;
-        createJungle();
+        this.jungleRatio = jungleRatio;
+        createJungle(this.jungleRatio);
         placeGrass(numberOfGrass);
     }
 
-    private void createJungle() {
-        // it will be parameter !!!
-        int xSqrtSideLength = (int) Math.sqrt(boundStepUpper.x + 1);
-        int ySqrtSideLength = (int) Math.sqrt(boundStepUpper.y+ 1 );
-        this.mapCenter = new Vector2d(boundStepUpper.x/2,boundStepUpper.y/2);
-        this.boundJungleUpper = new Vector2d(mapCenter.x + xSqrtSideLength/2,mapCenter.y + ySqrtSideLength/2);
+    private void createJungle(double jungleRatio) {
+        if(jungleRatio < 0 || jungleRatio > 1)
+            throw new IllegalArgumentException(jungleRatio + " is not legal. JungleRatio have to be in range (0.0 ... 1.0).\n");
 
-        if (xSqrtSideLength % 2 == 0)
-            this.boundJungleLower = new Vector2d(mapCenter.x - xSqrtSideLength/2 - 1,mapCenter.y - ySqrtSideLength/2 - 1);
+        int x = (int) (boundStepUpper.x*jungleRatio);
+        int y = (int) (boundStepUpper.y*jungleRatio);
+
+        if(x == 0 && !(jungleRatio == 0))               // Set min/max jungle size
+            x = 1;
+        else if(x > boundStepUpper.x)
+            x = boundStepUpper.x;
+
+        if(y == 0 && !(jungleRatio == 0))
+            y = 1;
+        else if(y > boundStepUpper.x)
+            y = boundStepUpper.x;
+
+        Vector2d jungleDimensions = new Vector2d(x,y);
+        this.mapCenter = new Vector2d(boundStepUpper.x/2,boundStepUpper.y/2);
+        this.boundJungleUpper = new Vector2d(mapCenter.x + jungleDimensions.x/2,mapCenter.y + jungleDimensions.y/2);
+
+        if (jungleDimensions.x % 2 == 0)
+            this.boundJungleLower = new Vector2d(mapCenter.x - jungleDimensions.x/2 - 1,mapCenter.y - jungleDimensions.y/2 - 1);
         else
-            this.boundJungleLower = new Vector2d(mapCenter.x - xSqrtSideLength/2,mapCenter.y - ySqrtSideLength/2);
+            this.boundJungleLower = new Vector2d(mapCenter.x - jungleDimensions.x/2,mapCenter.y - jungleDimensions.y/2);
     }
 
     public void placeGrass(int numberOfGrassToPlace) {

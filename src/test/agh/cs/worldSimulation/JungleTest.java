@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JungleTest {
     Vector2d v = new Vector2d(2,2);
-    IWorldMap map = new Jungle(10, 5, 0);
+    IWorldMap map = new Jungle(10, 5, 0, 0.1);
 
     @Test
     void canMoveToTest(){
@@ -61,7 +61,7 @@ public class JungleTest {
 
         String[] comands = new String[]{"1", "3"};
         MoveDirection[] directions = new OptionsParser().parse(comands);
-        IWorldMap jungleMap = new Jungle(10,5,0);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2);
         Vector2d[] positions = { cornerRightUpperPosition, cornerRightLowerPosition };
         IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions);
         engineJungleWorld.run();
@@ -77,7 +77,7 @@ public class JungleTest {
 
         comands = new String[]{"5", "7"};
         MoveDirection[] directions2 = new OptionsParser().parse(comands);
-        IWorldMap jungleMap2 = new Jungle(10,5,0);
+        IWorldMap jungleMap2 = new Jungle(10,5,0, 0.2);
         Vector2d[] positions2 = { cornerLeftUpperPosition, cornerLeftLowerPosition };
         IEngine engineJungleWorld2 = new SimulationEngine(directions2, jungleMap2, positions2);
         engineJungleWorld2.run();

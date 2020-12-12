@@ -26,7 +26,7 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 ##### Wygeneruj mapę:
 - [x] ```step``` jako prostokąt ```a * b```
 - [x] ```sawanna``` na środku ```sqrt(a) * sqrt(b)```
-- [ ] ```sawanna``` na środku ma rozmiar proporcjonalny do mapy ``` jungleRatio * (a * b)```
+- [x] ```sawanna``` na środku ma rozmiar proporcjonalny do mapy ``` jungleRatio * (a * b)```
 - [x] Unikaj kolizji przy pierwszym dodawaiu zwierząt - zmnień pozycję rośliny
 - [x] Trawa pojawia się w turach
 - [x] 8 obrotów (stron świata)
