@@ -1,6 +1,7 @@
 package agh.cs.worldSimulation;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * The interface responsible for interacting with the map of the world.
@@ -26,15 +27,17 @@ public interface IWorldMap {
      */
     boolean place(Animal animal);
 
-    /**
-     * Return true if given position on the map is occupied. Should not be
-     * confused with canMove since there might be empty positions where the animal
-     * cannot move.
-     *
-     * @param position
-     *            Position to check.
-     * @return True if the position is occupied.
-     */
+    boolean placeWithDirection(Animal animal, MapDirection direction);
+
+        /**
+         * Return true if given position on the map is occupied. Should not be
+         * confused with canMove since there might be empty positions where the animal
+         * cannot move.
+         *
+         * @param position
+         *            Position to check.
+         * @return True if the position is occupied.
+         */
     boolean isOccupied(Vector2d position);
 
     /**

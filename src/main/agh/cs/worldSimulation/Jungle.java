@@ -1,9 +1,6 @@
 package agh.cs.worldSimulation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Jungle extends AbstractWorldMap implements IWorldMap {
     private final Vector2d mapBoundLower = new Vector2d(0,0);
@@ -12,17 +9,14 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     private final HashMap<Vector2d, Animal> animalsPositionMap = new HashMap<>();
     private Vector2d jungleBoundLower;
     private Vector2d jungleBoundUpper;
-    private Vector2d mapCenter;
-    private final int numberOfGrass;
     private final double jungleRatio;          // number 0.0 ... 1.0
 
 
-    public Jungle(int width, int height, int numberOfGrass, double jungleRatio) {
+    public Jungle(int width, int height, int initialNumberOfGrass, double jungleRatio) {
         this.mapBoundUpper = new Vector2d(width-1,height-1);
-        this.numberOfGrass = numberOfGrass;
         this.jungleRatio = jungleRatio;
         createJungle(this.jungleRatio);
-        placeGrass(numberOfGrass);
+        placeGrass(initialNumberOfGrass);
     }
 
     private void createJungle(double jungleRatio) {
@@ -32,7 +26,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         int x = (int) (mapBoundUpper.x*jungleRatio);
         int y = (int) (mapBoundUpper.y*jungleRatio);
 
-        if(jungleRatio != 0) {      // Set min jungle size
+        if(jungleRatio != 0) {          // Set min jungle size
             if(x == 0)
                 x = 1;
             if(y == 0)
@@ -40,9 +34,9 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         }
 
         Vector2d jungleDimensions = new Vector2d(x,y);
-        this.mapCenter = new Vector2d(mapBoundUpper.x/2,mapBoundUpper.y/2);
+        Vector2d mapCenter = new Vector2d(mapBoundUpper.x/2,mapBoundUpper.y/2);
 
-        if(jungleRatio == 1) {  // Always the map must be divided into 2 types (jungle and step)
+        if(jungleRatio == 1) {          // Always the map must be divided into 2 types (jungle and step)
             this.jungleBoundUpper = mapBoundUpper.substract(new Vector2d(1,1));
             this.jungleBoundLower = mapBoundLower.add(new Vector2d(1,1));
         } else {
@@ -127,18 +121,22 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
     private void placeGrassAtStep(int numberOfGrassToPlace,Vector2d boundFieldLower ,Vector2d boundFieldUpper) {
         Grass newGrass;
+        int counterFailedTrial = 0;
 
         for(int i=0; i<numberOfGrassToPlace; i++) {
-            boolean uniquePosition = true;
             newGrass = new Grass(generateRandomPositionAt(boundFieldLower, boundFieldUpper));
 
             // Do zoptymalizowania!!!
             while(isOccupied(newGrass.getPosition()) || !isInStep(newGrass.getPosition())){
+                counterFailedTrial++;
                 newGrass = new Grass(generateRandomPositionAt(boundFieldLower, boundFieldUpper));
             }
 
-            if(uniquePosition)
-                addGrass(newGrass);
+            // Będzie warotść informująca ile procent mapt jest zajęte !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if(counterFailedTrial > 10*numberOfGrassToPlace)    // jeśli 100% mapy jest zajęte
+                return;
+
+            addGrass(newGrass);
         }
     }
 
@@ -194,43 +192,55 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         return animalsList;
     }
 
+
+    private final Vector2d vX = new Vector2d(1,0);
+    private final Vector2d vY = new Vector2d(0,1);
+
     private Vector2d northWrap(Vector2d position) {
+        if(canMoveTo(position.add(vY)))
+            return position.add(vY);
         return new Vector2d(position.x, mapBoundLower.y);
     }
 
     private Vector2d northEastWrap(Vector2d position) {
-        if(canMoveTo(northWrap(position).add(new Vector2d(1,0))))
-            return northWrap(position).add(new Vector2d(1,0));
+        if(canMoveTo(northWrap(position).add(vX)))
+            return northWrap(position).add(vX);
         return eastWrap(northWrap(position));
     }
 
     private Vector2d eastWrap(Vector2d position) {
+        if(canMoveTo(position.add(vX)))
+            return position.add(vX);
         return new Vector2d(mapBoundLower.x, position.y);
     }
 
     private Vector2d southEastWrap(Vector2d position) {
-        if(canMoveTo(southWrap(position).add(new Vector2d(1,0))))
-            return southWrap(position).add(new Vector2d(1,0));
+        if(canMoveTo(southWrap(position).add(vX)))
+            return southWrap(position).add(vX);
         return eastWrap(southWrap(position));
     }
 
     private Vector2d southWrap(Vector2d position) {
+        if(canMoveTo(position.substract(vY)))
+            return position.substract(vY);
         return new Vector2d(position.x, mapBoundUpper.y);
     }
 
     private Vector2d southWestWrap(Vector2d position) {
-        if(canMoveTo(southWrap(position).substract(new Vector2d(1,0))))
-            return southWrap(position).substract(new Vector2d(1,0));
+        if(canMoveTo(southWrap(position).substract(vX)))
+            return southWrap(position).substract(vX);
         return westWrap(southWrap(position));
     }
 
     private Vector2d westWrap(Vector2d position) {
+        if(canMoveTo(position.substract(vX)))
+            return position.substract(vX);
         return new Vector2d(mapBoundUpper.x, position.y);
     }
 
     private Vector2d northWestWrap(Vector2d position) {
-        if(canMoveTo(northWrap(position).substract(new Vector2d(1,0))))
-            return northWrap(position).substract(new Vector2d(1,0));
+        if(canMoveTo(northWrap(position).substract(vX)))
+            return northWrap(position).substract(vX);
         return westWrap(northWrap(position));
     }
 
@@ -239,13 +249,13 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
         Vector2d wrappedPosition = switch (animal.toString()) {
             case "^" -> northWrap(position);
-            case "1" -> northEastWrap(position);
+            case "1" -> northEastWrap(oldPosition);
             case ">" -> eastWrap(position);
-            case "3" -> southEastWrap(position);
+            case "3" -> southEastWrap(oldPosition);
             case "v" -> southWrap(position);
-            case "5" -> southWestWrap(position);
+            case "5" -> southWestWrap(oldPosition);
             case "<" -> westWrap(position);
-            case "7" -> northWestWrap(position);
+            case "7" -> northWestWrap(oldPosition);
             default -> null;
         };
 
@@ -258,13 +268,18 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
             grassPositionMap.remove(position);
             positionGrassDied(position);
         }
-
         return !isOccupied(position) && position.precedes(mapBoundUpper) && position.follows(mapBoundLower);
     }
 
     @Override
-    public boolean place(Animal animal) {
-        return super.place(animal);
+    public boolean place(Animal animal) { return super.place(animal); }
+
+    public boolean placeWithDirection(Animal animal, MapDirection direction) {
+        if(super.place(animal)) {
+            animal.direction = direction;
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -294,24 +309,16 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     }
 
     @Override
-    public String toString(IWorldMap map) {
-        return super.toString(map);
-    }
+    public String toString(IWorldMap map) { return super.toString(map); }
 
     @Override
-    public Vector2d lowerLeft() {
-        return mapBoundLower;
-    }
+    public Vector2d lowerLeft() { return mapBoundLower; }
 
     @Override
-    public Vector2d upperRight() {
-        return mapBoundUpper;
-    }
+    public Vector2d upperRight() { return mapBoundUpper; }
 
     @Override
-    public HashMap<Vector2d,Animal> getAnimalsHashMap() {
-        return this.animalsPositionMap;
-    }
+    public HashMap<Vector2d,Animal> getAnimalsHashMap() { return this.animalsPositionMap; }
 
     @Override
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {

@@ -35,7 +35,7 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 - [ ] ilość energii traconej w każdym dniu ```(moveEnergy)```
 - [ ] ilość energii zyskiwanej przy zjedzeniu rośliny ```(plantEnergy)```
 - [ ] Wiele zwierząt może znajdować się na jednej pozycji
-- [ ] Gdy dżungla jest pełna to nie dodajemy nowych roślin !!!
+- [x] Gdy dżungla jest pełna to nie dodajemy nowych roślin
 - [x] Genertor losowych początkowych pozycji zwierząt
     - [x] losowe i unikalne pozycje
     - [x] losowy kierunek
@@ -46,7 +46,7 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 #### Mechanika mapy:
 - [x] Tury - zwierzę może ruszyć się tylko raz w ciągu dnia
 - [x] Generator codziennego dodawania roślin
-  - [ ] 1 na ```sawannie``` (jeśli pozycja naley do stepu to ponownie doaj)
+  - [x] 1 na ```sawannie``` (jeśli pozycja naley do stepu to ponownie doaj)
   - [x] 1 na ```stepie```
 - [ ] Poziom życia zwierząt
   - [ ] Każdego dnia zwierze traci określoną ilość ```energii``` za poruszanie się po mapie
@@ -80,7 +80,7 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 - [ ] Program powinien umożliwiać uzyskanie statystyki (jak w punkcie 4) po określonej liczbie epok w formie pliku tekstowego. Statystyki powinny stanowić uśrednienie wartości z poszczególnych epok.
 
 #### Optymalizacja:
-- [ ] w przypadku gy zapełnimy 60% mapy to patrzymy na "wolne pozycje"
+- [ ] w przypadku gy zapełnimy 60% mapy to patrzymy na "wolne pozycje" w placeGrass
 - [ ] problem wielowątkowości albo rysujemy albo obliczamy - synchronizacja/ przekaywanie inforami pomiędzy wątkami
    
 #### Grafika:
