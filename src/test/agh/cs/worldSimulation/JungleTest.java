@@ -188,7 +188,7 @@ public class JungleTest {
 
         commands = new String[]{"f", "f"};
         MoveDirection[] directions2 = new OptionsParser().parse(commands);
-        MapDirection[] animalsDirections2 = {MapDirection.SOUTH_WEST, MapDirection.NORTH_WEST};
+        MapDirection[] animalsDirections2 = { MapDirection.NORTH_WEST, MapDirection.SOUTH_WEST,};
         IWorldMap jungleMap2 = new Jungle(10,5,0, 0.2);
         Vector2d[] positions2 = { cornerLeftUpperPosition, cornerLeftLowerPosition };
         IEngine engineJungleWorld2 = new SimulationEngine(directions2, jungleMap2, positions2, animalsDirections2);

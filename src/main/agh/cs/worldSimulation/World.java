@@ -10,6 +10,9 @@ public class World {
             //IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions);
             IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, 2);
             engineJungleWorld.run();
+
+            System.out.println("===========================");
+            engineJungleWorld.run(10);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }

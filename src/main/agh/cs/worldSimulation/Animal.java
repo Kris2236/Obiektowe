@@ -1,12 +1,15 @@
 package agh.cs.worldSimulation;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 
 public class Animal implements ISubject {
-    protected Vector2d position;
-    protected MapDirection direction;
-    protected IWorldMap map;
     private final ArrayList<IPositionChangeObserver> observerList = new ArrayList<>();
+    protected MapDirection direction;
+    protected Vector2d position;
+    protected IWorldMap map;
+    protected int lifeEnergy;
+    protected int[] genotype;
 
     public Animal(IWorldMap map){
         this.map = map;
@@ -17,26 +20,55 @@ public class Animal implements ISubject {
         this.position = initialPosition;
     }
 
+    public Animal(IWorldMap map, Vector2d initialPosition, int lifeEnergy, int[] genotype){
+        this.map = map;
+        this.position = initialPosition;
+        this.lifeEnergy = lifeEnergy;
+        if(genotype.length != 32)
+            throw new IllegalArgumentException(genotype.length + " is not legal genotype length. Genotype length must be 32 in Animal.\n");
+        this.genotype = genotype;
+    }
+
     public Vector2d getPosition(){
         return this.position;
     }
 
     public String toString(){
         return switch (direction) {
-            case NORTH -> "^";
+            case NORTH -> "^";      // 0
             case NORTH_EAST -> "1";
-            case EAST -> ">";
+            case EAST -> ">";       // 2
             case SOUTH_EAST -> "3";
-            case SOUTH -> "v";
+            case SOUTH -> "v";      // 4
             case SOUTH_WEST -> "5";
-            case WEST -> "<";
+            case WEST -> "<";       // 6
             case NORTH_WEST -> "7";
             default -> null;
         };
     }
 
+    public void moveAccordingGenotype() {
+        MoveDirection direction = parseGeneDirection(randomNumberBetween(0,7));
+        move(direction);
+    }
+
+    private MoveDirection parseGeneDirection(int gene) {
+        System.out.println(gene);
+
+        return switch (gene){
+            case 0 -> MoveDirection.FORWARD;
+            case 1 -> MoveDirection.FORWARD_RIGHT;
+            case 2 -> MoveDirection.RIGHT;
+            case 3 -> MoveDirection.BACKWARD_RIGHT;
+            case 4 -> MoveDirection.BACKWARD;
+            case 5 -> MoveDirection.BACKWARD_LEFT;
+            case 6 -> MoveDirection.LEFT;
+            case 7 -> MoveDirection.FORWARD_LEFT;
+            default -> throw new IllegalArgumentException(gene + " is not legal gene. Animal can not move, there is only 8 possible directions.");
+        };
+    }
+
     public void move(MoveDirection direction) {
-        // If animal decided to change direction - genetic
         switch (direction){
             case FORWARD -> this.direction = this.direction;
             case FORWARD_RIGHT -> this.direction = this.direction.next();
@@ -55,15 +87,23 @@ public class Animal implements ISubject {
         Vector2d pos = this.position.add(this.direction.toUnitVector());
 
         if(map.canMoveTo(pos)){
+
             notifyObservers(this.position, pos);
             this.position = pos;
+
         } else if(!(map.objectAt(pos) instanceof Animal)) {
+
             pos = map.wrapEdge(this.position, pos, direction);
             // Check if the wrapped position is occupied by another animal and make small animals
 
             notifyObservers(this.position, pos);
             this.position = pos;
         }
+    }
+
+    private int randomNumberBetween(int min, int max) {
+        SecureRandom generator = new SecureRandom();
+        return generator.nextInt(max - min + 1) + min;
     }
 
     @Override

@@ -11,4 +11,9 @@ public interface IEngine {
      * n-th direction should be sent to the n-th animal on the map.
      */
     void run();
+
+    /**
+     * Automatically move the animal on the map according to the genotype.
+     */
+    void run(int maxDay);
 }

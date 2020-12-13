@@ -25,14 +25,14 @@ abstract public class AbstractWorldMap extends MapBoundary {
     }
 
     public boolean place(Animal animal) throws IllegalArgumentException {
-        if(canMoveTo(animal.position)){
-            getAnimalsHashMap().put(animal.position, animal);
+        if(canMoveTo(animal.getPosition())){
+            getAnimalsHashMap().put(animal.getPosition(), animal);
             animal.direction = generateRandomDirection();
             animal.register(this);
-            animal.notifyObservers(animal.position, animal.position);
+            animal.notifyObservers(animal.getPosition(), animal.getPosition());
             return true;
         } else {
-            throw new IllegalArgumentException(animal.position + " is not legal. Off the map or position is occupated.\n");
+            throw new IllegalArgumentException(animal.getPosition() + " is not legal. Off the map or position is occupated.\n");
         }
     }
 

@@ -55,5 +55,5 @@ public interface IWorldMap {
 
     void placeGrass(int numberOfGrassToPlace);
 
-    ArrayList<Animal> generateAnimals(int numberOfAnimals);
+    ArrayList<Animal> generateAnimals(int numberOfAnimals, int startEnergy, int genotypeLength);
 }

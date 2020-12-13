@@ -82,7 +82,8 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 #### Optymalizacja:
 - [ ] w przypadku gy zapełnimy 60% mapy to patrzymy na "wolne pozycje" w placeGrass
 - [ ] problem wielowątkowości albo rysujemy albo obliczamy - synchronizacja/ przekaywanie inforami pomiędzy wątkami
-   
+- [ ] zwierze posiada obliczone prawdopodobieństwo dla każdego z kierunków
+
 #### Grafika:
 - [ ] java fx
    - [ ] Program ma wyświetlać animację pokazującą pozycję zwierząt
