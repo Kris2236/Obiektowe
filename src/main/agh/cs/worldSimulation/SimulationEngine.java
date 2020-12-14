@@ -2,6 +2,7 @@ package agh.cs.worldSimulation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class SimulationEngine implements IEngine{
@@ -9,6 +10,8 @@ public class SimulationEngine implements IEngine{
     private final ArrayList<Vector2d> positions = new ArrayList<>();
     private ArrayList<Animal> animals = new ArrayList<>();
     protected IWorldMap map;
+    protected int moveEnergy = 0;
+    protected int plantEnergy = 0;
 
 
     public SimulationEngine(MoveDirection[] commands, IWorldMap map, Vector2d[] positions, MapDirection[] moveDirections) {
@@ -25,10 +28,13 @@ public class SimulationEngine implements IEngine{
         addAnimalsToMap();
     }
 
-    public SimulationEngine(MoveDirection[] commands, IWorldMap map, int numberOfAnimals) {
+    public SimulationEngine(MoveDirection[] commands, IWorldMap map, int numberOfAnimals, int startEnergy, int moveEnergy) {
         this.commands.addAll(Arrays.asList(commands));          // Add animals move commands
         this.map = map;
-        animals = map.generateAnimals(numberOfAnimals, 100, 32);    // write by constructor
+        this.moveEnergy = moveEnergy;
+        this.plantEnergy = plantEnergy;
+
+        animals = map.generateAnimals(numberOfAnimals, startEnergy, 32, moveEnergy);
     }
 
     private void addAnimalsToMap() {
@@ -75,6 +81,9 @@ public class SimulationEngine implements IEngine{
                 System.out.println(map.toString(map));
             }
 
+            System.out.println(map.toString(map));
+
+
             animals.get(i % animals.size()).move(commands.get(i));              // Make moves for the animals in turn
         }
 
@@ -85,18 +94,31 @@ public class SimulationEngine implements IEngine{
         int day = 0;
 
         while (day < maxDay){
-            if(animals.size() == 0){
+            System.out.println("Aniamls: " + animals.size() + " " + map.getAnimalsHashMap().size());
+
+            if(map.getAnimalsHashMap().isEmpty()){
                 System.out.println("Day: " + day + ". All animals died. PRINT STATICTICS");
                 return;
             }
 
-            for (Animal animal : animals) {         // Every animal have to move
+            // 1. Making movements and note the "grass + animal" and "multi animals" positions
+            for (Animal animal : map.getAnimalsHashMap().values().toArray(new Animal[0])) {         // Every animal have to move
                 animal.moveAccordingGenotype();
             }
+
+            // 2. Foreach "grass + animal" positions assign plantEnergy (if there are 2 or more of the strongest animals with the same lifeEnergy in one position, split the energy)
+            // 3. Deleting dead animals and update "multi animals" positions
+            // 4. Foreach "multi animals" positions make small animal
+
+            System.out.println(map.getAnimalsHashMap().keySet());
+            Animal[] animalsSet = map.getAnimalsHashMap().values().toArray(new Animal[0]);
+            System.out.println(map.getAnimalsHashMap().values());
 
             System.out.println("Day: " + day);
             day++;
             System.out.println(map.toString(map));
+
+            // 6. Placing grass
             map.placeGrass(2);
             System.out.println(map.toString(map));
         }

@@ -31,9 +31,9 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 - [x] 8 obrotów (stron świata)
 - [x] Zawija się na krańcach dla 8 kierunków świata
 - [ ] Dane wejściowe są ładowane z pliku parameters.json znajdującego się w katalogu, w których uruchamiana jest aplikacja.
-- [ ] ilość energii początkowej zwierząt ```(startEnergy)```
-- [ ] ilość energii traconej w każdym dniu ```(moveEnergy)```
-- [ ] ilość energii zyskiwanej przy zjedzeniu rośliny ```(plantEnergy)```
+- [x] ilość energii początkowej zwierząt ```(startEnergy)```
+- [x] ilość energii traconej w każdym dniu ```(moveEnergy)```
+- [x] ilość energii zyskiwanej przy zjedzeniu rośliny ```(plantEnergy)```
 - [ ] Wiele zwierząt może znajdować się na jednej pozycji
 - [x] Gdy dżungla jest pełna to nie dodajemy nowych roślin
 - [x] Genertor losowych początkowych pozycji zwierząt
@@ -48,15 +48,15 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 - [x] Generator codziennego dodawania roślin
   - [x] 1 na ```sawannie``` (jeśli pozycja naley do stepu to ponownie doaj)
   - [x] 1 na ```stepie```
-- [ ] Poziom życia zwierząt
-  - [ ] Każdego dnia zwierze traci określoną ilość ```energii``` za poruszanie się po mapie
-  - [ ] Każdego dnia zwierze traci określoną ilość ```energii``` za zmianę kierunku
+- [x] Poziom życia zwierząt
+  - [x] Każdego dnia zwierze traci określoną ilość ```energii``` za poruszanie się po mapie
 - [ ] Rozmnażanie i umieranie zwierzaków
     - [ ] Dzieci dostają 2 częsćigenów od rodziców i 1 w zależności od obszaru w którym się urodzą
+    - [x] umieranie gdy ``` energia <= 0```
+- [x] Generator ruchów zwierząt
 
 #### Zwierzęta:
-- [ ] Genetyka zwierząt
-- [ ] Generator ruchów zwierząt 
+- [x] Genetyka zwierząt
 
 #### Engine:
 - [ ] Testy

@@ -1,5 +1,6 @@
 package agh.cs.worldSimulation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -20,13 +21,14 @@ abstract public class AbstractWorldMap extends MapBoundary {
             case 5 -> MapDirection.SOUTH_WEST;
             case 6 -> MapDirection.WEST;
             case 7 -> MapDirection.NORTH_WEST;
-            default -> throw new IllegalStateException("Unexpected value: " + randomNumber);
+            default -> throw new IllegalStateException("Unexpected value: " + randomNumber + "is not legal direction. Animal can not generate random direction, 8 possible directions. (AbstractMap)\n");
         };
     }
 
     public boolean place(Animal animal) throws IllegalArgumentException {
         if(canMoveTo(animal.getPosition())){
             getAnimalsHashMap().put(animal.getPosition(), animal);
+            // animal list
             animal.direction = generateRandomDirection();
             animal.register(this);
             animal.notifyObservers(animal.getPosition(), animal.getPosition());
@@ -62,10 +64,18 @@ abstract public class AbstractWorldMap extends MapBoundary {
 
     public abstract HashMap<Vector2d, Animal> getAnimalsHashMap();
 
+    public abstract ArrayList<Animal> getAnimalsList();
+
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
         final HashMap<Vector2d, Animal> animalsMap = getAnimalsHashMap();
         Animal animal = animalsMap.get(oldPosition);
-        animalsMap.remove(oldPosition);
+        Aniaml[] animalFromList = getAnimalsList();
+
+        // update in list
+        if(canDeleteFromMap(oldPosition))
+            animalsMap.remove(oldPosition);
+
+
         animalsMap.put(newPosition, animal);
         super.positionChanged(oldPosition, newPosition);            // Notify changes in MapBoundary
     }

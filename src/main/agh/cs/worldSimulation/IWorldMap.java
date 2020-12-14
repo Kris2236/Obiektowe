@@ -1,6 +1,7 @@
 package agh.cs.worldSimulation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -55,5 +56,14 @@ public interface IWorldMap {
 
     void placeGrass(int numberOfGrassToPlace);
 
-    ArrayList<Animal> generateAnimals(int numberOfAnimals, int startEnergy, int genotypeLength);
+    ArrayList<Animal> generateAnimals(int numberOfAnimals, int startEnergy, int genotypeLength, int moveEnergy);
+
+    int getEnergyFrom(Vector2d pos);
+
+    void animalDied(Vector2d positnion);
+
+    HashMap<Vector2d,Animal> getAnimalsHashMap();
+
+    int randomNumberBetween(int min, int max);
+
 }

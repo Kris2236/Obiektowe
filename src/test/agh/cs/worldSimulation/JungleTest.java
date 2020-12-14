@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class JungleTest {
     Vector2d v = new Vector2d(2,2);
-    IWorldMap map = new Jungle(10, 5, 0, 0.1);
+    IWorldMap map = new Jungle(10, 5, 0, 0.1, 25);
 
     @Test
     void canMoveToTest(){
@@ -62,7 +62,7 @@ public class JungleTest {
 
         String[] commands = new String[]{"f", "f", "f", "f"};
         MoveDirection[] directions = new OptionsParser().parse(commands);
-        IWorldMap jungleMap = new Jungle(10,5,0, 0.2);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2, 25);
         Vector2d[] positions = { v1, v2, v3, v4 };
         IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions, animalsDirections);
         engineJungleWorld.run();
@@ -94,7 +94,7 @@ public class JungleTest {
 
         String[] commands = new String[]{"f", "f", "f", "f"};
         MoveDirection[] directions = new OptionsParser().parse(commands);
-        IWorldMap jungleMap2 = new Jungle(10,5,0, 0.2);
+        IWorldMap jungleMap2 = new Jungle(10,5,0, 0.2, 25);
         Vector2d[] positions = new Vector2d[]{v1, v2, v3, v4};
         IEngine engineJungleWorld2 = new SimulationEngine(directions, jungleMap2, positions, animalsDirections);
         engineJungleWorld2.run();
@@ -125,7 +125,7 @@ public class JungleTest {
 
         String[] commands = new String[]{"f", "f"};
         MoveDirection[] directions = new OptionsParser().parse(commands);
-        IWorldMap jungleMap = new Jungle(10,5,0, 0.2);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2, 25);
         Vector2d[] positions = { v1, v2 };
         IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions, animalsDirections);
         engineJungleWorld.run();
@@ -148,7 +148,7 @@ public class JungleTest {
 
         String[] commands = new String[]{"f", "f"};
         MoveDirection[] directions = new OptionsParser().parse(commands);
-        IWorldMap jungleMap = new Jungle(10,5,0, 0.2);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2, 25);
         Vector2d[] positions = { v1, v2 };
         IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions, animalsDirections);
         engineJungleWorld.run();
@@ -172,7 +172,7 @@ public class JungleTest {
         String[] commands = new String[]{"f", "f"};
         MoveDirection[] directions = new OptionsParser().parse(commands);
         MapDirection[] animalsDirections = {MapDirection.NORTH_EAST, MapDirection.SOUTH_EAST};
-        IWorldMap jungleMap = new Jungle(10,5,0, 0.2);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2, 25);
         Vector2d[] positions = { cornerRightUpperPosition, cornerRightLowerPosition };
         IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions, animalsDirections);
         engineJungleWorld.run();
@@ -189,7 +189,7 @@ public class JungleTest {
         commands = new String[]{"f", "f"};
         MoveDirection[] directions2 = new OptionsParser().parse(commands);
         MapDirection[] animalsDirections2 = { MapDirection.NORTH_WEST, MapDirection.SOUTH_WEST,};
-        IWorldMap jungleMap2 = new Jungle(10,5,0, 0.2);
+        IWorldMap jungleMap2 = new Jungle(10,5,0, 0.2, 25);
         Vector2d[] positions2 = { cornerLeftUpperPosition, cornerLeftLowerPosition };
         IEngine engineJungleWorld2 = new SimulationEngine(directions2, jungleMap2, positions2, animalsDirections2);
         engineJungleWorld2.run();
@@ -212,7 +212,7 @@ public class JungleTest {
 
         String[] commands = new String[]{"1", "1"};
         MoveDirection[] directions = new OptionsParser().parse(commands);
-        IWorldMap jungleMap = new Jungle(10,5,0, 0.2);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2, 25);
         Vector2d[] positions = { v1, v2 };
         IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions, animalsDirections);
         engineJungleWorld.run();
@@ -235,7 +235,7 @@ public class JungleTest {
 
         String[] commands = new String[]{"7", "7"};
         MoveDirection[] directions = new OptionsParser().parse(commands);
-        IWorldMap jungleMap = new Jungle(10,5,0, 0.2);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2, 25);
         Vector2d[] positions = { v1, v2 };
         IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions, animalsDirections);
         engineJungleWorld.run();
@@ -258,7 +258,7 @@ public class JungleTest {
 
         String[] commands = new String[]{"5", "5"};
         MoveDirection[] directions = new OptionsParser().parse(commands);
-        IWorldMap jungleMap = new Jungle(10,5,0, 0.2);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2, 25);
         Vector2d[] positions = { v1, v2 };
         IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions, animalsDirections);
         engineJungleWorld.run();
@@ -281,7 +281,7 @@ public class JungleTest {
 
         String[] commands = new String[]{"3", "3"};
         MoveDirection[] directions = new OptionsParser().parse(commands);
-        IWorldMap jungleMap = new Jungle(10,5,0, 0.2);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2, 25);
         Vector2d[] positions = { v1, v2 };
         IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions, animalsDirections);
         engineJungleWorld.run();
@@ -304,7 +304,7 @@ public class JungleTest {
 
         String[] commands = new String[]{"1", "3"};
         MoveDirection[] directions = new OptionsParser().parse(commands);
-        IWorldMap jungleMap = new Jungle(10,5,0, 0.2);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2, 25);
         Vector2d[] positions = { v1, v2 };
         IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions, animalsDirections);
         engineJungleWorld.run();
@@ -316,5 +316,49 @@ public class JungleTest {
         assertTrue(jungleMap.isOccupied(new Vector2d(0,0)));
         assertTrue(jungleMap.objectAt(new Vector2d(0,0)) instanceof Animal);
         assertFalse(jungleMap.objectAt(v2) instanceof Animal);
+    }
+
+    @Test
+    void JungleManyAnimalsInOnePositionTest() {
+        Vector2d v1 = new Vector2d(1,1);
+        Vector2d v2 = new Vector2d(3,1);
+
+        MapDirection[] animalsDirections = { MapDirection.NORTH, MapDirection.NORTH};
+
+        String[] commands = new String[]{"2", "6"};
+        MoveDirection[] directions = new OptionsParser().parse(commands);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2, 25);
+        Vector2d[] positions = { v1, v2 };
+        IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions, animalsDirections);
+        engineJungleWorld.run();
+
+        assertTrue(jungleMap.isOccupied(new Vector2d(2,1)));
+        assertTrue(jungleMap.objectAt(new Vector2d(2,1)) instanceof Animal);
+        assertFalse(jungleMap.objectAt(v1) instanceof Animal);
+
+        assertTrue(jungleMap.isOccupied(new Vector2d(2,1)));
+        assertTrue(jungleMap.objectAt(new Vector2d(2,1)) instanceof Animal);
+        assertFalse(jungleMap.objectAt(v2) instanceof Animal);
+    }
+
+    @Test
+    void JungleAnimalRoundTest() {
+        Vector2d v1 = new Vector2d(1,1);
+        Vector2d v2 = new Vector2d(3,1);
+
+        MapDirection[] animalsDirections = { MapDirection.NORTH, MapDirection.NORTH};
+
+        String[] commands = new String[]{"2", "6", "f", "f", "b", "b", "f", "f"};
+        MoveDirection[] directions = new OptionsParser().parse(commands);
+        IWorldMap jungleMap = new Jungle(10,5,0, 0.2, 25);
+        Vector2d[] positions = { v1, v2 };
+        IEngine engineJungleWorld = new SimulationEngine(directions, jungleMap, positions, animalsDirections);
+        engineJungleWorld.run();
+
+        assertTrue(jungleMap.isOccupied(v1));
+        assertTrue(jungleMap.objectAt(v1) instanceof Animal);
+
+        assertTrue(jungleMap.isOccupied(v2));
+        assertTrue(jungleMap.objectAt(v2) instanceof Animal);
     }
 }

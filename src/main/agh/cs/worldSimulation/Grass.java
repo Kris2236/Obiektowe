@@ -5,14 +5,22 @@ import java.util.ArrayList;
 public class Grass implements ISubject {
     private final Vector2d position;
     private final ArrayList<IPositionChangeObserver> observerList = new ArrayList<>();
+    private int plantEnergy;        // In future we can for each plant generate random energy
 
     Grass(Vector2d position){
         this.position = position;
     }
 
+    Grass(Vector2d position, int plantEnergy){
+        this.position = position;
+        this.plantEnergy = plantEnergy;
+    }
+
     public Vector2d getPosition(){
         return this.position;
     }
+
+    public int getEnergy() {return this.plantEnergy; }
 
     public String toString(){
         return "*";
