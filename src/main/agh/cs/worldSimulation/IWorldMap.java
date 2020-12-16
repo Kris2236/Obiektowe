@@ -52,18 +52,27 @@ public interface IWorldMap {
 
     Object toString(IWorldMap map);
 
-    Vector2d wrapEdge(Vector2d oldPosition, Vector2d pos, MoveDirection direction);
+    Vector2d wrapEdge(Animal animal, Vector2d pos, MoveDirection direction);
 
-    void placeGrass(int numberOfGrassToPlace);
+    //void placeGrass(int numberOfGrassToPlace);
+    //int getEnergyFrom(Vector2d pos);
 
     ArrayList<Animal> generateAnimals(int numberOfAnimals, int startEnergy, int genotypeLength, int moveEnergy);
 
-    int getEnergyFrom(Vector2d pos);
+    public void addDailyGrass();
 
-    void animalDied(Vector2d positnion);
+    void animalDied(Animal animal);
 
-    HashMap<Vector2d,Animal> getAnimalsHashMap();
+    //HashMap<Vector2d,Animal> getAnimalsHashMap();
+
+    ArrayList<Animal> getAnimalsList();
 
     int randomNumberBetween(int min, int max);
+    int getEnergyFrom(Vector2d position);
+    boolean isInStep(Vector2d position);
+    Vector2d getMapBoundLower();
+    Vector2d getMapBoundUpper();
+    Vector2d getJungleBoundLower();
+    Vector2d getJungleBoundUpper();
 
 }

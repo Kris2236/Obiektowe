@@ -23,6 +23,32 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
 
 ## Status projektu
 
+#### Nowa mechanika:
+- [ ] 1 Wykonaj ruchy zwierząt (mogą być kolizje)
+  - [ ] zapisz pozycje ```grass + animal```
+  - [ ] zapisz pozycje ```multi animal```
+- [ ] 2 Przydziel energię za trawę i ją usuń (pozycje ```grass + animal```)
+- [ ] 3 Usuń zwierzęta, których ```lifeEnergy <= 0``` ("przenieś je do statystk")
+- [ ] 4 Zrób dzieci (pozycje ```multi animal```)
+- [ ] 5 Dodaj trawę
+
+#### Mechanika mapy:
+- [x] Tury - zwierzę może ruszyć się tylko raz w ciągu dnia
+- [x] Generator codziennego dodawania roślin
+  - [x] 1 na ```sawannie``` (jeśli pozycja naley do stepu to ponownie doaj)
+  - [x] 1 na ```stepie```
+- [x] Poziom życia zwierząt
+  - [x] Każdego dnia zwierze traci określoną ilość ```energii``` za poruszanie się po mapie
+- [ ] Rozmnażanie i umieranie zwierzaków
+  - [ ] Dzieci dostają 2 częsćigenów od rodziców i 1 w zależności od obszaru w którym się urodzą
+  - [x] umieranie gdy ``` energia <= 0```
+- [x] Generator ruchów zwierząt
+- [ ] w klasie cell przechowujemy info o pozycjac z zwierzętami...
+
+#### Zwierzęta:
+- [x] Genetyka zwierząt
+- [ ] Rodzice
+
 ##### Wygeneruj mapę:
 - [x] ```step``` jako prostokąt ```a * b```
 - [x] ```sawanna``` na środku ma rozmiar proporcjonalny do mapy ``` jungleRatio * (a * b)```
@@ -42,21 +68,6 @@ Do uruchomienia potrzebne jest oprogramowanie java 15.
     
 - [ ] Minimalna energia potrzebna do rozmnożenia to połowa energii początkowej zwierzęcia, tzn. 50% ```startEnergy```
 - [ ] gdy para zwierząt się rozmnaża, a wszystkie pozycje dookoła są zajęte to potomek ląduje na losowo zajętym kwadracie
-
-#### Mechanika mapy:
-- [x] Tury - zwierzę może ruszyć się tylko raz w ciągu dnia
-- [x] Generator codziennego dodawania roślin
-  - [x] 1 na ```sawannie``` (jeśli pozycja naley do stepu to ponownie doaj)
-  - [x] 1 na ```stepie```
-- [x] Poziom życia zwierząt
-  - [x] Każdego dnia zwierze traci określoną ilość ```energii``` za poruszanie się po mapie
-- [ ] Rozmnażanie i umieranie zwierzaków
-    - [ ] Dzieci dostają 2 częsćigenów od rodziców i 1 w zależności od obszaru w którym się urodzą
-    - [x] umieranie gdy ``` energia <= 0```
-- [x] Generator ruchów zwierząt
-
-#### Zwierzęta:
-- [x] Genetyka zwierząt
 
 #### Engine:
 - [ ] Testy

@@ -77,11 +77,11 @@ public class SimulationEngine implements IEngine{
                 System.out.println("Day: " + day);
                 day++;
                 System.out.println(map.toString(map));
-                map.placeGrass(2);
+                map.addDailyGrass();
                 System.out.println(map.toString(map));
             }
 
-            System.out.println(map.toString(map));
+            //System.out.println(map.toString(map));
 
 
             animals.get(i % animals.size()).move(commands.get(i));              // Make moves for the animals in turn
@@ -94,15 +94,15 @@ public class SimulationEngine implements IEngine{
         int day = 0;
 
         while (day < maxDay){
-            System.out.println("Aniamls: " + animals.size() + " " + map.getAnimalsHashMap().size());
+            System.out.println("Aniamls: " + animals.size() + " " + map.getAnimalsList().size());
 
-            if(map.getAnimalsHashMap().isEmpty()){
+            if(map.getAnimalsList().isEmpty()){
                 System.out.println("Day: " + day + ". All animals died. PRINT STATICTICS");
                 return;
             }
 
             // 1. Making movements and note the "grass + animal" and "multi animals" positions
-            for (Animal animal : map.getAnimalsHashMap().values().toArray(new Animal[0])) {         // Every animal have to move
+            for (Animal animal : map.getAnimalsList().toArray(new Animal[0])) {         // Every animal have to move
                 animal.moveAccordingGenotype();
             }
 
@@ -110,16 +110,23 @@ public class SimulationEngine implements IEngine{
             // 3. Deleting dead animals and update "multi animals" positions
             // 4. Foreach "multi animals" positions make small animal
 
-            System.out.println(map.getAnimalsHashMap().keySet());
-            Animal[] animalsSet = map.getAnimalsHashMap().values().toArray(new Animal[0]);
-            System.out.println(map.getAnimalsHashMap().values());
+
+            for(Animal animal : map.getAnimalsList())
+                System.out.print(animal.getPosition());
+            System.out.println();
+
+            Animal[] animalsSet = map.getAnimalsList().toArray(new Animal[0]);
+
+            for(Animal animal : map.getAnimalsList())
+                System.out.print(animal.getPosition());
+            System.out.println();
 
             System.out.println("Day: " + day);
             day++;
             System.out.println(map.toString(map));
 
             // 6. Placing grass
-            map.placeGrass(2);
+            map.addDailyGrass();
             System.out.println(map.toString(map));
         }
 

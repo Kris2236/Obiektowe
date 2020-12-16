@@ -94,7 +94,7 @@ public class Animal implements ISubject {
         Vector2d pos = this.position.add(this.direction.toUnitVector());
 
         if(!map.canMoveTo(pos)){
-            pos = map.wrapEdge(this.position, pos, direction);
+            pos = map.wrapEdge(this, pos, direction);
             // Check if the wrapped position is occupied by another animal and make small animals ...
         }
 
@@ -103,7 +103,7 @@ public class Animal implements ISubject {
         System.out.println("Animal pos: " + pos + "\tEnergy: " + this.lifeEnergy);
 
         if(this.lifeEnergy <= 0 )       // Do it in simulation engine
-            this.map.animalDied(this.position);
+            this.map.animalDied(this);
     }
 
     @Override

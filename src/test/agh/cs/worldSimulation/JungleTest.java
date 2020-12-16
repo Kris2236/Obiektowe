@@ -342,7 +342,7 @@ public class JungleTest {
     }
 
     @Test
-    void JungleAnimalRoundTest() {
+    void JungleAnimalPassingTest() {
         Vector2d v1 = new Vector2d(1,1);
         Vector2d v2 = new Vector2d(3,1);
 

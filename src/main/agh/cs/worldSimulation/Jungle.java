@@ -6,27 +6,31 @@ import java.util.*;
 public class Jungle extends AbstractWorldMap implements IWorldMap {
     private final Vector2d mapBoundLower = new Vector2d(0,0);
     private final Vector2d mapBoundUpper;
-
-    private final HashMap<Vector2d, Grass> grassPositionMap = new HashMap<>();
-    //private final HashMap<Vector2d, Animal> animalsPositionMap = new HashMap<>();
-    private final ArrayList<Animal> animalsPositionList = new ArrayList<>();
-    private final ArrayList<Animal> deadAnimalsList = new ArrayList<>();
-
     private Vector2d jungleBoundLower;
     private Vector2d jungleBoundUpper;
     private final double jungleRatio;
-    private final Vector2d vX = new Vector2d(1,0);
-    private final Vector2d vY = new Vector2d(0,1);
-    private int plantEnergy = 0;
+    private GrassEngine grassEngine;
+
+    // inna klasa ma się tym zajmować
+    private final ArrayList<Animal> animalsList = new ArrayList<>();
+    private final ArrayList<Animal> deadAnimalsList = new ArrayList<>();
 
 
     public Jungle(int width, int height, int initialNumberOfGrass, double jungleRatio, int plantEnergy) {
         this.mapBoundUpper = new Vector2d(width-1,height-1);
         this.jungleRatio = jungleRatio;
-        this.plantEnergy = plantEnergy;
+        //this.plantEnergy = plantEnergy;
         createJungle(this.jungleRatio);
-        placeGrass(initialNumberOfGrass);
+
+        this.grassEngine = new GrassEngine(plantEnergy, this);
+
+        grassEngine.placeGrass(initialNumberOfGrass);
     }
+
+    public Vector2d getMapBoundLower() { return  this.mapBoundLower; }
+    public Vector2d getMapBoundUpper() { return  this.mapBoundUpper; }
+    public Vector2d getJungleBoundLower() { return  this.mapBoundLower; }
+    public Vector2d getJungleBoundUpper() { return  this.mapBoundUpper; }
 
     private void createJungle(double jungleRatio) {
         if(jungleRatio <= 0 || jungleRatio > 1)
@@ -54,6 +58,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         }
     }
 
+    // to mapVisualizer
     private void printJungle(){
         for(int y=0; y<=mapBoundUpper.y; y++){
             for(int x=0; x<=mapBoundUpper.x; x++){
@@ -66,87 +71,17 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         }
     }
 
-    public void placeGrass(int numberOfGrassToPlace) {
-        placeGrassInStep(numberOfGrassToPlace/2, mapBoundLower, mapBoundUpper);
-
-        if(numberOfGrassToPlace % 2 == 0)
-            placeGrassBetween(numberOfGrassToPlace/2, jungleBoundLower, jungleBoundUpper);
-        else
-            placeGrassBetween(numberOfGrassToPlace/2 + 1, jungleBoundLower, jungleBoundUpper);
+    // new class GrassEngine
+    public void addDailyGrass() {
+        grassEngine.placeGrass(2);
     }
 
-    private void placeGrassBetween(int numberOfGrassToPlace,Vector2d boundFieldLower ,Vector2d boundFieldUpper) {
-        int counterFailedTrial = 0;
-        Grass newGrass;
-
-        for(int i=0; i<numberOfGrassToPlace; i++) {
-            boolean uniquePosition = true;
-            newGrass = new Grass(randomVector2dBetween(boundFieldLower, boundFieldUpper), this.plantEnergy);
-
-            if(counterFailedTrial > 2 * numberOfGrassToPlace) {       // Check if are there any empty positions !!!! you can check how many position in field are empty
-                Vector2d[] emptyPositions = emptyPositionsBetween(boundFieldLower, boundFieldUpper);
-                if(emptyPositions.length == 0)
-                    return;                     // stop function - all positions are occupied
-                else
-                    newGrass = new Grass(emptyPositions[randomNumberBetween(0, emptyPositions.length-1)]);     // Choose random empty position
-
-            } else if(objectAt(newGrass.getPosition()) instanceof Animal) {
-                i--;
-                uniquePosition = false;
-                counterFailedTrial++;
-            }
-
-            if(uniquePosition)
-                addGrass(newGrass);
-        }
+    public int getEnergyFrom(Vector2d position) {
+        return grassEngine.getEnergyFrom(position);
     }
+    // ----
 
-    private Vector2d[] emptyPositionsBetween(Vector2d boundFieldLower, Vector2d boundFieldUpper) {
-        List<Vector2d> emptyPositions = new ArrayList<>();
-
-        for(int x=boundFieldLower.x; x<=boundFieldUpper.x; x++) {
-            for(int y=boundFieldLower.y; y<=boundFieldUpper.y; y++) {
-                if(!isOccupied(new Vector2d(x,y)))
-                    emptyPositions.add(new Vector2d(x,y));
-            }
-        }
-
-        return emptyPositions.toArray(new Vector2d[0]);
-    }
-
-    private void addGrass(Grass newGrass) {
-        grassPositionMap.put(newGrass.getPosition(), newGrass);
-        newGrass.register(this);
-        positionGrassAdd(newGrass.getPosition());
-    }
-
-    private void removeGrass(Vector2d position) {
-        grassPositionMap.get(position).unregister(this);
-        grassPositionMap.remove(position);
-        positionGrassDied(position);
-    }
-
-    private void placeGrassInStep(int numberOfGrassToPlace,Vector2d boundFieldLower ,Vector2d boundFieldUpper) {
-        Grass newGrass;
-        int counterFailedTrial = 0;
-
-        for(int i=0; i<numberOfGrassToPlace; i++) {
-            newGrass = new Grass(randomVector2dBetween(boundFieldLower, boundFieldUpper), this.plantEnergy);
-
-            // Do zoptymalizowania!!!
-            while(objectAt(newGrass.getPosition()) instanceof Animal || !isInStep(newGrass.getPosition())){
-                counterFailedTrial++;
-                newGrass = new Grass(randomVector2dBetween(boundFieldLower, boundFieldUpper));
-            }
-
-            // Będzie warotść informująca ile procent mapt jest zajęte !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if(counterFailedTrial > 10*numberOfGrassToPlace)    // jeśli 100% mapy jest zajęte
-                return;
-
-            addGrass(newGrass);
-        }
-    }
-
+    // klasa randomGenerator
     private Vector2d randomVector2dBetween(Vector2d boundFieldLower, Vector2d boundFieldUpper) {
         SecureRandom generator = new SecureRandom();
         int x = generator.nextInt(boundFieldUpper.x - boundFieldLower.x + 1) + boundFieldLower.x;
@@ -159,6 +94,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         return generator.nextInt(max - min + 1) + min;
     }
 
+    // new class Genotype
     private int[] generateRandomGenotype(int genotypeLength) {
         int[] randomGenotype = new int[genotypeLength];
         for(int i=0; i<genotypeLength; i++)
@@ -167,6 +103,8 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         return randomGenotype;
     }
 
+
+    // new Class AnimalsEngine
     @Override
     public ArrayList<Animal> generateAnimals(int numberOfAnimalsToAdd, int startEnergy, int genptypeLength, int moveEnergy) {
         int counterFailedTrial = 0;
@@ -186,15 +124,15 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
             Animal newAnimal = new Animal(this, randomVector2dBetween(boundFieldLower, boundFieldUpper), startEnergy, generateRandomGenotype(genptypeLength), moveEnergy);
 
-            if(animalsPositionMap.containsKey(newAnimal.getPosition())) {        // Check if new random animal position equals other existing
+            if(objectAt(newAnimal.getPosition()) instanceof Animal) {        // Check if new random animal position equals other existing
                 i--;
                 counterFailedTrial++;
                 uniquePosition = false;
             }
 
-            if(grassPositionMap.containsKey(newAnimal.getPosition())) {      // Move grass if is collision
-                placeGrassBetween(1, mapBoundLower, mapBoundUpper);        // Add grass in all field because animals are adding in savanna
-                removeGrass(newAnimal.getPosition());
+            if(grassEngine.getGrassMap().containsKey(newAnimal.getPosition())) {      // Move grass if is collision
+                grassEngine.placeGrassBetween(1, mapBoundLower, mapBoundUpper);        // Add grass in all field because animals are adding in savanna
+                grassEngine.removeGrass(newAnimal.getPosition(), this);
             }
 
             if(uniquePosition) {
@@ -205,6 +143,11 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
         return animalsList;
     }
+    // -----
+
+    // to map direction
+    private final Vector2d vX = new Vector2d(1,0);
+    private final Vector2d vY = new Vector2d(0,1);
 
     private Vector2d northWrap(Vector2d position) {
         if(canMoveTo(position.add(vY)))
@@ -254,82 +197,40 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         return westWrap(northWrap(position));
     }
 
-    public Vector2d wrapEdge(Vector2d oldPosition, Vector2d position, MoveDirection direction) {
-        Animal animal = animalsPositionMap.get(oldPosition);
+    public Vector2d wrapEdge(Animal animal, Vector2d position, MoveDirection direction) {
+        //Animal animal = animalsPositionMap.get(oldPosition);
+        // Animal animal = animalsList.get(getAnimalId(animal));
 
+        // tounitVector() !!!
         Vector2d wrappedPosition = switch (animal.toString()) {
             case "^" -> northWrap(position);
-            case "1" -> northEastWrap(oldPosition);
+            case "1" -> northEastWrap(animal.getPosition());
             case ">" -> eastWrap(position);
-            case "3" -> southEastWrap(oldPosition);
+            case "3" -> southEastWrap(animal.getPosition());
             case "v" -> southWrap(position);
-            case "5" -> southWestWrap(oldPosition);
+            case "5" -> southWestWrap(animal.getPosition());
             case "<" -> westWrap(position);
-            case "7" -> northWestWrap(oldPosition);
+            case "7" -> northWestWrap(animal.getPosition());
             default -> null;
         };
 
         return wrappedPosition;
     }
 
-    public int getEnergyFrom(Vector2d position) {
-        int grassEnergy = 0;
-        if(objectAt(position) instanceof Grass) {
-            grassEnergy = grassPositionMap.get(position).getEnergy();
-            grassPositionMap.remove(position);
-            positionGrassDied(position);
+    private int getAnimalId(Animal animal) throws IllegalArgumentException {
+        for(int i=0; i<animalsList.size(); i++) {
+            if(animalsList.get(i).equals(animal))    // czy ok???
+                return i;
         }
 
-        return grassEnergy;
-    }
-
-    private boolean isAnimalAlone(Vector2d position) {
-        return animalsOnPosition(position).length == 1;
-    }
-
-    private Animal[] animalsOnPosition(Vector2d positnion) {
-        ArrayList<Animal> animalsOnPosition = new ArrayList<>();
-        ArrayList<Integer> animalsOnPositionId = new ArrayList<>();
-
-        for (Animal animal : animalsPositionList) {
-            if (animal.getPosition().equals(positnion))
-                animalsOnPosition.add(animal);
-        }
-
-        return animalsOnPosition.toArray(new Animal[0]);
-    }
-
-    private Animal[] getAnimalsToDelete(Vector2d position) {
-        Animal[] animalsOnPosition = animalsOnPosition(position);
-        ArrayList<Animal> animalsToDelete = new ArrayList<>();
-
-        for(Animal animal : animalsOnPosition) {
-            if (animal.getPosition().equals(position) && animal.lifeEnergy <=0) {
-                animalsToDelete.add(animal);
-            }
-        }
-
-        return animalsToDelete.toArray(new Animal[0]);
+        throw new IllegalArgumentException(animal + ": animal is not in animalsList. \n");
     }
 
     @Override
-    public void animalDied(Vector2d positnion) {
-        Animal[] deadAniamls = getAnimalsToDelete(positnion);
-
-        if (deadAniamls.length == 0)
-            return;
-
-        // move animal to diedAnimalList
-        for(Animal animal : deadAniamls) {
-            animalsPositionList.get();
-        }
-
-        // unregister animal
-
-
-        animalsPositionMap.get(positnion).unregister(this);
-        animalsPositionMap.remove(positnion);
-        System.out.println("Animal died: " + positnion);
+    public void animalDied(Animal animal) {
+        animalsList.get(getAnimalId(animal)).unregister(this);
+        deadAnimalsList.add(animalsList.get(getAnimalId(animal)));       // add to dead animal list
+        animalsList.remove(animal);
     }
 
     private boolean isInMap(Vector2d position) {
@@ -340,7 +241,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         return position.follows(jungleBoundLower) && position.precedes(jungleBoundUpper);
     }
 
-    private boolean isInStep(Vector2d position) {
+    public boolean isInStep(Vector2d position) {
         return isInMap(position) && !isInJungle(position);
     }
 
@@ -365,25 +266,20 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     @Override
     public boolean isOccupied(Vector2d position) {
         boolean result = super.isOccupied(position);        // check animals in AbstractWorldMap
-
-        if(result) {
+        if(result)
             return true;
-        }
 
-        return grassPositionMap.containsKey(position);      // check grass
+        return grassEngine.getGrassMap().containsKey(position);      // check grass
     }
 
     @Override
     public Object objectAt(Vector2d position) {
         Object object = super.objectAt(position);        // return Animal object as first - display priority in AbstractWorldMap
-
-        if(object != null) {
+        if(object != null)
             return object;
-        }
 
-        if(grassPositionMap.containsKey(position)) {        // return Grass object
-            return grassPositionMap.get(position);
-        }
+        if(grassEngine.getGrassMap().containsKey(position))        // return Grass object
+            return grassEngine.getGrassMap().get(position);
 
         return null;        // return no object
     }
@@ -398,10 +294,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     public Vector2d upperRight() { return mapBoundUpper; }
 
     @Override
-    public HashMap<Vector2d,Animal> getAnimalsHashMap() { return this.animalsPositionMap; }
-
-    @Override
-    public ArrayList<Animal> getAnimalsList() { return this.animalsPositionList; }
+    public ArrayList<Animal> getAnimalsList() { return this.animalsList; }
 
     @Override
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {

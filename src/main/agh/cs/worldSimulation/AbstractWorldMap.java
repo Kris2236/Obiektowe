@@ -27,7 +27,7 @@ abstract public class AbstractWorldMap extends MapBoundary {
 
     public boolean place(Animal animal) throws IllegalArgumentException {
         if(canMoveTo(animal.getPosition())){
-            getAnimalsHashMap().put(animal.getPosition(), animal);
+            getAnimalsList().add(animal);
             // animal list
             animal.direction = generateRandomDirection();
             animal.register(this);
@@ -43,9 +43,11 @@ abstract public class AbstractWorldMap extends MapBoundary {
     }
 
     public Object objectAt(Vector2d position) {
-        if(getAnimalsHashMap().containsKey(position)) {
-            return getAnimalsHashMap().get(position);           // return Animal object as first - display priority
+        for(Animal animal : getAnimalsList()) {
+            if (animal.getPosition().equals(position))
+                return animal;
         }
+
         return null;
     }
 
@@ -62,21 +64,16 @@ abstract public class AbstractWorldMap extends MapBoundary {
         return getUpperRight();
     }
 
-    public abstract HashMap<Vector2d, Animal> getAnimalsHashMap();
+    // public abstract HashMap<Vector2d, Animal> getAnimalsHashMap();
 
     public abstract ArrayList<Animal> getAnimalsList();
 
-    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
-        final HashMap<Vector2d, Animal> animalsMap = getAnimalsHashMap();
-        Animal animal = animalsMap.get(oldPosition);
-        Aniaml[] animalFromList = getAnimalsList();
-
-        // update in list
-        if(canDeleteFromMap(oldPosition))
-            animalsMap.remove(oldPosition);
-
-
-        animalsMap.put(newPosition, animal);
-        super.positionChanged(oldPosition, newPosition);            // Notify changes in MapBoundary
+    public void positionChanged(Animal animal, Vector2d newPosition) {   // przekaż animal
+        // final HashMap<Vector2d, Animal> animalsMap = getAnimalsHashMap();
+        // Animal animal = animalsMap.get(oldPosition);
+        // ArrayList<Animal> animalsList = getAnimalsList();
+        System.out.println("position changed");
+        // animalsMap.put(newPosition, animal);
+        // super.positionChanged(oldPosition, newPosition);            // Notify changes in MapBoundary
     }
 }
