@@ -30,7 +30,6 @@ public class MapBoundary implements IPositionChangeObserver, ILifeCycleObserver 
         }
     });
 
-    @Override
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
         updateAnimal(oldPosition,newPosition);
     }
@@ -77,5 +76,10 @@ public class MapBoundary implements IPositionChangeObserver, ILifeCycleObserver 
     public void positionGrassChanged(Vector2d oldPosition, Vector2d newPosition) {
         positionGrassDied(oldPosition);
         positionGrassAdd(newPosition);
+    }
+
+    @Override
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition, Animal animal) {
+
     }
 }

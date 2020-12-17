@@ -3,6 +3,10 @@ package agh.cs.worldSimulation;
 public enum MapDirection {
     NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST, NullPointerException;
 
+//    public static MapDirection getRandomDirection(){
+//
+//    }
+
     public String toString(){
         switch(this) {
             case NORTH: return "N (Północ)";
@@ -32,7 +36,6 @@ public enum MapDirection {
             default:
                 System.out.println("Error: next in MapDirection.java");
                 return NullPointerException;
-
         }
     }
 
@@ -53,32 +56,18 @@ public enum MapDirection {
     }
 
     public Vector2d toUnitVector(){
-        int x = 0, y = 0;
 
-        if(this.equals(MapDirection.NORTH))
-            y = 1;
-        else if(this.equals(MapDirection.NORTH_EAST)) {
-            x = 1;
-            y = 1;
-        } else if(this.equals(MapDirection.WEST))
-            x = -1;
-        else if(this.equals(MapDirection.SOUTH_EAST)) {
-            x = 1;
-            y = -1;
-        } else if(this.equals(MapDirection.SOUTH))
-            y = -1;
-        else if(this.equals(MapDirection.SOUTH_WEST)) {
-            x = -1;
-            y = -1;
-        } else if(this.equals(MapDirection.EAST))
-            x=1;
-        else if(this.equals(MapDirection.NORTH_WEST)) {
-            x = -1;
-            y = 1;
+        switch(this) {
+            case NORTH: return new Vector2d(0,1);
+            case NORTH_EAST: return new Vector2d(1,1);
+            case EAST: return new Vector2d(1,0);
+            case SOUTH_EAST: return new Vector2d(1,-1);
+            case SOUTH: return new Vector2d(0,-1);
+            case SOUTH_WEST: return new Vector2d(-1,-1);
+            case WEST: return new Vector2d(-1,0);
+            case NORTH_WEST: return new Vector2d(-1,1);
+            default:
+                throw new IllegalArgumentException("Illegal direction in toUnitVector in MapDirection.java");
         }
-        else
-            System.out.println("Error: toUnitVector in MapDirection.java");
-
-        return new Vector2d(x, y);
     }
 }

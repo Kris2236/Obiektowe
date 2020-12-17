@@ -3,8 +3,8 @@ package agh.cs.worldSimulation;
 import java.util.ArrayList;
 
 public class Grass implements ISubject {
+    private final ArrayList<IPositionChangeObserver> observerList = new ArrayList<>();  // ma być ILifeCycleObserver
     private final Vector2d position;
-    private final ArrayList<IPositionChangeObserver> observerList = new ArrayList<>();
     private int plantEnergy;        // In future we can for each plant generate random energy
 
     Grass(Vector2d position){
@@ -20,7 +20,7 @@ public class Grass implements ISubject {
         return this.position;
     }
 
-    public int getEnergy() {return this.plantEnergy; }
+    public int getEnergy() {return this.plantEnergy; }  // ma informować obserwatorów o usunięciu obiektu + zwracać energię
 
     public String toString(){
         return "*";
@@ -40,7 +40,7 @@ public class Grass implements ISubject {
     @Override
     public void notifyObservers(Vector2d oldPosition, Vector2d newPosition){
         for(IPositionChangeObserver o : observerList){
-            o.positionChanged(oldPosition, newPosition);
+            //o.positionChanged(oldPosition, newPosition, this);
         }
     }
 }

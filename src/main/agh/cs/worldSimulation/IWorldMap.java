@@ -2,6 +2,7 @@ package agh.cs.worldSimulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -52,12 +53,12 @@ public interface IWorldMap {
 
     Object toString(IWorldMap map);
 
-    Vector2d wrapEdge(Animal animal, Vector2d pos, MoveDirection direction);
+    // Vector2d wrapEdge(Animal animal, Vector2d pos, MoveDirection direction);
 
     //void placeGrass(int numberOfGrassToPlace);
     //int getEnergyFrom(Vector2d pos);
 
-    ArrayList<Animal> generateAnimals(int numberOfAnimals, int startEnergy, int genotypeLength, int moveEnergy);
+    //ArrayList<Animal> generateAnimals(int numberOfAnimals, int startEnergy, int genotypeLength, int moveEnergy);
 
     public void addDailyGrass();
 
@@ -67,12 +68,12 @@ public interface IWorldMap {
 
     ArrayList<Animal> getAnimalsList();
 
-    int randomNumberBetween(int min, int max);
+    Vector2d upperRight();
+    Vector2d lowerLeft();
     int getEnergyFrom(Vector2d position);
     boolean isInStep(Vector2d position);
-    Vector2d getMapBoundLower();
-    Vector2d getMapBoundUpper();
-    Vector2d getJungleBoundLower();
-    Vector2d getJungleBoundUpper();
-
+    ArrayList<Vector2d> getEmptyJunglePositions();
+    ArrayList<Vector2d> getEmptyStepPositions();
+    Vector2d mapWrap(Animal animal, Vector2d position);
+    void reproduce(Vector2d position);
 }

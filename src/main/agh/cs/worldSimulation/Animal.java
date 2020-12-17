@@ -1,15 +1,19 @@
 package agh.cs.worldSimulation;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
-public class Animal implements ISubject {
+public class Animal implements ISubject,Comparable {
     private final ArrayList<IPositionChangeObserver> observerList = new ArrayList<>();
+    Set<Animal> children = new HashSet<>();
+    int birthDay;
+    int deathDay = 0;
     protected MapDirection direction;
     protected Vector2d position;
     protected IWorldMap map;
     protected int lifeEnergy = 1000000000;
-    protected int[] genotype;
+    protected Genotype genotype;
     private int moveEnergy = 0;
 
     public Animal(IWorldMap map){
@@ -21,13 +25,11 @@ public class Animal implements ISubject {
         this.position = initialPosition;
     }
 
-    public Animal(IWorldMap map, Vector2d initialPosition, int lifeEnergy, int[] genotype, int moveEnergy){
+    public Animal(IWorldMap map, Vector2d initialPosition, int lifeEnergy, Genotype genotype, int moveEnergy){
         this.map = map;
         this.position = initialPosition;
         this.lifeEnergy = lifeEnergy;
         this.moveEnergy = moveEnergy;
-        if(genotype.length != 32)
-            throw new IllegalArgumentException(genotype.length + " is not legal genotype length. Genotype length must be 32 in Animal.\n");
         this.genotype = genotype;
     }
 
@@ -50,8 +52,7 @@ public class Animal implements ISubject {
     }
 
     public void moveAccordingGenotype() {
-        MoveDirection direction = parseGeneDirection(genotype[this.map.randomNumberBetween(0,genotype.length-1)]);
-        move(direction);
+        move(parseGeneDirection(genotype.getGeneAccordingGenotype()));
     }
 
     private MoveDirection parseGeneDirection(int gene) {
@@ -83,19 +84,15 @@ public class Animal implements ISubject {
         makeMove(direction);
     }
 
-    private void updatePosition(Vector2d position) {
-        this.lifeEnergy = this.lifeEnergy - moveEnergy + map.getEnergyFrom(position);
-        notifyObservers(this.position, position);
-        this.position = position;
-    }
-
     private void makeMove(MoveDirection direction){
-
         Vector2d pos = this.position.add(this.direction.toUnitVector());
+        boolean makeSmallAimal = false;
+
+        if(map.objectAt(pos) instanceof Animal)   // Check if the wrapped position is occupied by another animal and make small animals ...
+            makeSmallAimal = true;
 
         if(!map.canMoveTo(pos)){
-            pos = map.wrapEdge(this, pos, direction);
-            // Check if the wrapped position is occupied by another animal and make small animals ...
+            pos = map.mapWrap(this, pos);
         }
 
         updatePosition(pos);
@@ -104,6 +101,17 @@ public class Animal implements ISubject {
 
         if(this.lifeEnergy <= 0 )       // Do it in simulation engine
             this.map.animalDied(this);
+
+        if(makeSmallAimal) {
+            System.out.println("REPRODUCE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            map.reproduce(position);        // reproduce
+        }
+    }
+
+    private void updatePosition(Vector2d position) {
+        this.lifeEnergy = this.lifeEnergy - moveEnergy + map.getEnergyFrom(position);
+        notifyObservers(this.position, position);
+        this.position = position;
     }
 
     @Override
@@ -119,7 +127,12 @@ public class Animal implements ISubject {
     @Override
     public void notifyObservers(Vector2d oldPosition, Vector2d newPosition){
         for(IPositionChangeObserver o : observerList){
-            o.positionChanged(oldPosition, newPosition);
+            o.positionChanged(oldPosition, newPosition, this);
         }
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.lifeEnergy;
     }
 }

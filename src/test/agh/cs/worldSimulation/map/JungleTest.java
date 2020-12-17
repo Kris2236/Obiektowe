@@ -1,5 +1,6 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.map;
 
+import agh.cs.worldSimulation.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -2,8 +2,6 @@ package agh.cs.worldSimulation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 public class SimulationEngine implements IEngine{
     private final ArrayList<MoveDirection> commands = new ArrayList<>();
@@ -12,7 +10,7 @@ public class SimulationEngine implements IEngine{
     protected IWorldMap map;
     protected int moveEnergy = 0;
     protected int plantEnergy = 0;
-
+    protected AnimalEngine animalEngine;
 
     public SimulationEngine(MoveDirection[] commands, IWorldMap map, Vector2d[] positions, MapDirection[] moveDirections) {
         this.commands.addAll(Arrays.asList(commands));          // Add animals move commands
@@ -34,7 +32,8 @@ public class SimulationEngine implements IEngine{
         this.moveEnergy = moveEnergy;
         this.plantEnergy = plantEnergy;
 
-        animals = map.generateAnimals(numberOfAnimals, startEnergy, 32, moveEnergy);
+        this.animalEngine = new AnimalEngine(map, startEnergy, moveEnergy);
+        animalEngine.generateAnimals(numberOfAnimals);
     }
 
     private void addAnimalsToMap() {
@@ -94,32 +93,28 @@ public class SimulationEngine implements IEngine{
         int day = 0;
 
         while (day < maxDay){
-            System.out.println("Aniamls: " + animals.size() + " " + map.getAnimalsList().size());
+            //System.out.println("Aniamls: " + animals.size() + " " + map.getAnimalsList().size());
 
             if(map.getAnimalsList().isEmpty()){
                 System.out.println("Day: " + day + ". All animals died. PRINT STATICTICS");
                 return;
             }
 
-            // 1. Making movements and note the "grass + animal" and "multi animals" positions
+            // 1. Making movements and (note the "grass + animal" and "multi animals" positions) imidietly reproduce animals and eat grass
             for (Animal animal : map.getAnimalsList().toArray(new Animal[0])) {         // Every animal have to move
                 animal.moveAccordingGenotype();
             }
 
             // 2. Foreach "grass + animal" positions assign plantEnergy (if there are 2 or more of the strongest animals with the same lifeEnergy in one position, split the energy)
+            //      - optional sort animals by energy
             // 3. Deleting dead animals and update "multi animals" positions
             // 4. Foreach "multi animals" positions make small animal
 
 
-            for(Animal animal : map.getAnimalsList())
-                System.out.print(animal.getPosition());
-            System.out.println();
-
-            Animal[] animalsSet = map.getAnimalsList().toArray(new Animal[0]);
-
-            for(Animal animal : map.getAnimalsList())
-                System.out.print(animal.getPosition());
-            System.out.println();
+            //for(Animal animal : map.getAnimalsList())
+            //    System.out.print(animal.getPosition());
+            //System.out.println();
+            //Animal[] animalsSet = map.getAnimalsList().toArray(new Animal[0]);
 
             System.out.println("Day: " + day);
             day++;
@@ -131,5 +126,6 @@ public class SimulationEngine implements IEngine{
         }
 
         System.out.println(map.toString(map));
+        System.out.println("Sukces! Finito zakończono podaną liczbę dni");
     }
 }

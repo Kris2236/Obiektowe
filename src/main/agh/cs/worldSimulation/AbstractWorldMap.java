@@ -27,8 +27,7 @@ abstract public class AbstractWorldMap extends MapBoundary {
 
     public boolean place(Animal animal) throws IllegalArgumentException {
         if(canMoveTo(animal.getPosition())){
-            getAnimalsList().add(animal);
-            // animal list
+            getAnimalsList().add(animal);       //
             animal.direction = generateRandomDirection();
             animal.register(this);
             animal.notifyObservers(animal.getPosition(), animal.getPosition());
@@ -63,8 +62,6 @@ abstract public class AbstractWorldMap extends MapBoundary {
     public  Vector2d upperRight(){
         return getUpperRight();
     }
-
-    // public abstract HashMap<Vector2d, Animal> getAnimalsHashMap();
 
     public abstract ArrayList<Animal> getAnimalsList();
 
