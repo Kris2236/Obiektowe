@@ -1,10 +1,12 @@
 package agh.cs.worldSimulation;
 
+import agh.cs.worldSimulation.data.Vector2d;
+
 /**
  * The interface responsible for managing subjects in observer pattern.
  * Class implementing should contain a lis of observers.
  */
-public interface ISubject {
+public interface IPositionChangeSubject {
 
     /**
      * Register new observer in lis of observers.

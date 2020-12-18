@@ -1,5 +1,7 @@
 package agh.cs.worldSimulation;
 
+import agh.cs.worldSimulation.data.Vector2d;
+
 import java.util.*;
 
 public class Jungle extends AbstractWorldMap implements IWorldMap {
@@ -12,14 +14,23 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     private final MapWrap mapWrap;
     private AnimalEngine animalEngine;
 
-    public Jungle(int width, int height, int initialNumberOfGrass, double jungleRatio, int plantEnergy) {
+    public Jungle() {
+        this.mapBoundUpper = null;
+        this.jungleRatio = 0;
+        this.grassEngine = null;
+        this.mapWrap = null;
+        this.animalEngine =  null;
+    }
+
+    public Jungle(int width, int height, int initialNumberOfGrass, double jungleRatio, int plantEnergy, AnimalEngine animalEngine) {
         this.mapBoundUpper = new Vector2d(width-1,height-1);
         this.jungleRatio = jungleRatio;
         createJungle(this.jungleRatio);
         this.grassEngine = new GrassEngine(plantEnergy, this);
         grassEngine.placeGrass(initialNumberOfGrass);
         this.mapWrap = new MapWrap(this);
-        //this.animalEngine = new AnimalEngine(this);
+        this.animalEngine =  animalEngine;
+        this.animalEngine.map = this;
     }
 
     private void createJungle(double jungleRatio) {
@@ -49,8 +60,8 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     }
 
     // do zoptymalizowania
-    public ArrayList<Vector2d> getEmptyPositions() {
-        ArrayList<Vector2d> emptyPositions = new ArrayList<>();
+    public LinkedList<Vector2d> getEmptyPositions() {
+        LinkedList<Vector2d> emptyPositions = new LinkedList<>();
         for (int x=mapBoundLower.x; x<=mapBoundUpper.x; x++) {
             for (int y=mapBoundLower.y; y<=mapBoundUpper.y; y++) {
                 if (!isOccupied(new Vector2d(x, y)))
@@ -60,9 +71,9 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         return emptyPositions;
     }
 
-    public ArrayList<Vector2d> getEmptyJunglePositions() {
-        ArrayList<Vector2d> emptyPositions = getEmptyPositions();
-        ArrayList<Vector2d> emptyJunglePositions = new ArrayList<>();
+    public LinkedList<Vector2d> getEmptyJunglePositions() {
+        LinkedList<Vector2d> emptyPositions = getEmptyPositions();
+        LinkedList<Vector2d> emptyJunglePositions = new LinkedList<>();
         for (Vector2d position : emptyPositions) {
             if (isInJungle(position))
                 emptyJunglePositions.add(position);
@@ -70,9 +81,9 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         return emptyJunglePositions;
     }
 
-    public ArrayList<Vector2d> getEmptyStepPositions() {
-        ArrayList<Vector2d> emptyPositions = getEmptyPositions();
-        ArrayList<Vector2d> emptyStepPositions = new ArrayList<>();
+    public LinkedList<Vector2d> getEmptyStepPositions() {
+        LinkedList<Vector2d> emptyPositions = getEmptyPositions();
+        LinkedList<Vector2d> emptyStepPositions = new LinkedList<>();
         for (Vector2d position : emptyPositions) {
             if (isInStep(position))
                 emptyStepPositions.add(position);
@@ -87,6 +98,10 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
     public int getEnergyFrom(Vector2d position) {
         return grassEngine.getEnergyFrom(position);
+    }
+
+    public int getGrassMapSize() {
+        return grassEngine.getGrassMap().size();
     }
 
     //MapWrap
@@ -107,11 +122,16 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     }
 
     // AnimalEngine
-    public ArrayList<Animal> getAnimalsList() {     // get animalEngine from Simuation engine!!!!!
+    public LinkedList<Animal> getAnimalsList() {     // get animalEngine from Simuation engine!!!!!
         if (this.animalEngine == null) {
             this.animalEngine = new AnimalEngine(this, 100, 10);    // To delete
         }
         return this.animalEngine.getAnimalsList();
+    }
+
+    @Override
+    public LinkedList<Animal> getDeadAnimalsList() {
+        return  this.animalEngine.getDeadAnimalsList();
     }
 
     public void reproduce(Vector2d position) {

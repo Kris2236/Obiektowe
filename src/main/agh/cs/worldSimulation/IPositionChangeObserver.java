@@ -1,5 +1,7 @@
 package agh.cs.worldSimulation;
 
+import agh.cs.worldSimulation.data.Vector2d;
+
 /**
  * The interface responsible for managing observers positions in observer pattern.
  */

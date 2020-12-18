@@ -1,9 +1,8 @@
 package agh.cs.worldSimulation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import agh.cs.worldSimulation.data.Vector2d;
+
+import java.util.LinkedList;
 
 /**
  * The interface responsible for interacting with the map of the world.
@@ -58,7 +57,7 @@ public interface IWorldMap {
     //void placeGrass(int numberOfGrassToPlace);
     //int getEnergyFrom(Vector2d pos);
 
-    //ArrayList<Animal> generateAnimals(int numberOfAnimals, int startEnergy, int genotypeLength, int moveEnergy);
+    //LinkedList<Animal> generateAnimals(int numberOfAnimals, int startEnergy, int genotypeLength, int moveEnergy);
 
     public void addDailyGrass();
 
@@ -66,14 +65,17 @@ public interface IWorldMap {
 
     //HashMap<Vector2d,Animal> getAnimalsHashMap();
 
-    ArrayList<Animal> getAnimalsList();
+    LinkedList<Animal> getAnimalsList();
+
+    LinkedList<Animal> getDeadAnimalsList();
 
     Vector2d upperRight();
     Vector2d lowerLeft();
     int getEnergyFrom(Vector2d position);
     boolean isInStep(Vector2d position);
-    ArrayList<Vector2d> getEmptyJunglePositions();
-    ArrayList<Vector2d> getEmptyStepPositions();
+    LinkedList<Vector2d> getEmptyJunglePositions();
+    LinkedList<Vector2d> getEmptyStepPositions();
     Vector2d mapWrap(Animal animal, Vector2d position);
     void reproduce(Vector2d position);
+    int getGrassMapSize();
 }

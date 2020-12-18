@@ -1,8 +1,10 @@
 package agh.cs.worldSimulation;
 
+import agh.cs.worldSimulation.data.Vector2d;
+
 import java.util.ArrayList;
 
-public class Grass implements ISubject {
+public class Grass implements IPositionChangeSubject {
     private final ArrayList<IPositionChangeObserver> observerList = new ArrayList<>();  // ma być ILifeCycleObserver
     private final Vector2d position;
     private int plantEnergy;        // In future we can for each plant generate random energy

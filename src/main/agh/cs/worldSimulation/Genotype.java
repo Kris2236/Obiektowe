@@ -53,9 +53,7 @@ public class Genotype {
         }
 
         genotype.addAll(childGenotype);
-        for (int i = 0; i < numberOfGeneTypes; i++) {
-            numberOfGeneType[i] = childNumberOfGeneType[i];
-        }
+        if (numberOfGeneTypes >= 0) System.arraycopy(childNumberOfGeneType, 0, numberOfGeneType, 0, numberOfGeneTypes);
     }
 
     private List<Integer> connectGenotypes(Genotype genotype1, Genotype genotype2) {
@@ -64,10 +62,6 @@ public class Genotype {
         int splitPoint1 = randomNumberBetween(1, genomeSize-2);                 // First parents genotypes split point
         int splitPoint2 = randomNumberBetween(splitPoint1 + 1, genomeSize-1);   // Second parents genotypes split point
 
-        System.out.println();
-        System.out.println(genotype1.genotype);
-        System.out.println(genotype2.genotype);
-
         int genotypePart1 = randomNumberBetween(1,3);       // Choose random first genotype part
 
         int genotypePart2 = randomNumberBetween(1,3);       // Choose random second genotype part
@@ -75,9 +69,7 @@ public class Genotype {
             genotypePart2 = randomNumberBetween(1,3);
 
         childGenotype.addAll(getPartGenotype(genotypePart1, splitPoint1, splitPoint2, genotype1));    // random part from first genotype
-        System.out.println(childGenotype);
         childGenotype.addAll(getPartGenotype(genotypePart2, splitPoint1, splitPoint2, genotype2));    // random part from second genotype
-        System.out.println(childGenotype);
 
         int genotypePart3 = randomNumberBetween(1,3);
         while(genotypePart3 == genotypePart1 || genotypePart3 == genotypePart2)     // have to be different than first choice
@@ -88,10 +80,6 @@ public class Genotype {
             childGenotype.addAll(getPartGenotype(genotypePart3, splitPoint1, splitPoint2, genotype1));
         else
             childGenotype.addAll(getPartGenotype(genotypePart3, splitPoint1, splitPoint2, genotype2));
-
-        System.out.println(childGenotype);
-        System.out.println("genotypePart1: " + genotypePart1 + ", genotypePart2: " + genotypePart2 + ", genotypePart3: " + genotypePart3 + " Last genotype: " + chosenLastGenotype);
-        System.out.println();
 
         return childGenotype;
     }

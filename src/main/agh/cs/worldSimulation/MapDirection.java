@@ -1,5 +1,7 @@
 package agh.cs.worldSimulation;
 
+import agh.cs.worldSimulation.data.Vector2d;
+
 public enum MapDirection {
     NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST, NullPointerException;
 

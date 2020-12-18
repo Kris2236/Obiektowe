@@ -1,49 +1,41 @@
 package agh.cs.worldSimulation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import agh.cs.worldSimulation.data.Vector2d;
 
-public class SimulationEngine implements IEngine{
+import java.util.*;
+
+public class SimulationEngine implements IEngine, IDaySubject{
     private final ArrayList<MoveDirection> commands = new ArrayList<>();
     private final ArrayList<Vector2d> positions = new ArrayList<>();
+    private List<IDayObserver> observersList;
     private ArrayList<Animal> animals = new ArrayList<>();
     protected IWorldMap map;
-    protected int moveEnergy = 0;
-    protected int plantEnergy = 0;
+    protected int day = 0;
     protected AnimalEngine animalEngine;
+    protected Statistics statistics;
 
-    public SimulationEngine(MoveDirection[] commands, IWorldMap map, Vector2d[] positions, MapDirection[] moveDirections) {
-        this.commands.addAll(Arrays.asList(commands));          // Add animals move commands
-        this.positions.addAll(Arrays.asList(positions));            // Add animals positions to list
+//    public SimulationEngine(MoveDirection[] commands, IWorldMap map, Vector2d[] positions, MapDirection[] moveDirections) {
+//        this.commands.addAll(Arrays.asList(commands));          // Add animals move commands
+//        this.positions.addAll(Arrays.asList(positions));        // Add animals positions to list
+//        this.map = map;
+//        addAnimalsToMapWithDirections(moveDirections);
+//    }
+
+    public SimulationEngine(MoveDirection[] commands, IWorldMap map, int numberOfAnimals, AnimalEngine animalEngine) {
+        this.commands.addAll(Arrays.asList(commands));            // Add animals move commands
         this.map = map;
-        addAnimalsToMapWithDirections(moveDirections);
-    }
 
-    public SimulationEngine(MoveDirection[] commands, IWorldMap map, Vector2d[] positions) {
-        this.commands.addAll(Arrays.asList(commands));          // Add animals move commands
-        this.positions.addAll(Arrays.asList(positions));            // Add animals positions to list
-        this.map = map;
-        addAnimalsToMap();
-    }
+        this.observersList = new ArrayList<>();
 
-    public SimulationEngine(MoveDirection[] commands, IWorldMap map, int numberOfAnimals, int startEnergy, int moveEnergy) {
-        this.commands.addAll(Arrays.asList(commands));          // Add animals move commands
-        this.map = map;
-        this.moveEnergy = moveEnergy;
-        this.plantEnergy = plantEnergy;
+        this.statistics = new Statistics(map);
+        this.register(this.statistics);
 
-        this.animalEngine = new AnimalEngine(map, startEnergy, moveEnergy);
+        this.animalEngine = animalEngine;
+        this.register(this.animalEngine);
+
+        notifyObservers(day);
+
         animalEngine.generateAnimals(numberOfAnimals);
-    }
-
-    private void addAnimalsToMap() {
-        for(Vector2d position : this.positions) {           // Create animals
-            animals.add(new Animal(map, position));
-        }
-
-        for(Animal animal : animals) {          // Place animals on the map
-            map.place(animal);
-        }
     }
 
     private void addAnimalsToMapWithDirections(MapDirection[] directions) {
@@ -52,7 +44,7 @@ public class SimulationEngine implements IEngine{
         }
 
         int i=0;
-        for(Animal animal : animals) {          // Place animals on the map
+        for(Animal animal : animals) {                      // Place animals on the map
             if(i < directions.length)
                 map.placeWithDirection(animal, directions[i]);
             else
@@ -80,52 +72,57 @@ public class SimulationEngine implements IEngine{
                 System.out.println(map.toString(map));
             }
 
-            //System.out.println(map.toString(map));
-
-
             animals.get(i % animals.size()).move(commands.get(i));              // Make moves for the animals in turn
         }
 
         System.out.println(map.toString(map));
     }
 
-    public void run(int maxDay) {
-        int day = 0;
 
+    public void run(int maxDay) {
         while (day < maxDay){
-            //System.out.println("Aniamls: " + animals.size() + " " + map.getAnimalsList().size());
 
             if(map.getAnimalsList().isEmpty()){
-                System.out.println("Day: " + day + ". All animals died. PRINT STATICTICS");
+                System.out.println("All animals died.");
+                statistics.printStatistics();
                 return;
             }
 
-            // 1. Making movements and (note the "grass + animal" and "multi animals" positions) imidietly reproduce animals and eat grass
-            for (Animal animal : map.getAnimalsList().toArray(new Animal[0])) {         // Every animal have to move
+            // 1. Making movements and immediately reproduce animals or eat grass
+            for (Animal animal : map.getAnimalsList().toArray(new Animal[0]))        // Every animal have to move
                 animal.moveAccordingGenotype();
-            }
 
-            // 2. Foreach "grass + animal" positions assign plantEnergy (if there are 2 or more of the strongest animals with the same lifeEnergy in one position, split the energy)
-            //      - optional sort animals by energy
-            // 3. Deleting dead animals and update "multi animals" positions
-            // 4. Foreach "multi animals" positions make small animal
+            // Sort animal according to life energy - strongest animals make first moves
+            animalEngine.sortByEnergy();
 
-
-            //for(Animal animal : map.getAnimalsList())
-            //    System.out.print(animal.getPosition());
-            //System.out.println();
-            //Animal[] animalsSet = map.getAnimalsList().toArray(new Animal[0]);
-
-            System.out.println("Day: " + day);
-            day++;
+            statistics.printStatistics();
+            this.day++;
+            notifyObservers(day);
             System.out.println(map.toString(map));
 
-            // 6. Placing grass
+            // Placing grass
             map.addDailyGrass();
             System.out.println(map.toString(map));
         }
 
         System.out.println(map.toString(map));
-        System.out.println("Sukces! Finito zakończono podaną liczbę dni");
+        System.out.println("Successful, simulation complete.");
+        statistics.printStatistics();
+    }
+
+    @Override
+    public void register(IDayObserver o) {
+        observersList.add(o);
+    }
+
+    @Override
+    public void unregister(IDayObserver o) {
+        observersList.remove(o);
+    }
+
+    @Override
+    public void notifyObservers(int day) {
+        for(IDayObserver observer : observersList)
+            observer.dayChanged(day);
     }
 }

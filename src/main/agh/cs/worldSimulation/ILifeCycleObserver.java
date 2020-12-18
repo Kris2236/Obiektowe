@@ -1,6 +1,8 @@
 package agh.cs.worldSimulation;
 
 
+import agh.cs.worldSimulation.data.Vector2d;
+
 /**
  *   Grass life cycle.
  * */

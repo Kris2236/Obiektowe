@@ -1,5 +1,7 @@
 package agh.cs.worldSimulation;
 
+import agh.cs.worldSimulation.data.Vector2d;
+
 public class MapWrap {
     private final IWorldMap map;
     private final Vector2d vX = new Vector2d(1,0);
@@ -46,6 +48,8 @@ public class MapWrap {
         return wrappedPosition;
     }
 
+
+    // Optymalizacja
     private Vector2d northWrap(Vector2d position) {
         if(map.canMoveTo(position.add(vY)))
             return position.add(vY);

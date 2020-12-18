@@ -1,11 +1,13 @@
 package agh.cs.worldSimulation;
 
-import java.util.ArrayList;
+import agh.cs.worldSimulation.data.Vector2d;
+
+import java.util.LinkedList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Animal implements ISubject,Comparable {
-    private final ArrayList<IPositionChangeObserver> observerList = new ArrayList<>();
+public class Animal implements IPositionChangeSubject,Comparable {
+    private final LinkedList<IPositionChangeObserver> observerList = new LinkedList<>();
     Set<Animal> children = new HashSet<>();
     int birthDay;
     int deathDay = 0;
@@ -25,16 +27,29 @@ public class Animal implements ISubject,Comparable {
         this.position = initialPosition;
     }
 
-    public Animal(IWorldMap map, Vector2d initialPosition, int lifeEnergy, Genotype genotype, int moveEnergy){
+    public Animal(IWorldMap map, Vector2d initialPosition, int lifeEnergy, Genotype genotype, int moveEnergy, int birthDay){
         this.map = map;
         this.position = initialPosition;
         this.lifeEnergy = lifeEnergy;
         this.moveEnergy = moveEnergy;
         this.genotype = genotype;
+        this.birthDay = birthDay;
     }
 
     public Vector2d getPosition(){
         return this.position;
+    }
+
+    public int getBirthDay(){ return this.birthDay; }
+
+    public Genotype getGenotype(){ return this.genotype; }  // zastąp .genotype getterem
+
+    public int getDeathDay(){ return this.deathDay; }
+
+    public Set<Animal> getChildren(){ return this.children; }
+
+    public void dateOfDeath(int deathDay) {
+        this.deathDay = deathDay;
     }
 
     public String toString(){
@@ -97,13 +112,12 @@ public class Animal implements ISubject,Comparable {
 
         updatePosition(pos);
 
-        System.out.println("Animal pos: " + pos + "\tEnergy: " + this.lifeEnergy);
-
-        if(this.lifeEnergy <= 0 )       // Do it in simulation engine
+        if(this.lifeEnergy <= 0 ) {      // Do it in simulation engine
             this.map.animalDied(this);
+            return;
+        }
 
         if(makeSmallAimal) {
-            System.out.println("REPRODUCE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             map.reproduce(position);        // reproduce
         }
     }

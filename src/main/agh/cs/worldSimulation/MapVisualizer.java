@@ -1,5 +1,7 @@
 package agh.cs.worldSimulation;
 
+import agh.cs.worldSimulation.data.Vector2d;
+
 /**
  * The map visualizer converts the {@link IWorldMap} map into a string
  * representation.

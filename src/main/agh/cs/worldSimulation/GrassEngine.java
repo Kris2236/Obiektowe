@@ -1,7 +1,9 @@
 package agh.cs.worldSimulation;
 
+import agh.cs.worldSimulation.data.Vector2d;
+
 import java.security.SecureRandom;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.HashMap;
 
 public class GrassEngine{
@@ -33,7 +35,7 @@ public class GrassEngine{
     }
 
     public void placeGrassInJungle(int numberOfGrassToPlace) {
-        ArrayList<Vector2d> emptyPositions = map.getEmptyJunglePositions();
+        LinkedList<Vector2d> emptyPositions = map.getEmptyJunglePositions();
         // do klasy abstrakcyjnej   #1
         int randomId;
 
@@ -48,7 +50,7 @@ public class GrassEngine{
     }
 
     private void placeGrassInStep(int numberOfGrassToPlace) {
-        ArrayList<Vector2d> emptyPositions = map.getEmptyStepPositions();
+        LinkedList<Vector2d> emptyPositions = map.getEmptyStepPositions();
         // do klasy abstrakcyjnej   #1
         int randomId;
 

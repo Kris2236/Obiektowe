@@ -1,5 +1,7 @@
 package agh.cs.worldSimulation;
 
+import agh.cs.worldSimulation.data.Vector2d;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.SortedSet;

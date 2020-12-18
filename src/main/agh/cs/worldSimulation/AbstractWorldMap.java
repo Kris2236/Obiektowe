@@ -1,7 +1,8 @@
 package agh.cs.worldSimulation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import agh.cs.worldSimulation.data.Vector2d;
+
+import java.util.LinkedList;
 import java.util.Random;
 
 abstract public class AbstractWorldMap extends MapBoundary {
@@ -63,12 +64,12 @@ abstract public class AbstractWorldMap extends MapBoundary {
         return getUpperRight();
     }
 
-    public abstract ArrayList<Animal> getAnimalsList();
+    public abstract LinkedList<Animal> getAnimalsList();
 
     public void positionChanged(Animal animal, Vector2d newPosition) {   // przekaż animal
         // final HashMap<Vector2d, Animal> animalsMap = getAnimalsHashMap();
         // Animal animal = animalsMap.get(oldPosition);
-        // ArrayList<Animal> animalsList = getAnimalsList();
+        // LinkedList<Animal> animalsList = getAnimalsList();
         System.out.println("position changed");
         // animalsMap.put(newPosition, animal);
         // super.positionChanged(oldPosition, newPosition);            // Notify changes in MapBoundary
