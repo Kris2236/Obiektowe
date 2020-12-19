@@ -1,7 +1,5 @@
 package agh.cs.worldSimulation.engine;
 
-import agh.cs.worldSimulation.engine.IDayObserver;
-
 public interface IDaySubject {
 
     /**

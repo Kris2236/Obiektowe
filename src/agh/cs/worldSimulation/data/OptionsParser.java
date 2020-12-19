@@ -1,7 +1,5 @@
 package agh.cs.worldSimulation.data;
 
-import agh.cs.worldSimulation.data.MoveDirection;
-
 import java.util.ArrayList;
 import java.util.List;
 
