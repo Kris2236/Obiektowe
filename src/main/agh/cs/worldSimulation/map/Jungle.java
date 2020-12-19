@@ -1,6 +1,9 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.map;
 
+import agh.cs.worldSimulation.engine.AnimalEngine;
+import agh.cs.worldSimulation.engine.GrassEngine;
 import agh.cs.worldSimulation.data.Vector2d;
+import agh.cs.worldSimulation.elements.animal.Animal;
 
 import java.util.*;
 
@@ -22,6 +25,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         this.animalEngine =  null;
     }
 
+    // simulation engine jako parametr
     public Jungle(int width, int height, int initialNumberOfGrass, double jungleRatio, int plantEnergy, AnimalEngine animalEngine) {
         this.mapBoundUpper = new Vector2d(width-1,height-1);
         this.jungleRatio = jungleRatio;
@@ -30,8 +34,11 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         grassEngine.placeGrass(initialNumberOfGrass);
         this.mapWrap = new MapWrap(this);
         this.animalEngine =  animalEngine;
+
         this.animalEngine.map = this;
     }
+
+    // settery dla engine
 
     private void createJungle(double jungleRatio) {
         if(jungleRatio <= 0 || jungleRatio > 1)
@@ -125,13 +132,15 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     public LinkedList<Animal> getAnimalsList() {     // get animalEngine from Simuation engine!!!!!
         if (this.animalEngine == null) {
             this.animalEngine = new AnimalEngine(this, 100, 10);    // To delete
+            System.out.println("\t\t\t---NEW Animal Engine--- BAD");
+            //throw new IllegalArgumentException()
         }
         return this.animalEngine.getAnimalsList();
     }
 
     @Override
     public LinkedList<Animal> getDeadAnimalsList() {
-        return  this.animalEngine.getDeadAnimalsList();
+        return this.animalEngine.getDeadAnimalsList();
     }
 
     public void reproduce(Vector2d position) {
@@ -155,13 +164,14 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         }
     }
 
-    public boolean placeWithDirection(Animal animal, MapDirection direction) {
-        if(super.place(animal)) {
-            animal.direction = direction;
-            return true;
-        }
-        return false;
-    }
+//    // Animal konstruktor zwierzęcia z kierunkiem
+//    public boolean placeWithDirection(Animal animal, MapDirection direction) {
+//        if(super.place(animal)) {
+//            animal.direction = direction;
+//            return true;
+//        }
+//        return false;
+//    }
 
     @Override
     public boolean place(Animal animal) {

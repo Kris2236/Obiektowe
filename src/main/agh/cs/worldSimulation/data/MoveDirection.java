@@ -1,4 +1,4 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.data;
 
 public enum MoveDirection {
     FORWARD, FORWARD_RIGHT, RIGHT, BACKWARD_RIGHT, BACKWARD, BACKWARD_LEFT, LEFT, FORWARD_LEFT;

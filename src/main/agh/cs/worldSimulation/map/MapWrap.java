@@ -1,6 +1,7 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.map;
 
 import agh.cs.worldSimulation.data.Vector2d;
+import agh.cs.worldSimulation.elements.animal.Animal;
 
 public class MapWrap {
     private final IWorldMap map;
@@ -13,39 +14,17 @@ public class MapWrap {
 
     public Vector2d wrapEdge(Animal animal, Vector2d position) {
 
-//        Vector2d wrappedPosition = switch (animal.direction) {
-//            case MapDirection.NORTH -> northWrap(position);
-//            case MapDirection.NORTH_EAST -> northEastWrap(animal.getPosition());
-//            case MapDirection.EAST -> eastWrap(position);
-//            case MapDirection.SOUTH_EAST -> southEastWrap(animal.getPosition());
-//            case MapDirection.SOUTH -> southWrap(position);
-//            case MapDirection.SOUTH_WEST -> southWestWrap(animal.getPosition());
-//            case MapDirection.WEST -> westWrap(position);
-//            case MapDirection.NORTH_WEST -> northWestWrap(animal.getPosition());
-//            default -> null;
-//        };
-
-        Vector2d wrappedPosition;
-        if (animal.direction.equals(MapDirection.NORTH))
-            wrappedPosition = northWrap(position);
-        else if (animal.direction.equals(MapDirection.NORTH_EAST))
-            wrappedPosition = northEastWrap(animal.getPosition());
-        else if (animal.direction.equals(MapDirection.EAST))
-            wrappedPosition = eastWrap(position);
-        else if (animal.direction.equals(MapDirection.SOUTH_EAST))
-            wrappedPosition = southEastWrap(animal.getPosition());
-        else if (animal.direction.equals(MapDirection.SOUTH))
-            wrappedPosition = southWrap(position);
-        else if (animal.direction.equals(MapDirection.SOUTH_WEST))
-            wrappedPosition = southWestWrap(animal.getPosition());
-        else if (animal.direction.equals(MapDirection.WEST))
-            wrappedPosition = westWrap(position);
-        else if (animal.direction.equals(MapDirection.NORTH_WEST))
-            wrappedPosition = northWestWrap(animal.getPosition());
-        else
-            throw new IllegalArgumentException("Animal direction is not legal.");
-
-        return wrappedPosition;
+        return switch (animal.getDirection()) {
+            case NORTH -> northWrap(position);
+            case NORTH_EAST -> northEastWrap(animal.getPosition());
+            case EAST -> eastWrap(position);
+            case SOUTH_EAST -> southEastWrap(animal.getPosition());
+            case SOUTH -> southWrap(position);
+            case SOUTH_WEST -> southWestWrap(animal.getPosition());
+            case WEST -> westWrap(position);
+            case NORTH_WEST -> northWestWrap(animal.getPosition());
+            default -> throw new IllegalArgumentException("Animal direction is not legal.");
+        };
     }
 
 

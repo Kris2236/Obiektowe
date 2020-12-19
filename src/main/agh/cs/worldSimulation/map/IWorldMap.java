@@ -1,6 +1,7 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.map;
 
 import agh.cs.worldSimulation.data.Vector2d;
+import agh.cs.worldSimulation.elements.animal.Animal;
 
 import java.util.LinkedList;
 
@@ -28,7 +29,7 @@ public interface IWorldMap {
      */
     boolean place(Animal animal);
 
-    boolean placeWithDirection(Animal animal, MapDirection direction);
+    //boolean placeWithDirection(Animal animal, MapDirection direction);
 
         /**
          * Return true if given position on the map is occupied. Should not be

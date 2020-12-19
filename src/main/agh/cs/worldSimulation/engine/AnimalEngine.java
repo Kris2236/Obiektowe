@@ -1,12 +1,15 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.engine;
 
 import agh.cs.worldSimulation.data.Vector2d;
+import agh.cs.worldSimulation.elements.animal.Animal;
+import agh.cs.worldSimulation.elements.animal.Genotype;
+import agh.cs.worldSimulation.map.IWorldMap;
 
 import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.Collections;
 
-public class AnimalEngine implements IDayObserver{
+public class AnimalEngine implements IDayObserver {
     private final LinkedList<Animal> animalsList = new LinkedList<>();
     private final LinkedList<Animal> deadAnimalsList = new LinkedList<>();
     public IWorldMap map;
@@ -14,7 +17,7 @@ public class AnimalEngine implements IDayObserver{
     private final int moveEnergy;
     private int day;
 
-    AnimalEngine(IWorldMap map, int startEnergy, int moveEnergy) {
+    public AnimalEngine(IWorldMap map, int startEnergy, int moveEnergy) {
         this.map = map;
         this.startEnergy = startEnergy;
         this.moveEnergy = moveEnergy;
@@ -23,23 +26,23 @@ public class AnimalEngine implements IDayObserver{
     public void reproduce(Vector2d position) {
         LinkedList<Animal> parents = getStrongestParents(position);
 
-        if (parents.get(0).lifeEnergy < startEnergy/2 || parents.get(1).lifeEnergy < startEnergy/2  // Not enough energy
+        if (parents.get(0).getEnergy() < startEnergy/2 || parents.get(1).getEnergy() < startEnergy/2  // Not enough energy
             || getPositionForSmallAnimal(parents.get(0).getPosition()) == null)                     // No empty position for child
             return;
 
         // Getting energy from parents
-        int energyFromParents = parents.get(0).lifeEnergy/4 + parents.get(1).lifeEnergy/4;
-        parents.get(0).lifeEnergy = parents.get(0).lifeEnergy - parents.get(0).lifeEnergy/4;
-        parents.get(1).lifeEnergy = parents.get(1).lifeEnergy - parents.get(1).lifeEnergy/4;
+        int energyFromParents = parents.get(0).getQuaterEnergy() + parents.get(1).getQuaterEnergy();
+//        parents.get(0).lifeEnergy = parents.get(0).lifeEnergy - parents.get(0).lifeEnergy/4;
+//        parents.get(1).lifeEnergy = parents.get(1).lifeEnergy - parents.get(1).lifeEnergy/4;
 
         Vector2d smallAnimalPosition = getPositionForSmallAnimal(parents.get(0).getPosition());
-        Animal smallAnimal = new Animal(map, smallAnimalPosition, energyFromParents, new Genotype(parents.get(0).genotype, parents.get(1).genotype), moveEnergy, this.day);
+        Animal smallAnimal = new Animal(map, smallAnimalPosition, energyFromParents, new Genotype(parents.get(0).getGenotype(), parents.get(1).getGenotype()), moveEnergy, this.day);
 
-        System.out.println(smallAnimal.genotype.genotype);
+        System.out.println(smallAnimal.getGenotype().getGenotype());
 
         // Adding small animal as children
-        parents.get(0).children.add(smallAnimal);
-        parents.get(1).children.add(smallAnimal);
+        parents.get(0).getChildren().add(smallAnimal);
+        parents.get(1).getChildren().add(smallAnimal);
 
         map.place(smallAnimal);
     }

@@ -1,5 +1,7 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.elements.plant;
 
+import agh.cs.worldSimulation.other.IPositionChangeObserver;
+import agh.cs.worldSimulation.other.IPositionChangeSubject;
 import agh.cs.worldSimulation.data.Vector2d;
 
 import java.util.ArrayList;
@@ -9,11 +11,7 @@ public class Grass implements IPositionChangeSubject {
     private final Vector2d position;
     private int plantEnergy;        // In future we can for each plant generate random energy
 
-    Grass(Vector2d position){
-        this.position = position;
-    }
-
-    Grass(Vector2d position, int plantEnergy){
+    public Grass(Vector2d position, int plantEnergy){
         this.position = position;
         this.plantEnergy = plantEnergy;
     }

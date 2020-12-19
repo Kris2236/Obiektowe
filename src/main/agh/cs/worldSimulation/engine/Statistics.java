@@ -1,8 +1,12 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.engine;
+
+import agh.cs.worldSimulation.elements.animal.Animal;
+import agh.cs.worldSimulation.elements.animal.Genotype;
+import agh.cs.worldSimulation.map.IWorldMap;
 
 import java.util.LinkedList;
 
-public class Statistics implements IDayObserver{
+public class Statistics implements IDayObserver {
     protected final IWorldMap map;
     private int day;
     // save data for n-th day
@@ -31,7 +35,7 @@ public class Statistics implements IDayObserver{
             return avgEnergy;
 
         for(Animal animal : animals)
-            avgEnergy += animal.lifeEnergy;
+            avgEnergy += animal.getEnergy();
 
         avgEnergy /= animals.size();
         return avgEnergy;
@@ -45,12 +49,12 @@ public class Statistics implements IDayObserver{
         LinkedList<Genotype> genotypes = new LinkedList<>();
 
         for(Animal animal : animals)
-            genotypes.add(animal.genotype);
+            genotypes.add(animal.getGenotype());
 
         // wybierz dominujący - najczęściej występujący
 
         for(Genotype genotype : genotypes)
-            System.out.println(genotype.genotype);
+            System.out.println(genotype.getGenotype());
     }
 
     private double avgAnimalsLifespan() {
@@ -60,7 +64,7 @@ public class Statistics implements IDayObserver{
             return avgLifespan;     // No dead animal
 
         for(Animal animal : deadAnimals)
-            avgLifespan += (animal.deathDay - animal.getBirthDay());
+            avgLifespan += (animal.getDeathDay() - animal.getBirthDay());
 
         avgLifespan /= deadAnimals.size();
         return avgLifespan;

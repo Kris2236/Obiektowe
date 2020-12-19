@@ -1,10 +1,13 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.engine;
 
+import agh.cs.worldSimulation.data.MoveDirection;
 import agh.cs.worldSimulation.data.Vector2d;
+import agh.cs.worldSimulation.elements.animal.Animal;
+import agh.cs.worldSimulation.map.IWorldMap;
 
 import java.util.*;
 
-public class SimulationEngine implements IEngine, IDaySubject{
+public class SimulationEngine implements IEngine, IDaySubject {
     private final ArrayList<MoveDirection> commands = new ArrayList<>();
     private final ArrayList<Vector2d> positions = new ArrayList<>();
     private List<IDayObserver> observersList;
@@ -38,20 +41,20 @@ public class SimulationEngine implements IEngine, IDaySubject{
         animalEngine.generateAnimals(numberOfAnimals);
     }
 
-    private void addAnimalsToMapWithDirections(MapDirection[] directions) {
-        for(Vector2d position : this.positions) {           // Create animals
-            animals.add(new Animal(map, position));
-        }
-
-        int i=0;
-        for(Animal animal : animals) {                      // Place animals on the map
-            if(i < directions.length)
-                map.placeWithDirection(animal, directions[i]);
-            else
-                map.place(animal);
-            i++;
-        }
-    }
+//    private void addAnimalsToMapWithDirections(MapDirection[] directions) {
+//        for(Vector2d position : this.positions) {           // Create animals
+//            animals.add(new Animal(map, position));
+//        }
+//
+//        int i=0;
+//        for(Animal animal : animals) {                      // Place animals on the map
+//            if(i < directions.length)
+//                map.placeWithDirection(animal, directions[i]);
+//            else
+//                map.place(animal);
+//            i++;
+//        }
+//    }
 
     @Override
     public void run() {

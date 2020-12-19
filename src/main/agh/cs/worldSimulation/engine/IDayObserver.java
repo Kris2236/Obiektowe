@@ -1,4 +1,4 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.engine;
 
 public interface IDayObserver {
     /**

@@ -1,35 +1,20 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.map;
 
+import agh.cs.worldSimulation.other.MapBoundary;
+import agh.cs.worldSimulation.other.MapVisualizer;
 import agh.cs.worldSimulation.data.Vector2d;
+import agh.cs.worldSimulation.elements.animal.Animal;
 
 import java.util.LinkedList;
-import java.util.Random;
 
 abstract public class AbstractWorldMap extends MapBoundary {
 
     public abstract boolean canMoveTo(Vector2d position);
 
-    private MapDirection generateRandomDirection() {
-        Random generator = new Random();
-        int randomNumber = generator.nextInt(8);
-
-        return switch (randomNumber) {
-            case 0 -> MapDirection.NORTH;
-            case 1 -> MapDirection.NORTH_EAST;
-            case 2 -> MapDirection.EAST;
-            case 3 -> MapDirection.SOUTH_EAST;
-            case 4 -> MapDirection.SOUTH;
-            case 5 -> MapDirection.SOUTH_WEST;
-            case 6 -> MapDirection.WEST;
-            case 7 -> MapDirection.NORTH_WEST;
-            default -> throw new IllegalStateException("Unexpected value: " + randomNumber + "is not legal direction. Animal can not generate random direction, 8 possible directions. (AbstractMap)\n");
-        };
-    }
-
     public boolean place(Animal animal) throws IllegalArgumentException {
         if(canMoveTo(animal.getPosition())){
             getAnimalsList().add(animal);       //
-            animal.direction = generateRandomDirection();
+            //animal.direction = generateRandomDirection();
             animal.register(this);
             animal.notifyObservers(animal.getPosition(), animal.getPosition());
             return true;

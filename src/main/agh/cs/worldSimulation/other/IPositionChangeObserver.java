@@ -1,6 +1,7 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.other;
 
 import agh.cs.worldSimulation.data.Vector2d;
+import agh.cs.worldSimulation.elements.animal.Animal;
 
 /**
  * The interface responsible for managing observers positions in observer pattern.

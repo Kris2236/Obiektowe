@@ -1,4 +1,4 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.elements.animal;
 
 import java.security.SecureRandom;
 import java.util.*;
@@ -7,9 +7,9 @@ public class Genotype {
     public static int genomeSize = 32;
     public static int numberOfGeneTypes = 8;
     protected List<Integer> genotype = new ArrayList<>(genomeSize);
-    int[] numberOfGeneType = new int[numberOfGeneTypes];
+    protected int[] numberOfGeneType = new int[numberOfGeneTypes];
 
-    Genotype() {
+    public Genotype() {
         for(int i=0; i<numberOfGeneTypes; i++) {
             genotype.add(i);                    // every animal must be able to move in every direction in its genes
         }
@@ -25,7 +25,7 @@ public class Genotype {
         }
     }
 
-    Genotype(Genotype genotype1, Genotype genotype2) {
+    public Genotype(Genotype genotype1, Genotype genotype2) {
         int[] childNumberOfGeneType = new int[numberOfGeneTypes];
         List<Integer> childGenotype = connectGenotypes(genotype1, genotype2);
         Collections.sort(childGenotype);
@@ -55,6 +55,8 @@ public class Genotype {
         genotype.addAll(childGenotype);
         if (numberOfGeneTypes >= 0) System.arraycopy(childNumberOfGeneType, 0, numberOfGeneType, 0, numberOfGeneTypes);
     }
+
+    public List<Integer> getGenotype() { return this.genotype; }
 
     private List<Integer> connectGenotypes(Genotype genotype1, Genotype genotype2) {
         List<Integer> childGenotype = new ArrayList<>();

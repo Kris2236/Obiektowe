@@ -1,4 +1,4 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.other;
 
 import agh.cs.worldSimulation.data.Vector2d;
 

@@ -1,9 +1,15 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.elements.animal;
 
+import agh.cs.worldSimulation.other.IPositionChangeObserver;
+import agh.cs.worldSimulation.other.IPositionChangeSubject;
+import agh.cs.worldSimulation.map.IWorldMap;
+import agh.cs.worldSimulation.data.MapDirection;
+import agh.cs.worldSimulation.data.MoveDirection;
 import agh.cs.worldSimulation.data.Vector2d;
 
 import java.util.LinkedList;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class Animal implements IPositionChangeSubject,Comparable {
@@ -27,6 +33,12 @@ public class Animal implements IPositionChangeSubject,Comparable {
         this.position = initialPosition;
     }
 
+    public Animal(IWorldMap map, Vector2d initialPosition, MapDirection InitialDirection){
+        this.map = map;
+        this.position = initialPosition;
+        this.direction = InitialDirection;
+    }
+
     public Animal(IWorldMap map, Vector2d initialPosition, int lifeEnergy, Genotype genotype, int moveEnergy, int birthDay){
         this.map = map;
         this.position = initialPosition;
@@ -34,13 +46,34 @@ public class Animal implements IPositionChangeSubject,Comparable {
         this.moveEnergy = moveEnergy;
         this.genotype = genotype;
         this.birthDay = birthDay;
+        this.direction = generateRandomDirection();
+    }
+
+    public Animal(IWorldMap map, Vector2d initialPosition, int lifeEnergy, Genotype genotype, int moveEnergy, int birthDay, MapDirection InitialDirection){
+        this.map = map;
+        this.position = initialPosition;
+        this.lifeEnergy = lifeEnergy;
+        this.moveEnergy = moveEnergy;
+        this.genotype = genotype;
+        this.birthDay = birthDay;
+        this.direction = InitialDirection;
     }
 
     public Vector2d getPosition(){
         return this.position;
     }
 
+    public MapDirection getDirection(){ return this.direction; }
+
     public int getBirthDay(){ return this.birthDay; }
+
+    public int getEnergy(){ return this.lifeEnergy; }
+
+    public int getQuaterEnergy(){
+        int result = this.lifeEnergy/4;
+        this.lifeEnergy -= result;
+        return result;
+    }
 
     public Genotype getGenotype(){ return this.genotype; }  // zastąp .genotype getterem
 
@@ -63,6 +96,23 @@ public class Animal implements IPositionChangeSubject,Comparable {
             case WEST -> "<";       // 6
             case NORTH_WEST -> "7";
             default -> null;
+        };
+    }
+
+    private MapDirection generateRandomDirection() {
+        Random generator = new Random();
+        int randomNumber = generator.nextInt(8);
+
+        return switch (randomNumber) {
+            case 0 -> MapDirection.NORTH;
+            case 1 -> MapDirection.NORTH_EAST;
+            case 2 -> MapDirection.EAST;
+            case 3 -> MapDirection.SOUTH_EAST;
+            case 4 -> MapDirection.SOUTH;
+            case 5 -> MapDirection.SOUTH_WEST;
+            case 6 -> MapDirection.WEST;
+            case 7 -> MapDirection.NORTH_WEST;
+            default -> throw new IllegalStateException("Unexpected value: " + randomNumber + "is not legal direction. Animal can not generate random direction, 8 possible directions. (AbstractMap)\n");
         };
     }
 

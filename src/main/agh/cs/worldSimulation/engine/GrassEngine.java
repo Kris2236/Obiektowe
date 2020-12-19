@@ -1,6 +1,9 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.engine;
 
+import agh.cs.worldSimulation.other.IPositionChangeObserver;
 import agh.cs.worldSimulation.data.Vector2d;
+import agh.cs.worldSimulation.elements.plant.Grass;
+import agh.cs.worldSimulation.map.IWorldMap;
 
 import java.security.SecureRandom;
 import java.util.LinkedList;
@@ -11,7 +14,7 @@ public class GrassEngine{
     private int plantEnergy = 0;
     protected IWorldMap map;
 
-    GrassEngine(int plantEnergy, IWorldMap map) {
+    public GrassEngine(int plantEnergy, IWorldMap map) {
         this.plantEnergy = plantEnergy;
         this.map = map;
     }

@@ -1,4 +1,4 @@
-package agh.cs.worldSimulation;
+package agh.cs.worldSimulation.engine;
 
 /**
  * The interface responsible for managing the moves of the animals.
