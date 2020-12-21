@@ -171,7 +171,6 @@ public class SimulationWorldApp extends Application {
 
 
         // start stage2
-
         simulationPaused2 = false;
         markdownGenotype2 = false;
         saveStatistics2 = false;
@@ -234,7 +233,7 @@ public class SimulationWorldApp extends Application {
         Stage stage2 = new Stage();
         stage2.setTitle("Simulation2");
         stage2.setScene(new Scene(root2, width * matchScale() + 20, height * matchScale() + 30 +100 ));
-        //stage2.show();
+        stage2.show();
 
         Thread taskThread = new Thread(new Runnable() {
             @Override
