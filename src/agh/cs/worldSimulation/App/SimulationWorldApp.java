@@ -30,7 +30,7 @@ public class SimulationWorldApp extends Application {
     private boolean saveStatistics;
     private boolean followStrongestPet;
     private Animal followedAnimal;
-    private final int interval = 200;       // form map bigger than 100x100 interval should be bigger
+    private int interval = 100;       // form map bigger than 100x100 interval should be bigger
     private final int windowMaxWidth = 600;
     private final int windowMaxHeight = 800;
     private CanDisplay canDisplay;
@@ -107,25 +107,24 @@ public class SimulationWorldApp extends Application {
         buttonSaveStatistics.setOnAction(e -> this.saveStatistics = true);
 
         buttonFollowStrongestPet.setOnAction(e -> {
-            if (!followStrongestPet) {
-                synchronized (this) {
-                    LinkedList<Animal> animals = null;                              // Getting strongest pet position
-                    try {
-                        animals = engineJungleWorld.getAnimalEngine().getAnimalsList();
-                    } catch (InterruptedException interruptedException) {
-                        interruptedException.printStackTrace();
-                    }
-                    if(animals == null){
-                        try {
-                            throw new IllegalAccessException("Empty animals list, simulation cant follow any animal.");
-                        } catch (IllegalAccessException illegalAccessException) {
-                            illegalAccessException.printStackTrace();
-                        }
-                    } else
-                        followedAnimal = animals.get(0);
+            synchronized (this) {
+                LinkedList<Animal> animals = null;                              // Getting strongest pet position
+                try {
+                    animals = engineJungleWorld.getAnimalEngine().getAnimalsList();
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
                 }
-                this.followStrongestPet = true;
+                if(animals == null){
+                    try {
+                        throw new IllegalAccessException("Empty animals list, simulation cant follow any animal.");
+                    } catch (IllegalAccessException illegalAccessException) {
+                        illegalAccessException.printStackTrace();
+                    }
+                } else
+                    followedAnimal = animals.get(0);
             }
+            this.followStrongestPet = true;
+
         });
 
         HBox hbox = new HBox();
@@ -278,13 +277,13 @@ public class SimulationWorldApp extends Application {
             } else if (markdownGenotype && markdownPos.contains(position)){            // Markdown
                 color = "#0000FF";
             } else if(animals.get(position).getEnergy() > jsonParser.initialAnimalEnergy * 4/5 )   // Full energy
-                color = "#70F050";
+                color = "#55FF22";
             else if (animals.get(position).getEnergy() <= jsonParser.initialAnimalEnergy * 4/5 && animals.get(position).getEnergy() > jsonParser.initialAnimalEnergy/3)       // Medium energy
                 color = "#FEB100";
             else                    // Low energy
                 color = "#EA0606";
         } else if (grass.containsKey(position)) // grass
-            color = "#439030";
+            color = "#58A35E";
 
         return  color;
     }

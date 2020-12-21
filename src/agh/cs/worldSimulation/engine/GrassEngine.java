@@ -64,17 +64,11 @@ public class GrassEngine{
         grassPositionMap.put(newGrass.getPosition(), newGrass);
     }
 
-//    public void removeGrass(Vector2d position, IPositionChangeObserver observer) {
-//        grassPositionMap.get(position).unregister(observer);
-//        grassPositionMap.remove(position);
-//    }
-
     private int randomNumberBetween(int min, int max) {
         SecureRandom generator = new SecureRandom();
         return generator.nextInt(max - min + 1) + min;
     }
 
-    // trawa ma informować jak zostanie zjedzona
     public int getEnergyFrom(Vector2d position) {
         int grassEnergy = 0;
         if(map.objectAt(position) instanceof Grass) {
