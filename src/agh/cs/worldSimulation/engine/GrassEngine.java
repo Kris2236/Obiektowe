@@ -1,6 +1,5 @@
 package agh.cs.worldSimulation.engine;
 
-import agh.cs.worldSimulation.other.IPositionChangeObserver;
 import agh.cs.worldSimulation.data.Vector2d;
 import agh.cs.worldSimulation.elements.plant.Grass;
 import agh.cs.worldSimulation.map.IWorldMap;
@@ -11,17 +10,13 @@ import java.util.HashMap;
 
 public class GrassEngine{
     private final HashMap<Vector2d, Grass> grassPositionMap = new HashMap<>();
-    private int plantEnergy = 0;
-    protected IWorldMap map;
+    private final int plantEnergy;
+    private final IWorldMap map;
+
 
     public GrassEngine(int plantEnergy, IWorldMap map) {
         this.plantEnergy = plantEnergy;
         this.map = map;
-    }
-
-    public int randomNumberBetween(int min, int max) {
-        SecureRandom generator = new SecureRandom();
-        return generator.nextInt(max - min + 1) + min;
     }
 
     public HashMap<Vector2d, Grass> getGrassMap() {
@@ -39,7 +34,6 @@ public class GrassEngine{
 
     public void placeGrassInJungle(int numberOfGrassToPlace) {
         LinkedList<Vector2d> emptyPositions = map.getEmptyJunglePositions();
-        // do klasy abstrakcyjnej   #1
         int randomId;
 
         if (emptyPositions.isEmpty())
@@ -54,7 +48,6 @@ public class GrassEngine{
 
     private void placeGrassInStep(int numberOfGrassToPlace) {
         LinkedList<Vector2d> emptyPositions = map.getEmptyStepPositions();
-        // do klasy abstrakcyjnej   #1
         int randomId;
 
         if (emptyPositions.isEmpty())
@@ -67,19 +60,18 @@ public class GrassEngine{
         }
     }
 
-    public void addGrass(Grass newGrass, IPositionChangeObserver observer) {
-        grassPositionMap.put(newGrass.getPosition(), newGrass);
-        newGrass.register(observer);
-        //positionGrassAdd(newGrass.getPosition());
-    }
     public void addGrass(Grass newGrass) {
         grassPositionMap.put(newGrass.getPosition(), newGrass);
     }
 
-    public void removeGrass(Vector2d position, IPositionChangeObserver observer) {
-        grassPositionMap.get(position).unregister(observer);
-        grassPositionMap.remove(position);
-        //positionGrassDied(position);
+//    public void removeGrass(Vector2d position, IPositionChangeObserver observer) {
+//        grassPositionMap.get(position).unregister(observer);
+//        grassPositionMap.remove(position);
+//    }
+
+    private int randomNumberBetween(int min, int max) {
+        SecureRandom generator = new SecureRandom();
+        return generator.nextInt(max - min + 1) + min;
     }
 
     // trawa ma informować jak zostanie zjedzona
@@ -88,7 +80,6 @@ public class GrassEngine{
         if(map.objectAt(position) instanceof Grass) {
             grassEnergy = grassPositionMap.get(position).getEnergy();
             grassPositionMap.remove(position);
-            //positionGrassDied(position);
         }
 
         return grassEnergy;

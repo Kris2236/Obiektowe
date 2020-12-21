@@ -9,6 +9,7 @@ public class Genotype {
     protected List<Integer> genotype = new ArrayList<>(genomeSize);
     protected int[] numberOfGeneType = new int[numberOfGeneTypes];
 
+
     public Genotype() {
         for(int i=0; i<numberOfGeneTypes; i++) {
             genotype.add(i);                    // every animal must be able to move in every direction in its genes
@@ -18,10 +19,16 @@ public class Genotype {
             genotype.add(randomNumberBetween(0,numberOfGeneTypes - 1));     // rest gene are random
         }
 
-        Collections.sort(genotype);     // more random values will be if genotype unsorted
+        Collections.sort(genotype);             // more random values will be if genotype unsorted
 
         for (int i = 0; i < genomeSize; i++) {
             numberOfGeneType[genotype.get(i)]++;
+        }
+    }
+
+    public Genotype(List<Integer> genotype){
+        if (genotype.size() == 32) {
+            this.genotype = genotype;
         }
     }
 
@@ -56,6 +63,17 @@ public class Genotype {
         if (numberOfGeneTypes >= 0) System.arraycopy(childNumberOfGeneType, 0, numberOfGeneType, 0, numberOfGeneTypes);
     }
 
+    public String toString() {
+        StringBuilder result = new StringBuilder("[");
+
+        for(Integer i : genotype) {
+            result.append(" " + i);
+        }
+        result.append(" ]");
+
+        return result.toString();
+    }
+
     public List<Integer> getGenotype() { return this.genotype; }
 
     private List<Integer> connectGenotypes(Genotype genotype1, Genotype genotype2) {
@@ -87,7 +105,6 @@ public class Genotype {
     }
 
     private List<Integer> getPartGenotype(int part, int div1, int div2, Genotype genotype) {
-
         return switch (part){
             case 1 -> genotype.genotype.subList(0, div1 + 1);
             case 2 -> genotype.genotype.subList(div1 + 1, div2 + 1);
@@ -100,16 +117,8 @@ public class Genotype {
         return genotype.get(randomNumberBetween(0, genomeSize-1));
     }
 
-    public int randomNumberBetween(int min, int max) {
+    private int randomNumberBetween(int min, int max) {
         SecureRandom generator = new SecureRandom();
         return generator.nextInt(max - min + 1) + min;
     }
-
-//    private void countGenes(List<Integer> genes) {
-//        this.genotype = genes;
-//        for (Integer gene : genes) {
-//            numberOfGeneType[gene]++;
-//        }
-//    }
-
 }

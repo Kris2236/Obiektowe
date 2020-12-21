@@ -1,28 +1,25 @@
 package agh.cs.worldSimulation.elements.animal;
 
-import agh.cs.worldSimulation.other.IPositionChangeObserver;
-import agh.cs.worldSimulation.other.IPositionChangeSubject;
 import agh.cs.worldSimulation.map.IWorldMap;
 import agh.cs.worldSimulation.data.MapDirection;
 import agh.cs.worldSimulation.data.MoveDirection;
 import agh.cs.worldSimulation.data.Vector2d;
 
-import java.util.LinkedList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-public class Animal implements IPositionChangeSubject,Comparable {
-    private final LinkedList<IPositionChangeObserver> observerList = new LinkedList<>();
-    Set<Animal> children = new HashSet<>();
-    int birthDay;
-    int deathDay = 0;
-    protected MapDirection direction;
-    protected Vector2d position;
-    protected IWorldMap map;
-    protected int lifeEnergy = 1000000000;
-    protected Genotype genotype;
+public class Animal implements Comparable {
+    private final Set<Animal> children = new HashSet<>();
+    private int birthDay;
+    private int deathDay = 0;
+    private MapDirection direction;
+    private Vector2d position;
+    private final IWorldMap map;
+    private int lifeEnergy;
+    private Genotype genotype;
     private int moveEnergy = 0;
+
 
     public Animal(IWorldMap map){
         this.map = map;
@@ -69,13 +66,13 @@ public class Animal implements IPositionChangeSubject,Comparable {
 
     public int getEnergy(){ return this.lifeEnergy; }
 
-    public int getQuaterEnergy(){
+    public int getQuarterEnergy(){
         int result = this.lifeEnergy/4;
         this.lifeEnergy -= result;
         return result;
     }
 
-    public Genotype getGenotype(){ return this.genotype; }  // zastąp .genotype getterem
+    public Genotype getGenotype(){ return this.genotype; }
 
     public int getDeathDay(){ return this.deathDay; }
 
@@ -146,14 +143,14 @@ public class Animal implements IPositionChangeSubject,Comparable {
             case FORWARD_LEFT -> this.direction = this.direction.previous();
         }
 
-        makeMove(direction);
+        makeMove();
     }
 
-    private void makeMove(MoveDirection direction){
+    private void makeMove(){
         Vector2d pos = this.position.add(this.direction.toUnitVector());
         boolean makeSmallAimal = false;
 
-        if(map.objectAt(pos) instanceof Animal)   // Check if the wrapped position is occupied by another animal and make small animals ...
+        if(map.objectAt(pos) instanceof Animal)
             makeSmallAimal = true;
 
         if(!map.canMoveTo(pos)){
@@ -162,7 +159,7 @@ public class Animal implements IPositionChangeSubject,Comparable {
 
         updatePosition(pos);
 
-        if(this.lifeEnergy <= 0 ) {      // Do it in simulation engine
+        if(this.lifeEnergy <= 0 ) {
             this.map.animalDied(this);
             return;
         }
@@ -174,25 +171,7 @@ public class Animal implements IPositionChangeSubject,Comparable {
 
     private void updatePosition(Vector2d position) {
         this.lifeEnergy = this.lifeEnergy - moveEnergy + map.getEnergyFrom(position);
-        notifyObservers(this.position, position);
         this.position = position;
-    }
-
-    @Override
-    public void register(IPositionChangeObserver o) {
-        observerList.add(o);
-    }
-
-    @Override
-    public void unregister(IPositionChangeObserver o) {
-        observerList.remove(o);
-    }
-
-    @Override
-    public void notifyObservers(Vector2d oldPosition, Vector2d newPosition){
-        for(IPositionChangeObserver o : observerList){
-            o.positionChanged(oldPosition, newPosition, this);
-        }
     }
 
     @Override

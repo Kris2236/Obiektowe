@@ -1,15 +1,21 @@
 package agh.cs.worldSimulation.engine;
 
+import agh.cs.worldSimulation.data.Vector2d;
 import agh.cs.worldSimulation.elements.animal.Animal;
 import agh.cs.worldSimulation.elements.animal.Genotype;
 import agh.cs.worldSimulation.map.IWorldMap;
 
-import java.util.LinkedList;
+import java.util.*;
 
 public class Statistics implements IDayObserver {
-    protected final IWorldMap map;
+    private final IWorldMap map;
     private int day;
-    // save data for n-th day
+    private double globalAvgNumberOfAnimals = 0;
+    private double globalAvgNumberOfAnimalsEnergy = 0;
+    private double globalAvgNumberOfGrass = 0;
+    private double globalAvgLifespan = 0;
+    private double globalAvgNumberOfChildren = 0;
+
 
     public Statistics(IWorldMap map) {
         this.map = map;
@@ -17,16 +23,41 @@ public class Statistics implements IDayObserver {
 
     public void printStatistics() {
         System.out.println("------------------");
-        System.out.println("Day: " + day);
-        System.out.println("Number of animals: \t" + map.getAnimalsList().size());
-        System.out.println("Avg animals energy: " + avgAnimalsEnergy());
-        System.out.println("Number of grass: \t" + map.getGrassMapSize());
-        System.out.println("Avg lifespan dead animals: \t" + avgAnimalsLifespan());
-        System.out.println("Avg number of children:\t\t" + avgAnimalsChildren());
-        System.out.println("Dominant genotype: ");
-        dominantGenotype();
+        System.out.println(getDay());
+        System.out.println(getNumberOfAnimals());
+        System.out.println(getAvgAnimalEnergy());
+        System.out.println(getNumberOfGrass());
+        System.out.println(getAvgLifespan());
+        System.out.println(getAvgNumberOfChildren());
+        System.out.println(getDominantGenotype());
         System.out.println("------------------");
     }
+
+    public String getDay() {
+        return "Day: " + day;
+    }
+
+    public String getNumberOfAnimals() {
+        return "Number of animals: \t" + map.getAnimalsList().size();
+    }
+
+    public String getAvgAnimalEnergy() {
+        return "Avg animals energy: " + avgAnimalsEnergy();
+    }
+
+    public String getNumberOfGrass() {
+        return "Number of grass: \t" + map.getGrassMapSize();
+    }
+
+    public String getAvgLifespan() {
+        return "Avg lifespan dead animals: \t" + avgAnimalsLifespan();
+    }
+
+    public String getAvgNumberOfChildren() {
+        return "Avg number of children:\t\t" + avgAnimalsChildren();
+    }
+
+    public String getDominantGenotype() { return "Dominant genotype: " + dominantGenotype(); }
 
     private double avgAnimalsEnergy() {
         LinkedList<Animal> animals = map.getAnimalsList();
@@ -38,23 +69,63 @@ public class Statistics implements IDayObserver {
             avgEnergy += animal.getEnergy();
 
         avgEnergy /= animals.size();
-        return avgEnergy;
+        return Math.round(avgEnergy * 100.0)/100.0;
     }
 
-    private void dominantGenotype() {
+    public LinkedList<Vector2d> getAnimalsPosWithDominantGenotype() {
+        Genotype genotype = dominantGenotype();
+        LinkedList<Animal> animals = map.getAnimalsList();
+        LinkedList<Vector2d> animalsWithGenotype = new LinkedList<>();
+
+        for(Animal animal : animals) {
+            if(genotypesEquals(animal.getGenotype(), genotype)) {
+                animalsWithGenotype.add(animal.getPosition());
+            }
+        }
+
+        return animalsWithGenotype;
+    }
+
+    private boolean genotypesEquals(Genotype g1, Genotype g2) {
+        List<Integer> listg1 = g1.getGenotype();
+        List<Integer> listg2 = g2.getGenotype();
+
+        for(int i=0; i< listg1.size(); i++) {
+            if (!listg1.get(i).equals(listg2.get(i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private Genotype dominantGenotype() {
         LinkedList<Animal> animals = map.getAnimalsList();
         if (animals.isEmpty())
-            return;
+            return null;
 
-        LinkedList<Genotype> genotypes = new LinkedList<>();
+        HashMap< List<Integer>, Integer> genotypes = new HashMap<>();
+        int max = 1;
+        List<Integer> dominantGenotpe = animals.get(0).getGenotype().getGenotype();   // take first genotype
 
-        for(Animal animal : animals)
-            genotypes.add(animal.getGenotype());
+        // Getting dominant genotype
+        for(Animal animal : animals) {
+            if (genotypes.containsKey(animal.getGenotype().getGenotype())){
+                int numerOfAnimalsWithGenotpe = genotypes.get(animal.getGenotype().getGenotype()) + 1;
+                genotypes.replace(animal.getGenotype().getGenotype(), numerOfAnimalsWithGenotpe);
 
-        // wybierz dominujący - najczęściej występujący
+                if (numerOfAnimalsWithGenotpe > max) {
+                    max = numerOfAnimalsWithGenotpe;
+                    dominantGenotpe = animal.getGenotype().getGenotype();
+                } else if (numerOfAnimalsWithGenotpe == max) {
+                    // Many genotypes are dominating, in app there is not enough space to display
+                }
+            }
+            else
+                genotypes.put(animal.getGenotype().getGenotype(), 1);
+        }
 
-        for(Genotype genotype : genotypes)
-            System.out.println(genotype.getGenotype());
+        return new Genotype(dominantGenotpe);
     }
 
     private double avgAnimalsLifespan() {
@@ -67,7 +138,8 @@ public class Statistics implements IDayObserver {
             avgLifespan += (animal.getDeathDay() - animal.getBirthDay());
 
         avgLifespan /= deadAnimals.size();
-        return avgLifespan;
+        return Math.round(avgLifespan * 100.0)/100.0;
+
     }
 
     private double avgAnimalsChildren() {
@@ -80,11 +152,37 @@ public class Statistics implements IDayObserver {
             avgChildren += animal.getChildren().size();
 
         avgChildren /= animals.size();
-        return avgChildren;
+        return Math.round(avgChildren * 100.0)/100.0;
+    }
+
+    public String getGlobalStatistics() {
+        return "Days: " + day + "\n" +
+                "Avg Number of animals per day: \t " + globalAvgNumberOfAnimals/day + "\n" +
+                "Avg animals energy per day: " + globalAvgNumberOfAnimalsEnergy/day + "\n" +
+                "Avg number of grass per day: \t " + globalAvgNumberOfGrass/day + "\n" +
+                "Avg lifespan dead animals per day: \t " + globalAvgLifespan/day + "\n" +
+                "Avg number of children per day:\t\t" + globalAvgNumberOfChildren/day + "\n";
+    }
+
+    private void updateAvgToSave() {
+        if(day <=1) {
+            globalAvgNumberOfAnimals = map.getAnimalsList().size();
+            globalAvgNumberOfAnimalsEnergy = avgAnimalsEnergy();
+            globalAvgNumberOfGrass = map.getGrassMapSize();
+            globalAvgLifespan =  avgAnimalsLifespan();
+            globalAvgNumberOfChildren = avgAnimalsChildren();
+        } else {
+            globalAvgNumberOfAnimals += map.getAnimalsList().size();
+            globalAvgNumberOfAnimalsEnergy += avgAnimalsEnergy();
+            globalAvgNumberOfGrass += map.getGrassMapSize();
+            globalAvgLifespan += avgAnimalsLifespan();
+            globalAvgNumberOfChildren += avgAnimalsChildren();
+        }
     }
 
     @Override
     public void dayChanged(int day) {
         this.day = day;
+        updateAvgToSave();
     }
 }

@@ -14,18 +14,16 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     private Vector2d jungleBoundUpper;
     private final double jungleRatio;
     private final GrassEngine grassEngine;
-    private final MapWrap mapWrap;
+    private MapWrap mapWrap;
     private AnimalEngine animalEngine;
 
     public Jungle() {
         this.mapBoundUpper = null;
         this.jungleRatio = 0;
         this.grassEngine = null;
-        this.mapWrap = null;
         this.animalEngine =  null;
     }
 
-    // simulation engine jako parametr
     public Jungle(int width, int height, int initialNumberOfGrass, double jungleRatio, int plantEnergy, AnimalEngine animalEngine) {
         this.mapBoundUpper = new Vector2d(width-1,height-1);
         this.jungleRatio = jungleRatio;
@@ -34,8 +32,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         grassEngine.placeGrass(initialNumberOfGrass);
         this.mapWrap = new MapWrap(this);
         this.animalEngine =  animalEngine;
-
-        this.animalEngine.map = this;
+        this.animalEngine.setMap(this);
     }
 
     // settery dla engine
@@ -64,6 +61,12 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
             this.jungleBoundUpper = new Vector2d(mapCenter.x + jungleDimensions.x/2,mapCenter.y + jungleDimensions.y/2);
             this.jungleBoundLower = new Vector2d(mapCenter.x - jungleDimensions.x/2,mapCenter.y - jungleDimensions.y/2);
         }
+    }
+
+    @Override
+    public Vector2d getMapSize() {
+        Vector2d width = this.mapBoundUpper.substract(this.mapBoundLower).add(new Vector2d(1,1));
+        return width;
     }
 
     // do zoptymalizowania
@@ -111,6 +114,10 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
         return grassEngine.getGrassMap().size();
     }
 
+    public GrassEngine getGrassEngine() {
+        return this.grassEngine;
+    }
+
     //MapWrap
     public Vector2d mapWrap(Animal animal, Vector2d position){
         return mapWrap.wrapEdge(animal, position);
@@ -132,7 +139,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     public LinkedList<Animal> getAnimalsList() {     // get animalEngine from Simuation engine!!!!!
         if (this.animalEngine == null) {
             this.animalEngine = new AnimalEngine(this, 100, 10);    // To delete
-            System.out.println("\t\t\t---NEW Animal Engine--- BAD");
+            System.out.println("\t\t\t---NEW Animal Engine--- BAD, pewnie coś jest w złej kolejności tworzone!!!");
             //throw new IllegalArgumentException()
         }
         return this.animalEngine.getAnimalsList();
@@ -149,19 +156,6 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
     public void animalDied(Animal animal) {
         animalEngine.animalDied(animal);
-    }
-
-    // to mapVisualizer
-    private void printJungle(){
-        for(int y=0; y<=mapBoundUpper.y; y++){
-            for(int x=0; x<=mapBoundUpper.x; x++){
-                if(isInJungle(new Vector2d(x,y)))
-                    System.out.print("T");
-                else
-                    System.out.print("F");
-            }
-            System.out.println();
-        }
     }
 
 //    // Animal konstruktor zwierzęcia z kierunkiem
@@ -185,23 +179,23 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public boolean isOccupied(Vector2d position) {
-        boolean result = super.isOccupied(position);        // check animals in AbstractWorldMap
+        boolean result = super.isOccupied(position);                // check animals in AbstractWorldMap
         if(result)
             return true;
 
-        return grassEngine.getGrassMap().containsKey(position);      // check grass
+        return grassEngine.getGrassMap().containsKey(position);     // check grass
     }
 
     @Override
     public Object objectAt(Vector2d position) {
-        Object object = super.objectAt(position);        // return Animal object as first - display priority in AbstractWorldMap
+        Object object = super.objectAt(position);                   // return Animal object as first - display priority in AbstractWorldMap
         if(object != null)
             return object;
 
-        if(grassEngine.getGrassMap().containsKey(position))        // return Grass object
+        if(grassEngine.getGrassMap().containsKey(position))         // return Grass object
             return grassEngine.getGrassMap().get(position);
 
-        return null;        // return no object
+        return null;
     }
 
     @Override

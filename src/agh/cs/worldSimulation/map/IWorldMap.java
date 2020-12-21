@@ -2,6 +2,7 @@ package agh.cs.worldSimulation.map;
 
 import agh.cs.worldSimulation.data.Vector2d;
 import agh.cs.worldSimulation.elements.animal.Animal;
+import agh.cs.worldSimulation.engine.GrassEngine;
 
 import java.util.LinkedList;
 
@@ -53,30 +54,33 @@ public interface IWorldMap {
 
     Object toString(IWorldMap map);
 
-    // Vector2d wrapEdge(Animal animal, Vector2d pos, MoveDirection direction);
-
-    //void placeGrass(int numberOfGrassToPlace);
-    //int getEnergyFrom(Vector2d pos);
-
-    //LinkedList<Animal> generateAnimals(int numberOfAnimals, int startEnergy, int genotypeLength, int moveEnergy);
-
-    public void addDailyGrass();
+    void addDailyGrass();
 
     void animalDied(Animal animal);
-
-    //HashMap<Vector2d,Animal> getAnimalsHashMap();
 
     LinkedList<Animal> getAnimalsList();
 
     LinkedList<Animal> getDeadAnimalsList();
 
     Vector2d upperRight();
+
     Vector2d lowerLeft();
+
     int getEnergyFrom(Vector2d position);
+
     boolean isInStep(Vector2d position);
+
+    Vector2d getMapSize();
+
     LinkedList<Vector2d> getEmptyJunglePositions();
+
     LinkedList<Vector2d> getEmptyStepPositions();
+
     Vector2d mapWrap(Animal animal, Vector2d position);
+
     void reproduce(Vector2d position);
+
     int getGrassMapSize();
+
+    GrassEngine getGrassEngine();
 }

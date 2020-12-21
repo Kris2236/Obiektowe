@@ -15,11 +15,9 @@ abstract public class AbstractWorldMap extends MapBoundary {
         if(canMoveTo(animal.getPosition())){
             getAnimalsList().add(animal);       //
             //animal.direction = generateRandomDirection();
-            animal.register(this);
-            animal.notifyObservers(animal.getPosition(), animal.getPosition());
             return true;
         } else {
-            throw new IllegalArgumentException(animal.getPosition() + " is not legal. Off the map or position is occupated.\n");
+            throw new IllegalArgumentException(animal.getPosition() + " is not legal. Off the map or position is occupied.\n");
         }
     }
 
@@ -50,13 +48,4 @@ abstract public class AbstractWorldMap extends MapBoundary {
     }
 
     public abstract LinkedList<Animal> getAnimalsList();
-
-    public void positionChanged(Animal animal, Vector2d newPosition) {   // przekaż animal
-        // final HashMap<Vector2d, Animal> animalsMap = getAnimalsHashMap();
-        // Animal animal = animalsMap.get(oldPosition);
-        // LinkedList<Animal> animalsList = getAnimalsList();
-        System.out.println("position changed");
-        // animalsMap.put(newPosition, animal);
-        // super.positionChanged(oldPosition, newPosition);            // Notify changes in MapBoundary
-    }
 }

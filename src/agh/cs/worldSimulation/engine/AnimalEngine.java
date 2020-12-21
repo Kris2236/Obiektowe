@@ -12,10 +12,11 @@ import java.util.Collections;
 public class AnimalEngine implements IDayObserver {
     private final LinkedList<Animal> animalsList = new LinkedList<>();
     private final LinkedList<Animal> deadAnimalsList = new LinkedList<>();
-    public IWorldMap map;
+    private IWorldMap map;
     private final int startEnergy;
     private final int moveEnergy;
     private int day;
+
 
     public AnimalEngine(IWorldMap map, int startEnergy, int moveEnergy) {
         this.map = map;
@@ -26,19 +27,14 @@ public class AnimalEngine implements IDayObserver {
     public void reproduce(Vector2d position) {
         LinkedList<Animal> parents = getStrongestParents(position);
 
-        if (parents.get(0).getEnergy() < startEnergy/2 || parents.get(1).getEnergy() < startEnergy/2  // Not enough energy
-            || getPositionForSmallAnimal(parents.get(0).getPosition()) == null)                     // No empty position for child
+        if (parents.get(0).getEnergy() < startEnergy/2 || parents.get(1).getEnergy() < startEnergy/2    // Not enough energy
+            || getPositionForSmallAnimal(parents.get(0).getPosition()) == null)                         // No empty position for child
             return;
 
-        // Getting energy from parents
-        int energyFromParents = parents.get(0).getQuaterEnergy() + parents.get(1).getQuaterEnergy();
-//        parents.get(0).lifeEnergy = parents.get(0).lifeEnergy - parents.get(0).lifeEnergy/4;
-//        parents.get(1).lifeEnergy = parents.get(1).lifeEnergy - parents.get(1).lifeEnergy/4;
-
+        int energyFromParents = parents.get(0).getQuarterEnergy() + parents.get(1).getQuarterEnergy();    // Getting energy from parents
         Vector2d smallAnimalPosition = getPositionForSmallAnimal(parents.get(0).getPosition());
         Animal smallAnimal = new Animal(map, smallAnimalPosition, energyFromParents, new Genotype(parents.get(0).getGenotype(), parents.get(1).getGenotype()), moveEnergy, this.day);
-
-        System.out.println(smallAnimal.getGenotype().getGenotype());
+        //System.out.println(smallAnimal.getGenotype().getGenotype());
 
         // Adding small animal as children
         parents.get(0).getChildren().add(smallAnimal);
@@ -47,10 +43,16 @@ public class AnimalEngine implements IDayObserver {
         map.place(smallAnimal);
     }
 
+    public IWorldMap getMap() { return this.map; }
+
+    public void setMap(IWorldMap map) {
+        this.map = map;
+    }
+
     private Vector2d getPositionForSmallAnimal(Vector2d parentPosition) {
         Vector2d v;
 
-        for(int x=parentPosition.x-1; x<=parentPosition.x+1; x++) {             // Fining free position nearby parents
+        for(int x=parentPosition.x-1; x<=parentPosition.x+1; x++) {                 // Fining free position nearby parents
             for(int y=parentPosition.y-1; y<=parentPosition.y+1; y++) {
                 v = new Vector2d(x,y);
                 if (map.canMoveTo(v) && !map.isOccupied(v)) {
@@ -59,7 +61,8 @@ public class AnimalEngine implements IDayObserver {
             }
         }
 
-        LinkedList<Vector2d> emptyPositions = map.getEmptyJunglePositions();             // Else get random position
+        LinkedList<Vector2d> emptyPositions = map.getEmptyJunglePositions();        // Else get random position
+
         if (emptyPositions.isEmpty())
             emptyPositions = map.getEmptyStepPositions();
         else if (map.getEmptyStepPositions().isEmpty())
@@ -80,11 +83,7 @@ public class AnimalEngine implements IDayObserver {
     }
 
     public void sortByEnergy() {
-        System.out.println(animalsList);
         Collections.sort(animalsList);
-
-//        for(int i=0; i<animalsList.size(); i++)
-//            System.out.println(animalsList.get(i) + " \tEnergy: " + animalsList.get(i).lifeEnergy);
     }
 
     private LinkedList<Animal> getStrongestParents(Vector2d position) {
@@ -106,7 +105,6 @@ public class AnimalEngine implements IDayObserver {
     }
 
     public void animalDied(Animal animal) {
-        //animalsList.get(getAnimalId(animal)).unregister(observer);
         deadAnimalsList.add(animalsList.get(getAnimalId(animal)));       // add to dead animal list
         animal.dateOfDeath(this.day);
         animalsList.remove(animal);
