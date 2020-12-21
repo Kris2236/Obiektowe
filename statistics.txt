@@ -1,0 +1,6 @@
+Days: 200
+Avg Number of animals per day: 	 6.35
+Avg animals energy per day: 396.18134999999995
+Avg number of grass per day: 	 508.18
+Avg lifespan dead animals per day: 	 20.18234999999996
+Avg number of children per day:		1.1651999999999996
