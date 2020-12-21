@@ -34,7 +34,6 @@ public class AnimalEngine implements IDayObserver {
         int energyFromParents = parents.get(0).getQuarterEnergy() + parents.get(1).getQuarterEnergy();    // Getting energy from parents
         Vector2d smallAnimalPosition = getPositionForSmallAnimal(parents.get(0).getPosition());
         Animal smallAnimal = new Animal(map, smallAnimalPosition, energyFromParents, new Genotype(parents.get(0).getGenotype(), parents.get(1).getGenotype()), moveEnergy, this.day);
-        //System.out.println(smallAnimal.getGenotype().getGenotype());
 
         // Adding small animal as children
         parents.get(0).getChildren().add(smallAnimal);

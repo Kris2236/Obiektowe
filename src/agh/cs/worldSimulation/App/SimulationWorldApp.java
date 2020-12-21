@@ -29,6 +29,8 @@ public class SimulationWorldApp extends Application {
     private boolean simulationPaused;
     private boolean markdownGenotype;
     private boolean saveStatistics;
+    private boolean followStrongestPet;
+    private Animal followedAnimal;
     private final int interval = 200;       // form map bigger than 100x100 interval should be bigger
     private final int maxWidth = 600;
     private final int maxHeight = 800;
@@ -42,29 +44,57 @@ public class SimulationWorldApp extends Application {
     private int height;
 
 
+    // for second map
+    private boolean simulationPaused2;
+    private boolean markdownGenotype2;
+    private boolean saveStatistics2;
+    private boolean followStrongestPet2;
+    private CanDisplay canDisplay2;
+    private IEngine engineJungleWorld2;
+    private IWorldMap jungleMap2;
+    private JsonParser jsonParser2;
+
     @Override
     public void init() throws IOException {
-        this.canDisplay = new CanDisplay(true);
-
         // Parsing input data
+        // Important information program have problem with some input height and width
         jsonParser = new JsonParser();
         jsonParser.jsonParse();
 
         width = (int) jsonParser.width;
         height = (int) jsonParser.height;
 
-        // run background engine
+
+        // run background engine 1
+        this.canDisplay = new CanDisplay(false);
+
         Thread background =  new Thread(() -> {
             try{
-                AnimalEngine animalEngine = new AnimalEngine(new Jungle(), (int) jsonParser.initialAnimalEnergy,(int)  jsonParser.moveEnergy);
-                this.jungleMap = new Jungle( (int) jsonParser.width, (int) jsonParser.height, (int) jsonParser.initialNumberOfGrass,jsonParser.jungleRatio, (int) jsonParser.plantEnergy, animalEngine);
-                this.engineJungleWorld = new SimulationEngine(jungleMap, 15, animalEngine, this.canDisplay);
-                engineJungleWorld.run(200);
+                this.jungleMap = new Jungle( (int) jsonParser.width, (int) jsonParser.height, (int) jsonParser.initialNumberOfGrass,jsonParser.jungleRatio, (int) jsonParser.plantEnergy,(int) jsonParser.initialAnimalEnergy,(int)  jsonParser.moveEnergy);
+                this.engineJungleWorld = new SimulationEngine(jungleMap, this.canDisplay);
+                engineJungleWorld.setAnimalEngine(jungleMap.getAnimalEngine(), (int) jsonParser.initialAnimalCount);
+                engineJungleWorld.run((int) jsonParser.maxNumberOfDays);
             } catch (IllegalArgumentException | InterruptedException e) {
                 System.out.println(e.getMessage());
             }
         });
         background.start();
+
+
+        // run background engine 2
+        this.canDisplay = new CanDisplay(false);
+
+        Thread background2 =  new Thread(() -> {
+            try{
+                this.jungleMap2 = new Jungle( (int) jsonParser.width, (int) jsonParser.height, (int) jsonParser.initialNumberOfGrass,jsonParser.jungleRatio, (int) jsonParser.plantEnergy,(int) jsonParser.initialAnimalEnergy,(int)  jsonParser.moveEnergy);
+                this.engineJungleWorld2 = new SimulationEngine(jungleMap2, this.canDisplay);
+                engineJungleWorld2.setAnimalEngine(jungleMap2.getAnimalEngine(), (int) jsonParser.initialAnimalCount);
+                engineJungleWorld2.run((int) jsonParser.maxNumberOfDays);
+            } catch (IllegalArgumentException | InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
+        });
+        background2.start();
     }
 
     @Override
@@ -72,14 +102,17 @@ public class SimulationWorldApp extends Application {
         simulationPaused = false;
         markdownGenotype = false;
         saveStatistics = false;
+        followStrongestPet = false;
 
         Button buttonPause = new Button("Pause");
         Button buttonDominantGenotype = new Button("Dominant genotype");
         Button buttonSaveStatistics = new Button("Save statistics");
+        Button buttonFollowStrongestPet = new Button("Follow strongest pet statistics");
 
         buttonPause.setStyle("-fx-font-size: 1em; ");
         buttonDominantGenotype.setStyle("-fx-font-size: 1em; ");
         buttonSaveStatistics.setStyle("-fx-font-size: 1em; ");
+        buttonFollowStrongestPet.setStyle("-fx-font-size: 1em; ");
 
         buttonPause.setOnAction(e -> {
             this.simulationPaused = !simulationPaused;
@@ -103,8 +136,23 @@ public class SimulationWorldApp extends Application {
             this.saveStatistics = true;
         });
 
+        buttonFollowStrongestPet.setOnAction(e -> {
+            if (!followStrongestPet) {
+                synchronized (this) {
+                    LinkedList<Animal> animals = null;                              // Getting strongest pet position
+                    try {
+                        animals = engineJungleWorld.getAnimalEngine().getAnimalsList();
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
+                    followedAnimal = animals.get(0);
+                }
+                this.followStrongestPet = true;
+            }
+        });
+
         HBox hbox = new HBox();
-        hbox.getChildren().addAll(buttonPause, buttonDominantGenotype, buttonSaveStatistics);
+        hbox.getChildren().addAll(buttonPause, buttonDominantGenotype, buttonSaveStatistics, buttonFollowStrongestPet);
 
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10,10,10,10));
@@ -117,9 +165,76 @@ public class SimulationWorldApp extends Application {
         width = jungleMap.getMapSize().x;
         height = jungleMap.getMapSize().y;
 
-        primaryStage.setTitle("Simulation");
+        primaryStage.setTitle("Simulation1");
         primaryStage.setScene(new Scene(root, width * matchScale() + 20, height * matchScale() + 30 +100 ));
         primaryStage.show();
+
+
+        // start stage2
+
+        simulationPaused2 = false;
+        markdownGenotype2 = false;
+        saveStatistics2 = false;
+        followStrongestPet2 = false;
+
+        Button buttonPause2 = new Button("Pause");
+        Button buttonDominantGenotype2 = new Button("Dominant genotype");
+        Button buttonSaveStatistics2 = new Button("Save statistics");
+        Button buttonFollowStrongestPet2 = new Button("Follow strongest pet statistics");
+
+        buttonPause2.setStyle("-fx-font-size: 1em; ");
+        buttonDominantGenotype2.setStyle("-fx-font-size: 1em; ");
+        buttonSaveStatistics2.setStyle("-fx-font-size: 1em; ");
+        buttonFollowStrongestPet2.setStyle("-fx-font-size: 1em; ");
+
+        buttonPause2.setOnAction(e -> {
+            this.simulationPaused = !simulationPaused;
+
+            if (this.simulationPaused)
+                System.out.println("Paused...");
+            else
+                System.out.println("Simulation is working...");
+        });
+
+        buttonDominantGenotype2.setOnAction(e -> {
+            this.markdownGenotype = !markdownGenotype;
+
+            if (this.markdownGenotype)
+                System.out.println("Markdown...");
+            else
+                System.out.println("Normal Printing...");
+        });
+
+        buttonSaveStatistics2.setOnAction(e -> {
+            this.saveStatistics = true;
+        });
+
+        buttonFollowStrongestPet2.setOnAction(e -> {
+            if (!followStrongestPet) {
+                synchronized (this) {
+                    LinkedList<Animal> animals = null;                              // Getting strongest pet position
+                    try {
+                        animals = engineJungleWorld.getAnimalEngine().getAnimalsList();
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
+                    followedAnimal = animals.get(0);
+                }
+                this.followStrongestPet = true;
+            }
+        });
+
+        HBox hbox2 = new HBox();
+        hbox2.getChildren().addAll(buttonPause2, buttonDominantGenotype2, buttonSaveStatistics2, buttonFollowStrongestPet2);
+
+        BorderPane root2 = new BorderPane();
+        root.setPadding(new Insets(10,10,10,10));
+        root.setBottom(hbox2);
+
+        Stage stage2 = new Stage();
+        stage2.setTitle("Simulation2");
+        stage2.setScene(new Scene(root2, width * matchScale() + 20, height * matchScale() + 30 +100 ));
+        //stage2.show();
 
         Thread taskThread = new Thread(new Runnable() {
             @Override
@@ -145,6 +260,7 @@ public class SimulationWorldApp extends Application {
                                 }
                             }
                         });
+
                         canDisplay.setCanDisplay(false);
                     }
                 }
@@ -172,7 +288,24 @@ public class SimulationWorldApp extends Application {
         gp.add(labelAvgNumberOfChildren, 0,6);
         gp.add(labelDominantGenotype, 0,7);
 
-        gp.setPadding(new Insets(5, 0, 5, 100));
+        if (followStrongestPet){
+            Label labelIntro = new Label("Followed animal");
+            Label labelFollowedPetEnergy = new Label("Energy: " + followedAnimal.getEnergy());
+            Label labelFollowedPetGenotype = new Label( "Genotype: " + followedAnimal.getGenotype().getGenotype());
+            Label labelFollowedPetNumberOfChildren = new Label( "Number of children: " + followedAnimal.getChildren().size() );
+            Label labelFollowedPetDeadDate = new Label("");
+
+            if(followedAnimal.getEnergy() <= 0)
+                labelFollowedPetDeadDate = new Label( "Deadth day: " + followedAnimal.getDeathDay() );
+
+            gp.add(labelIntro,1,0);
+            gp.add(labelFollowedPetEnergy,1,1);
+            gp.add(labelFollowedPetGenotype,1,2);
+            gp.add(labelFollowedPetNumberOfChildren,1,3);
+            gp.add(labelFollowedPetDeadDate,1,4);
+        }
+
+        gp.setPadding(new Insets(5, 0, 5, 10));
         return gp;
     }
 
@@ -226,8 +359,11 @@ public class SimulationWorldApp extends Application {
         else
             color = "#D2D0CA";
 
-        if (animals.containsKey(position)) {   // jeśli jest w liście zwierzaków + life energy
-            if (markdownGenotype && markdownPos.contains(position)){            // Markdown
+        if (animals.containsKey(position)) {
+
+            if (followStrongestPet && (followedAnimal.getEnergy() > 0) && ( followedAnimal.getPosition().equals(position) || followedAnimal.equals(animals.get(position)) )) {                        // followed animal
+                color = "#661525";
+            } else if (markdownGenotype && markdownPos.contains(position)){            // Markdown
                 color = "#0000FF";
             } else if(animals.get(position).getEnergy() > jsonParser.initialAnimalEnergy * 4/5 )   // Full energy
                 color = "#70F050";
@@ -244,7 +380,7 @@ public class SimulationWorldApp extends Application {
     @Override
     public void stop() throws IOException, InterruptedException {
         if(saveStatistics){
-            WriteToFile writeToFile = new WriteToFile(engineJungleWorld.getStatistics(), "statistics.txt");
+            WriteToFile writeToFile = new WriteToFile(engineJungleWorld.getStatistics(), jsonParser.statisticsFilePath);
             writeToFile.writeToFile();
         }
     }

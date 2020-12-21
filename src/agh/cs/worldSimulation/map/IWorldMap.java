@@ -2,6 +2,7 @@ package agh.cs.worldSimulation.map;
 
 import agh.cs.worldSimulation.data.Vector2d;
 import agh.cs.worldSimulation.elements.animal.Animal;
+import agh.cs.worldSimulation.engine.AnimalEngine;
 import agh.cs.worldSimulation.engine.GrassEngine;
 
 import java.util.LinkedList;
@@ -11,7 +12,7 @@ import java.util.LinkedList;
  * Assumes that Vector2d and MoveDirection classes are defined.
  */
 
-public interface IWorldMap {
+public interface IWorldMap {        // Left to extend the model with additional map types
     /**
      * Indicate if any object can move to the given position.
      *
@@ -29,8 +30,6 @@ public interface IWorldMap {
      * @return True if the animal was placed. The animal cannot be placed if the map is already occupied.
      */
     boolean place(Animal animal);
-
-    //boolean placeWithDirection(Animal animal, MapDirection direction);
 
         /**
          * Return true if given position on the map is occupied. Should not be
@@ -83,4 +82,6 @@ public interface IWorldMap {
     int getGrassMapSize();
 
     GrassEngine getGrassEngine();
+
+    AnimalEngine getAnimalEngine();
 }

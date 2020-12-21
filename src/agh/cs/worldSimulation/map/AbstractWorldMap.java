@@ -14,7 +14,6 @@ abstract public class AbstractWorldMap extends MapBoundary {
     public boolean place(Animal animal) throws IllegalArgumentException {
         if(canMoveTo(animal.getPosition())){
             getAnimalsList().add(animal);       //
-            //animal.direction = generateRandomDirection();
             return true;
         } else {
             throw new IllegalArgumentException(animal.getPosition() + " is not legal. Off the map or position is occupied.\n");

@@ -13,4 +13,6 @@ public interface IEngine {
     Statistics getStatistics() throws InterruptedException;
 
     AnimalEngine getAnimalEngine() throws InterruptedException;
+
+    void setAnimalEngine(AnimalEngine animalEngine, int initialNumberOfAnimals);
 }

@@ -1,20 +1,11 @@
+package agh.cs.worldSimulation;
 
-import agh.cs.worldSimulation.App.CanDisplay;
 import agh.cs.worldSimulation.App.SimulationWorldApp;
-import agh.cs.worldSimulation.data.MoveDirection;
-import agh.cs.worldSimulation.data.OptionsParser;
-import agh.cs.worldSimulation.engine.AnimalEngine;
-import agh.cs.worldSimulation.engine.IEngine;
-import agh.cs.worldSimulation.engine.SimulationEngine;
-import agh.cs.worldSimulation.map.IWorldMap;
-import agh.cs.worldSimulation.map.Jungle;
 import javafx.application.Application;
 
 
 public class Main {
     public static void main(String[] args) {
-        CanDisplay canDisplay = new CanDisplay(true);
-
 
         Application.launch(SimulationWorldApp.class);
 

@@ -15,7 +15,9 @@ public class JsonParser {
     public double plantEnergy;
     public double initialNumberOfGrass;
     public double initialAnimalEnergy;
+    public double initialAnimalCount;
     public double jungleRatio;
+    public double maxNumberOfDays;
     public String statisticsFilePath;
 
 
@@ -43,6 +45,10 @@ public class JsonParser {
                 this.initialAnimalEnergy = (double) entry.getValue();
             } else if ("jungleRatio".equals(entry.getKey())) {
                 this.jungleRatio = (double) entry.getValue();
+            } else if ("maxNumberOfDays".equals(entry.getKey())) {
+                this.maxNumberOfDays = (double) entry.getValue();
+            } else if ("initialAnimalCount".equals(entry.getKey())) {
+                this.initialAnimalCount = (double) entry.getValue();
             } else if ("statisticsFilePath".equals(entry.getKey())) {
                 this.statisticsFilePath = (String) entry.getValue();
             }
@@ -50,7 +56,4 @@ public class JsonParser {
 
         reader.close();
     }
-
-
 }
-

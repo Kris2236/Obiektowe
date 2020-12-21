@@ -67,7 +67,7 @@ public class Genotype {
         StringBuilder result = new StringBuilder("[");
 
         for(Integer i : genotype) {
-            result.append(" " + i);
+            result.append(" ").append(i);
         }
         result.append(" ]");
 

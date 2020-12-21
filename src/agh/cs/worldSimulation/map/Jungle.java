@@ -16,26 +16,24 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     private final GrassEngine grassEngine;
     private MapWrap mapWrap;
     private AnimalEngine animalEngine;
+    private final int initialEnergy;
+    private final int moveEnergy;
 
-    public Jungle() {
-        this.mapBoundUpper = null;
-        this.jungleRatio = 0;
-        this.grassEngine = null;
-        this.animalEngine =  null;
-    }
 
-    public Jungle(int width, int height, int initialNumberOfGrass, double jungleRatio, int plantEnergy, AnimalEngine animalEngine) {
+    public Jungle(int width, int height, int initialNumberOfGrass, double jungleRatio, int plantEnergy, int initialEnergy, int moveEnergy) {
+        this.initialEnergy = initialEnergy;
+        this.moveEnergy = moveEnergy;
         this.mapBoundUpper = new Vector2d(width-1,height-1);
         this.jungleRatio = jungleRatio;
         createJungle(this.jungleRatio);
         this.grassEngine = new GrassEngine(plantEnergy, this);
         grassEngine.placeGrass(initialNumberOfGrass);
         this.mapWrap = new MapWrap(this);
-        this.animalEngine =  animalEngine;
-        this.animalEngine.setMap(this);
     }
 
-    // settery dla engine
+    public AnimalEngine getAnimalEngine() {
+        return this.animalEngine;
+    }
 
     private void createJungle(double jungleRatio) {
         if(jungleRatio <= 0 || jungleRatio > 1)
@@ -65,11 +63,9 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public Vector2d getMapSize() {
-        Vector2d width = this.mapBoundUpper.substract(this.mapBoundLower).add(new Vector2d(1,1));
-        return width;
+        return this.mapBoundUpper.substract(this.mapBoundLower).add(new Vector2d(1,1));
     }
 
-    // do zoptymalizowania
     public LinkedList<Vector2d> getEmptyPositions() {
         LinkedList<Vector2d> emptyPositions = new LinkedList<>();
         for (int x=mapBoundLower.x; x<=mapBoundUpper.x; x++) {
@@ -78,6 +74,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
                     emptyPositions.add(new Vector2d(x, y));
             }
         }
+
         return emptyPositions;
     }
 
@@ -88,6 +85,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
             if (isInJungle(position))
                 emptyJunglePositions.add(position);
         }
+
         return emptyJunglePositions;
     }
 
@@ -98,6 +96,7 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
             if (isInStep(position))
                 emptyStepPositions.add(position);
         }
+
         return emptyStepPositions;
     }
 
@@ -136,12 +135,10 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     }
 
     // AnimalEngine
-    public LinkedList<Animal> getAnimalsList() {     // get animalEngine from Simuation engine!!!!!
-        if (this.animalEngine == null) {
-            this.animalEngine = new AnimalEngine(this, 100, 10);    // To delete
-            System.out.println("\t\t\t---NEW Animal Engine--- BAD, pewnie coś jest w złej kolejności tworzone!!!");
-            //throw new IllegalArgumentException()
-        }
+    public LinkedList<Animal> getAnimalsList() {
+        if (this.animalEngine == null)
+            this.animalEngine = new AnimalEngine(this, initialEnergy, moveEnergy);
+
         return this.animalEngine.getAnimalsList();
     }
 
@@ -157,15 +154,6 @@ public class Jungle extends AbstractWorldMap implements IWorldMap {
     public void animalDied(Animal animal) {
         animalEngine.animalDied(animal);
     }
-
-//    // Animal konstruktor zwierzęcia z kierunkiem
-//    public boolean placeWithDirection(Animal animal, MapDirection direction) {
-//        if(super.place(animal)) {
-//            animal.direction = direction;
-//            return true;
-//        }
-//        return false;
-//    }
 
     @Override
     public boolean place(Animal animal) {

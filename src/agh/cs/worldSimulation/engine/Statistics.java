@@ -15,6 +15,7 @@ public class Statistics implements IDayObserver {
     private double globalAvgNumberOfGrass = 0;
     private double globalAvgLifespan = 0;
     private double globalAvgNumberOfChildren = 0;
+    LinkedList<Vector2d> animalsWithDominantGenotype;
 
 
     public Statistics(IWorldMap map) {
@@ -31,6 +32,10 @@ public class Statistics implements IDayObserver {
         System.out.println(getAvgNumberOfChildren());
         System.out.println(getDominantGenotype());
         System.out.println("------------------");
+    }
+
+    public LinkedList<Vector2d> getAnimalsPosWithDominantGenotype() {
+        return this.animalsWithDominantGenotype;
     }
 
     public String getDay() {
@@ -69,10 +74,11 @@ public class Statistics implements IDayObserver {
             avgEnergy += animal.getEnergy();
 
         avgEnergy /= animals.size();
+
         return Math.round(avgEnergy * 100.0)/100.0;
     }
 
-    public LinkedList<Vector2d> getAnimalsPosWithDominantGenotype() {
+    public LinkedList<Vector2d> setAnimalsPosWithDominantGenotype() {
         Genotype genotype = dominantGenotype();
         LinkedList<Animal> animals = map.getAnimalsList();
         LinkedList<Vector2d> animalsWithGenotype = new LinkedList<>();
@@ -139,7 +145,6 @@ public class Statistics implements IDayObserver {
 
         avgLifespan /= deadAnimals.size();
         return Math.round(avgLifespan * 100.0)/100.0;
-
     }
 
     private double avgAnimalsChildren() {
@@ -183,6 +188,7 @@ public class Statistics implements IDayObserver {
     @Override
     public void dayChanged(int day) {
         this.day = day;
-        updateAvgToSave();
+        updateAvgToSave();       // we can add a boolean variable to the canDispaly class and track the average stats from a specific day
+        this.animalsWithDominantGenotype = setAnimalsPosWithDominantGenotype();
     }
 }

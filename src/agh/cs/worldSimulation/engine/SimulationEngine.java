@@ -7,26 +7,28 @@ import agh.cs.worldSimulation.map.IWorldMap;
 import java.util.*;
 
 public class SimulationEngine implements IEngine, IDaySubject {
-    //private final ArrayList<MoveDirection> commands = new ArrayList<>();
-    //private final ArrayList<Animal> animals = new ArrayList<>();
     private final List<IDayObserver> observersList;
     private final IWorldMap map;
-    private final AnimalEngine animalEngine;
+    private AnimalEngine animalEngine;
     private final Statistics statistics;
     private final CanDisplay canDisplay;
     private int day = 0;
 
 
-    public SimulationEngine(IWorldMap map, int numberOfAnimals, AnimalEngine animalEngine, CanDisplay canDisplay) {
+    public SimulationEngine(IWorldMap map, CanDisplay canDisplay) {
         this.map = map;
         this.observersList = new ArrayList<>();
         this.statistics = new Statistics(map);
-        this.register(this.statistics);
+        this.canDisplay = canDisplay;
+    }
+
+    @Override
+    public void setAnimalEngine( AnimalEngine animalEngine, int initialNumberOfAnimals) {
         this.animalEngine = animalEngine;
         this.register(this.animalEngine);
+        this.register(this.statistics);
+        animalEngine.generateAnimals(initialNumberOfAnimals);
         notifyObservers(day);
-        this.canDisplay = canDisplay;
-        animalEngine.generateAnimals(numberOfAnimals);
     }
 
     public void run(int maxDay) throws InterruptedException {
@@ -55,7 +57,6 @@ public class SimulationEngine implements IEngine, IDaySubject {
             this.day++;
             notifyObservers(day);
             statistics.printStatistics();
-
 
             map.addDailyGrass();                    // Placing grass
             ThreadSynchronize();
@@ -103,46 +104,4 @@ public class SimulationEngine implements IEngine, IDaySubject {
         for(IDayObserver observer : observersList)
             observer.dayChanged(day);
     }
-
-
-    //    private void addAnimalsToMapWithDirections(MapDirection[] directions) {
-//        for(Vector2d position : this.positions) {           // Create animals
-//            animals.add(new Animal(map, position));
-//        }
-//
-//        int i=0;
-//        for(Animal animal : animals) {                      // Place animals on the map
-//            if(i < directions.length)
-//                map.placeWithDirection(animal, directions[i]);
-//            else
-//                map.place(animal);
-//            i++;
-//        }
-//    }
-
-//    @Override
-//    public void run() {
-//        int day = 0;
-//
-//        for(int i=0; i<commands.size(); i++) {
-//
-//            if(animals.size() == 0){
-//                System.out.println("Day: " + day + ". All animals died. PRINT STATICTICS");
-//                return;
-//            }
-//
-//            if(i % animals.size() == 0) {               // Show the map after every turn
-//                System.out.println("Day: " + day);
-//                day++;
-//                System.out.println(map.toString(map));
-//                map.addDailyGrass();
-//                System.out.println(map.toString(map));
-//            }
-//
-//            animals.get(i % animals.size()).move(commands.get(i));              // Make moves for the animals in turn
-//        }
-//
-//        System.out.println(map.toString(map));
-//    }
-
 }

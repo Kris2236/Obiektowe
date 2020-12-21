@@ -8,6 +8,7 @@ public class MapWrap {
     private final Vector2d vX = new Vector2d(1,0);
     private final Vector2d vY = new Vector2d(0,1);
 
+
     public MapWrap(IWorldMap map) {
         this.map = map;
     }
@@ -27,8 +28,6 @@ public class MapWrap {
         };
     }
 
-
-    // Optymalizacja
     private Vector2d northWrap(Vector2d position) {
         if(map.canMoveTo(position.add(vY)))
             return position.add(vY);

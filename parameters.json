@@ -1,11 +1,12 @@
 {
   "width": 60,
   "height": 80,
-  "moveEnergy": 1,
-  "plantEnergy": 1000,
-  "initialNumberOfGrass": 500,
-  "initialAnimalEnergy": 250,
+  "moveEnergy": 5,
+  "plantEnergy": 100,
+  "initialNumberOfGrass": 200,
+  "initialAnimalEnergy": 1000,
   "jungleRatio": 0.25,
-  "initialAnimalCount": 30,
+  "initialAnimalCount": 10,
+  "maxNumberOfDays": 1000,
   "statisticsFilePath": "statistics.txt"
 }
