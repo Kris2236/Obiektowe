@@ -1,8 +1,8 @@
 {
-Days: 61
-Avg Number of animals per day: 	 0.0
-Avg animals energy per day: 0.0
-Avg number of grass per day: 	 0.0
+Days: 2
+Avg Number of animals per day: 	 10.0
+Avg animals energy per day: 1042.5
+Avg number of grass per day: 	 196.0
 Avg lifespan dead animals per day: 	 0.0
 Avg number of children per day:		0.0
 }

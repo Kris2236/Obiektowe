@@ -3,7 +3,6 @@ package agh.cs.worldSimulation.App;
 import agh.cs.worldSimulation.data.Vector2d;
 import agh.cs.worldSimulation.elements.animal.Animal;
 import agh.cs.worldSimulation.elements.plant.Grass;
-import agh.cs.worldSimulation.engine.AnimalEngine;
 import agh.cs.worldSimulation.engine.IEngine;
 import agh.cs.worldSimulation.engine.SimulationEngine;
 import agh.cs.worldSimulation.map.IWorldMap;
@@ -32,8 +31,8 @@ public class SimulationWorldApp extends Application {
     private boolean followStrongestPet;
     private Animal followedAnimal;
     private final int interval = 200;       // form map bigger than 100x100 interval should be bigger
-    private final int maxWidth = 600;
-    private final int maxHeight = 800;
+    private final int windowMaxWidth = 600;
+    private final int windowMaxHeight = 800;
     private CanDisplay canDisplay;
     private IEngine engineJungleWorld;
     private IWorldMap jungleMap;
@@ -43,16 +42,6 @@ public class SimulationWorldApp extends Application {
     private int width;
     private int height;
 
-
-    // for second map
-    private boolean simulationPaused2;
-    private boolean markdownGenotype2;
-    private boolean saveStatistics2;
-    private boolean followStrongestPet2;
-    private CanDisplay canDisplay2;
-    private IEngine engineJungleWorld2;
-    private IWorldMap jungleMap2;
-    private JsonParser jsonParser2;
 
     @Override
     public void init() throws IOException {
@@ -64,11 +53,10 @@ public class SimulationWorldApp extends Application {
         width = (int) jsonParser.width;
         height = (int) jsonParser.height;
 
-
-        // run background engine 1
+        // run background engine
         this.canDisplay = new CanDisplay(false);
-
-        Thread background =  new Thread(() -> {
+        Thread background;
+        background =  new Thread(() -> {
             try{
                 this.jungleMap = new Jungle( (int) jsonParser.width, (int) jsonParser.height, (int) jsonParser.initialNumberOfGrass,jsonParser.jungleRatio, (int) jsonParser.plantEnergy,(int) jsonParser.initialAnimalEnergy,(int)  jsonParser.moveEnergy);
                 this.engineJungleWorld = new SimulationEngine(jungleMap, this.canDisplay);
@@ -79,22 +67,6 @@ public class SimulationWorldApp extends Application {
             }
         });
         background.start();
-
-
-        // run background engine 2
-        this.canDisplay = new CanDisplay(false);
-
-        Thread background2 =  new Thread(() -> {
-            try{
-                this.jungleMap2 = new Jungle( (int) jsonParser.width, (int) jsonParser.height, (int) jsonParser.initialNumberOfGrass,jsonParser.jungleRatio, (int) jsonParser.plantEnergy,(int) jsonParser.initialAnimalEnergy,(int)  jsonParser.moveEnergy);
-                this.engineJungleWorld2 = new SimulationEngine(jungleMap2, this.canDisplay);
-                engineJungleWorld2.setAnimalEngine(jungleMap2.getAnimalEngine(), (int) jsonParser.initialAnimalCount);
-                engineJungleWorld2.run((int) jsonParser.maxNumberOfDays);
-            } catch (IllegalArgumentException | InterruptedException e) {
-                System.out.println(e.getMessage());
-            }
-        });
-        background2.start();
     }
 
     @Override
@@ -104,8 +76,8 @@ public class SimulationWorldApp extends Application {
         saveStatistics = false;
         followStrongestPet = false;
 
-        Button buttonPause = new Button("Pause");
-        Button buttonDominantGenotype = new Button("Dominant genotype");
+        Button buttonPause = new Button("(Start/Pause)");
+        Button buttonDominantGenotype = new Button("(Mark/Unmark) Dominant genotype");
         Button buttonSaveStatistics = new Button("Save statistics");
         Button buttonFollowStrongestPet = new Button("Follow strongest pet statistics");
 
@@ -132,9 +104,7 @@ public class SimulationWorldApp extends Application {
                 System.out.println("Normal Printing...");
         });
 
-        buttonSaveStatistics.setOnAction(e -> {
-            this.saveStatistics = true;
-        });
+        buttonSaveStatistics.setOnAction(e -> this.saveStatistics = true);
 
         buttonFollowStrongestPet.setOnAction(e -> {
             if (!followStrongestPet) {
@@ -145,7 +115,14 @@ public class SimulationWorldApp extends Application {
                     } catch (InterruptedException interruptedException) {
                         interruptedException.printStackTrace();
                     }
-                    followedAnimal = animals.get(0);
+                    if(animals == null){
+                        try {
+                            throw new IllegalAccessException("Empty animals list, simulation cant follow any animal.");
+                        } catch (IllegalAccessException illegalAccessException) {
+                            illegalAccessException.printStackTrace();
+                        }
+                    } else
+                        followedAnimal = animals.get(0);
                 }
                 this.followStrongestPet = true;
             }
@@ -165,80 +142,15 @@ public class SimulationWorldApp extends Application {
         width = jungleMap.getMapSize().x;
         height = jungleMap.getMapSize().y;
 
-        primaryStage.setTitle("Simulation1");
+        primaryStage.setTitle("Simulation");
         primaryStage.setScene(new Scene(root, width * matchScale() + 20, height * matchScale() + 30 +100 ));
         primaryStage.show();
-
-
-        // start stage2
-        simulationPaused2 = false;
-        markdownGenotype2 = false;
-        saveStatistics2 = false;
-        followStrongestPet2 = false;
-
-        Button buttonPause2 = new Button("Pause");
-        Button buttonDominantGenotype2 = new Button("Dominant genotype");
-        Button buttonSaveStatistics2 = new Button("Save statistics");
-        Button buttonFollowStrongestPet2 = new Button("Follow strongest pet statistics");
-
-        buttonPause2.setStyle("-fx-font-size: 1em; ");
-        buttonDominantGenotype2.setStyle("-fx-font-size: 1em; ");
-        buttonSaveStatistics2.setStyle("-fx-font-size: 1em; ");
-        buttonFollowStrongestPet2.setStyle("-fx-font-size: 1em; ");
-
-        buttonPause2.setOnAction(e -> {
-            this.simulationPaused = !simulationPaused;
-
-            if (this.simulationPaused)
-                System.out.println("Paused...");
-            else
-                System.out.println("Simulation is working...");
-        });
-
-        buttonDominantGenotype2.setOnAction(e -> {
-            this.markdownGenotype = !markdownGenotype;
-
-            if (this.markdownGenotype)
-                System.out.println("Markdown...");
-            else
-                System.out.println("Normal Printing...");
-        });
-
-        buttonSaveStatistics2.setOnAction(e -> {
-            this.saveStatistics = true;
-        });
-
-        buttonFollowStrongestPet2.setOnAction(e -> {
-            if (!followStrongestPet) {
-                synchronized (this) {
-                    LinkedList<Animal> animals = null;                              // Getting strongest pet position
-                    try {
-                        animals = engineJungleWorld.getAnimalEngine().getAnimalsList();
-                    } catch (InterruptedException interruptedException) {
-                        interruptedException.printStackTrace();
-                    }
-                    followedAnimal = animals.get(0);
-                }
-                this.followStrongestPet = true;
-            }
-        });
-
-        HBox hbox2 = new HBox();
-        hbox2.getChildren().addAll(buttonPause2, buttonDominantGenotype2, buttonSaveStatistics2, buttonFollowStrongestPet2);
-
-        BorderPane root2 = new BorderPane();
-        root.setPadding(new Insets(10,10,10,10));
-        root.setBottom(hbox2);
-
-        Stage stage2 = new Stage();
-        stage2.setTitle("Simulation2");
-        stage2.setScene(new Scene(root2, width * matchScale() + 20, height * matchScale() + 30 +100 ));
-        stage2.show();
 
         Thread taskThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 while(!canDisplay.simulationFinished()){
+
                     synchronized (this) {
                         while (simulationPaused  || !canDisplay.getState()) {   // waiting for changes
                             try {
@@ -290,6 +202,8 @@ public class SimulationWorldApp extends Application {
         if (followStrongestPet){
             Label labelIntro = new Label("Followed animal");
             Label labelFollowedPetEnergy = new Label("Energy: " + followedAnimal.getEnergy());
+            if (followedAnimal.getEnergy() < 0)
+                labelFollowedPetEnergy = new Label("Energy: 0");
             Label labelFollowedPetGenotype = new Label( "Genotype: " + followedAnimal.getGenotype().getGenotype());
             Label labelFollowedPetNumberOfChildren = new Label( "Number of children: " + followedAnimal.getChildren().size() );
             Label labelFollowedPetDeadDate = new Label("");
@@ -319,7 +233,7 @@ public class SimulationWorldApp extends Application {
     }
 
     private int matchScale() {
-        return Math.max(maxWidth, maxHeight)/Math.max(width,height);
+        return Math.max(windowMaxWidth, windowMaxHeight)/Math.max(width,height);
     }
 
     private void MapApp(GridPane gp) throws InterruptedException {
@@ -327,7 +241,6 @@ public class SimulationWorldApp extends Application {
         HashMap<Vector2d, Grass> grass = jungleMap.getGrassEngine().getGrassMap();
         LinkedList<Vector2d> markdownPos = engineJungleWorld.getStatistics().getAnimalsPosWithDominantGenotype();
 
-        // sortuj po energii - optymalizacja - plany na przyszłość :)
         HashMap<Vector2d, Animal> animalsMap = new HashMap<>();
         for(Animal animal:animals)
             animalsMap.put(animal.getPosition(), animal);
@@ -350,7 +263,7 @@ public class SimulationWorldApp extends Application {
         }
     }
 
-    private String typeOfCell(Vector2d position, HashMap<Vector2d, Animal> animals, HashMap<Vector2d, Grass> grass, LinkedList<Vector2d> markdownPos) throws InterruptedException {
+    private String typeOfCell(Vector2d position, HashMap<Vector2d, Animal> animals, HashMap<Vector2d, Grass> grass, LinkedList<Vector2d> markdownPos) {
         String color;   // savanna
 
         if (!jungleMap.isInStep(position))
