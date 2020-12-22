@@ -46,7 +46,7 @@ public class SimulationWorldApp extends Application {
     @Override
     public void init() throws IOException {
         // Parsing input data
-        // Important information program have problem with some input height and width
+        // Important information : you can not add to many grass according to map dimension
         jsonParser = new JsonParser();
         jsonParser.jsonParse();
 

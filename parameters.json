@@ -7,6 +7,6 @@
   "initialAnimalEnergy": 1000,
   "jungleRatio": 0.35,
   "initialAnimalCount": 10,
-  "maxNumberOfDays": 1000,
+  "maxNumberOfDays": 100000,
   "statisticsFilePath": "statistics.txt"
 }
