@@ -22,7 +22,7 @@ należy załączyć biblioteki JavaFX oraz gson.
 W pliku parameters.json wpisujemy dane startowe aplikacji.
 
 ## Status
-Program nie działa dla pewnych danych wejściowych width, height.
+Program nie uruchamia się dla pewnych danych wejściowych (gdy podamy zby dużą ilość początkowej trawy w stosunku do jungle / rozmiaru mapy).
 
 # Źródła:
 ```https://github.com/apohllo/obiektowe-lab/tree/master/lab8```
