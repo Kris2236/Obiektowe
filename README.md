@@ -16,7 +16,7 @@ Stwórzmy grę! Nie będzie to jednak gra, w którą my gramy. Zamiast tego będ
 
 ## Uruchomienie
 Do uruchomienia najlepiej wykożystać środowisko InteliJ z java 15, do którego
-należy załączyć biblioteki JavaFX oraz gson.
+należy dodać biblioteki JavaFX oraz gson.
 
 ## Przykłady użycia
 W pliku parameters.json wpisujemy dane startowe aplikacji.
